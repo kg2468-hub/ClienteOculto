@@ -8,39 +8,104 @@
         :root { --primary: #004a99; --success: #28a745; --danger: #dc3545; --bg: #f4f7f9; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 550px; }
-        header { background: var(--primary); color: white; padding: 20px 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e0e6ed; }
-        label { font-weight: bold; font-size: 13px; color: #666; display: block; margin-top: 10px; text-transform: uppercase; }
+        
+        /* Logo Fixa Atualizada */
+        .logo-fixa { 
+            position: fixed; 
+            top: 15px; 
+            left: 15px; 
+            width: 95px; /* Tamanho aumentado */
+            height: 35x; 
+            object-fit: cover; 
+            z-index: 1000;
+            opacity: 0.5; /* Opacidade reduzida */
+            border-radius: 7px; /* Cantos arredondados */
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
+            pointer-events: none; /* Não atrapalha cliques por baixo */
+        }
+
+        .container { width: 100%; max-width: 550px; margin-top: 30px; }
+        
+        header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 35px 20px; 
+            border-radius: 12px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .header-text h2 { margin: 0; font-size: 26px; letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
+        .header-text p { margin: 8px 0 0; opacity: 0.9; font-size: 14px; font-weight: bold; letter-spacing: 3px; }
+
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e0e6ed; overflow: hidden; }
+        label { font-weight: bold; font-size: 11px; color: #888; display: block; margin-top: 10px; text-transform: uppercase; }
         input { width: 100%; padding: 14px; margin: 6px 0; border: 1px solid #ccd6e0; border-radius: 8px; font-size: 16px; outline: none; }
-        .section-title { font-weight: bold; color: var(--primary); background: #f0f4f8; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-transform: uppercase; text-align: center; }
-        .item { padding: 18px 0; border-bottom: 1px solid #f1f1f1; }
+        
+        .section-title { font-weight: bold; color: var(--primary); background: #f0f4f8; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-transform: uppercase; text-align: center; font-size: 13px; }
+        
+        .item { padding: 18px 10px; border-bottom: 1px solid #f1f1f1; transition: all 0.5s ease; background-repeat: no-repeat; background-size: 0% 100%; }
+        .item.respondido { opacity: 0.6; }
+        .item.resp-sim { background-image: linear-gradient(to right, rgba(40, 167, 69, 0.15), rgba(40, 167, 69, 0.15)); background-size: 100% 100%; background-position: left; }
+        .item.resp-nao { background-image: linear-gradient(to left, rgba(220, 53, 69, 0.15), rgba(220, 53, 69, 0.15)); background-size: 100% 100%; background-position: right; }
+        
         .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn { padding: 16px; border: 1px solid #ccd6e0; border-radius: 10px; background: #fff; font-weight: bold; cursor: pointer; font-size: 14px; transition: all 0.2s ease; }
         .btn.active-yes { background: var(--success) !important; color: white; border-color: var(--success); }
         .btn.active-no { background: var(--danger) !important; color: white; border-color: var(--danger); }
+        
         .btn-fin { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; margin: 25px 0; cursor: pointer; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 20000; padding: 20px; }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-question-box { background: #f8fafc; padding: 10px; border-radius: 8px; margin: 15px 0; font-style: italic; color: #4a5568; font-size: 14px; border-left: 4px solid var(--primary); }
+        
         #results { display: none; background: white; padding: 20px; border-radius: 12px; width: 100%; border: 2px solid var(--primary); margin-bottom: 30px; }
         pre { background: #fdfdfd; padding: 15px; white-space: pre-wrap; font-size: 13px; border: 1px solid #eee; color: #2c3e50; border-radius: 8px; font-family: monospace; }
-        footer { margin: 20px 0 40px; text-align: center; color: #95a5a6; font-size: 12px; }
         #toast { position: fixed; top: 20px; background: rgba(0,0,0,0.9); color: white; padding: 15px 25px; border-radius: 30px; display: none; z-index: 10000; font-weight: bold; }
+        footer { margin: 20px 0 40px; text-align: center; color: #95a5a6; font-size: 12px; }
     </style>
 </head>
 <body>
 
+<img src="PagueMenosLogo.png" alt="Logo" class="logo-fixa">
+
 <div id="toast"></div>
+
+<div id="modal-confirm" class="modal-overlay">
+    <div class="modal-content">
+        <h3 style="color: var(--primary);">Alterar Resposta?</h3>
+        <p>Deseja mudar para <strong id="modal-new-choice"></strong>?</p>
+        <div id="modal-question-text" class="modal-question-box"></div>
+        <div class="modal-btns" style="display: flex; gap: 10px;">
+            <button class="btn" style="flex:1" onclick="fecharModalConfirm(false)">CANCELAR</button>
+            <button class="btn" style="flex:1; background: var(--primary); color: white;" onclick="fecharModalConfirm(true)">CONFIRMAR</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-alert" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="alert-title" style="color: var(--danger);">⚠️ Atenção</h3>
+        <p id="alert-msg"></p>
+        <button class="btn-fin" style="margin: 10px 0 0; padding: 15px;" onclick="document.getElementById('modal-alert').style.display='none'">ENTENDI</button>
+    </div>
+</div>
 
 <div class="container">
     <header>
-        <h2 style="margin:0;">PAGUE MENOS</h2>
-        <p style="margin:5px 0 0; opacity: 0.9; font-size: 14px;">Checklist Cliente Oculto</p>
+        <div class="header-text">
+            <h2>CHECK-LIST</h2>
+            <p>CLIENTE OCULTO</p>
+        </div>
     </header>
     
     <div class="card">
         <label>Colaborador Avaliado</label>
         <input type="text" id="nome" placeholder="Nome completo">
         <label>Matrícula</label>
-        <input type="number" id="matri" placeholder="000000">
+        <input type="number" id="matri" placeholder="Ex: 000000">
     </div>
 
     <div id="checklist-area"></div>
@@ -53,10 +118,7 @@
         <button class="btn-fin" style="background:#4a5568; margin-bottom: 0;" onclick="copiar()">COPIAR PARA WHATSAPP</button>
     </div>
 
-    <footer>
-        Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
-        Relatório Interno não oficial.
-    </footer>
+    <footer>Desenvolvido por <strong>Erik Henrique - 126841</strong></footer>
 </div>
 
 <script>
@@ -68,71 +130,91 @@
 
     let respostas = {};
     let horaInicio = "";
+    let itemPendente = { id: null, valor: null };
 
     function montar() {
-        // Captura a hora de início assim que a página carrega
         const agora = new Date();
         horaInicio = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-
         const area = document.getElementById('checklist-area');
         let html = '';
         for (let secao in perguntas) {
             html += `<div class="card"><div class="section-title">${secao}</div>`;
             perguntas[secao].forEach((p, i) => {
                 const id = secao + "-" + i;
-                html += `<div class="item"><div style="font-size:15px; margin-bottom:10px;">${p}</div><div class="btns">
-                    <button class="btn" id="y-${id}" onclick="marcar('${id}', 1)">SIM ✅</button>
-                    <button class="btn" id="n-${id}" onclick="marcar('${id}', 0)">NÃO ❌</button>
-                </div></div>`;
+                html += `<div class="item" id="item-${id}">
+                    <div id="text-${id}" style="font-size:15px; margin-bottom:12px; font-weight:500; color:#333;">${p}</div>
+                    <div class="btns">
+                        <button class="btn" id="y-${id}" onclick="tentarMarcar('${id}', 1)">SIM ✅</button>
+                        <button class="btn" id="n-${id}" onclick="tentarMarcar('${id}', 0)">NÃO ❌</button>
+                    </div>
+                </div>`;
             });
             html += `</div>`;
         }
         area.innerHTML = html;
     }
 
-    function marcar(id, valor) {
+    function tentarMarcar(id, valor) {
+        if (respostas[id] === valor) return;
+        if (respostas[id] !== undefined) {
+            itemPendente = { id, valor };
+            document.getElementById('modal-new-choice').innerText = valor === 1 ? "SIM" : "NÃO";
+            document.getElementById('modal-question-text').innerText = `"${document.getElementById('text-'+id).innerText}"`;
+            document.getElementById('modal-confirm').style.display = 'flex';
+        } else {
+            executarMarcacao(id, valor);
+        }
+    }
+
+    function fecharModalConfirm(confirmado) {
+        if (confirmado) executarMarcacao(itemPendente.id, itemPendente.valor);
+        document.getElementById('modal-confirm').style.display = 'none';
+    }
+
+    function executarMarcacao(id, valor) {
         respostas[id] = valor;
+        const itemDiv = document.getElementById("item-" + id);
         document.getElementById("y-"+id).className = "btn";
         document.getElementById("n-"+id).className = "btn";
-        if (valor === 1) document.getElementById("y-"+id).classList.add("active-yes");
-        else document.getElementById("n-"+id).classList.add("active-no");
+        itemDiv.classList.remove("resp-sim", "resp-nao", "respondido");
+        void itemDiv.offsetWidth; 
+        itemDiv.classList.add("respondido");
+        if (valor === 1) { document.getElementById("y-"+id).classList.add("active-yes"); itemDiv.classList.add("resp-sim"); }
+        else { document.getElementById("n-"+id).classList.add("active-no"); itemDiv.classList.add("resp-nao"); }
+    }
+
+    function showAlert(msg) {
+        document.getElementById('alert-msg').innerText = msg;
+        document.getElementById('modal-alert').style.display = 'flex';
     }
 
     function finalizar() {
+        const nome = document.getElementById('nome').value.trim();
+        const matri = document.getElementById('matri').value.trim();
         const total = Object.values(perguntas).flat().length;
-        if (Object.keys(respostas).length < total) {
-            alert("⚠️ Responda todos os itens!");
-            return;
-        }
+        const respondidas = Object.keys(respostas).length;
+
+        if (!nome) return showAlert("Informe o nome do colaborador.");
+        if (!matri) return showAlert("Informe a matrícula.");
+        if (respondidas < total) return showAlert(`Responda as ${total - respondidas} perguntas restantes.`);
 
         const agora = new Date();
-        const horaFim = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-        const dataAtual = agora.toLocaleDateString('pt-BR');
-
         let acertos = 0;
-        let rel = "*AVALIAÇÃO CLIENTE OCULTO - PAGUE MENOS*\n";
-        rel += "--------------------------------\n";
-        rel += "👤 *Colaborador:* " + (document.getElementById('nome').value || "---") + "\n";
-        rel += "🆔 *Matrícula:* " + (document.getElementById('matri').value || "---") + "\n";
-        rel += "📅 *Data:* " + dataAtual + "\n";
-        rel += "⏰ *Início:* " + horaInicio + " | *Fim:* " + horaFim + "\n";
-        rel += "--------------------------------\n";
+        let rel = "*AVALIAÇÃO CLIENTE OCULTO - PAGUE MENOS*\n--------------------------------\n";
+        rel += `👤 *Colaborador:* ${nome}\n🆔 *Matrícula:* ${matri}\n📅 *Data:* ${agora.toLocaleDateString('pt-BR')}\n⏰ *Início:* ${horaInicio} | *Fim:* ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}\n--------------------------------\n`;
 
         for (let secao in perguntas) {
-            rel += "\n🔹 *" + secao + "*\n";
+            rel += `\n🔹 *${secao}*`;
             perguntas[secao].forEach((p, i) => {
                 const r = respostas[secao + "-" + i] === 1;
                 if (r) acertos++;
-                rel += (r ? "✅" : "❌") + " " + p + "\n";
+                rel += `\n${r ? "✅" : "❌"} ${p}`;
             });
+            rel += "\n";
         }
-
         const nota = ((acertos / total) * 100).toFixed(0);
-        rel += "\n--------------------------------\n";
-        rel += "📊 *DESEMPENHO FINAL: " + nota + "%*\n";
-        rel += "--------------------------------\n";
-        rel += "_Gerado por Erik Henrique - 126841_";
-
+        rel += `\n--------------------------------\n📊 *DESEMPENHO FINAL: ${nota}%*\n--------------------------------\n_Gerado por Erik Henrique - 126841_`;
+        
         document.getElementById('relatorio').innerText = rel;
         document.getElementById('score').innerText = "NOTA: " + nota + "%";
         document.getElementById('results').style.display = 'block';
@@ -140,10 +222,9 @@
     }
 
     function copiar() {
-        const t = document.getElementById('relatorio').innerText;
-        navigator.clipboard.writeText(t);
+        navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
         const toast = document.getElementById('toast');
-        toast.innerText = "📋 Copiado com sucesso!";
+        toast.innerText = "📋 Relatório copiado!";
         toast.style.display = "block";
         setTimeout(() => toast.style.display = "none", 2000);
     }
