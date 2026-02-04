@@ -9,19 +9,18 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Logo Fixa Atualizada */
         .logo-fixa { 
             position: fixed; 
             top: 15px; 
             left: 15px; 
-            width: 95px; /* Tamanho aumentado */
-            height: 35x; 
+            width: 95px; 
+            height: 35px; 
             object-fit: cover; 
             z-index: 1000;
-            opacity: 0.5; /* Opacidade reduzida */
-            border-radius: 7px; /* Cantos arredondados */
+            opacity: 0.5; 
+            border-radius: 7px; 
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
-            pointer-events: none; /* Não atrapalha cliques por baixo */
+            pointer-events: none; 
         }
 
         .container { width: 100%; max-width: 550px; margin-top: 30px; }
@@ -105,7 +104,7 @@
         <label>Colaborador Avaliado</label>
         <input type="text" id="nome" placeholder="Nome completo">
         <label>Matrícula</label>
-        <input type="number" id="matri" placeholder="Ex: 000000">
+        <input type="tel" id="matri" placeholder="Ex: 000000" inputmode="numeric">
     </div>
 
     <div id="checklist-area"></div>
@@ -119,10 +118,11 @@
     </div>
 
     <footer>
-    Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
-    <span style="opacity: 0.7; font-size: 11px; margin-top: 5px; display: Sistema não oficial, criado para facilitar aos gestores o acompanhamento do atendimento e a avaliação por meio do checklist de cliente oculto.</span>
-</footer>
-
+        Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+        <span style="opacity: 0.7; font-size: 11px; margin-top: 5px; display: block;">
+            Sistema não oficial, criado para facilitar aos gestores o acompanhamento do atendimento.
+        </span>
+    </footer>
 </div>
 
 <script>
@@ -183,8 +183,13 @@
         itemDiv.classList.remove("resp-sim", "resp-nao", "respondido");
         void itemDiv.offsetWidth; 
         itemDiv.classList.add("respondido");
-        if (valor === 1) { document.getElementById("y-"+id).classList.add("active-yes"); itemDiv.classList.add("resp-sim"); }
-        else { document.getElementById("n-"+id).classList.add("active-no"); itemDiv.classList.add("resp-nao"); }
+        if (valor === 1) { 
+            document.getElementById("y-"+id).classList.add("active-yes"); 
+            itemDiv.classList.add("resp-sim"); 
+        } else { 
+            document.getElementById("n-"+id).classList.add("active-no"); 
+            itemDiv.classList.add("resp-nao"); 
+        }
     }
 
     function showAlert(msg) {
