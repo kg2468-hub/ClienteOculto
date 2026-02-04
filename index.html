@@ -118,7 +118,11 @@
         <button class="btn-fin" style="background:#4a5568; margin-bottom: 0;" onclick="copiar()">COPIAR PARA WHATSAPP</button>
     </div>
 
-    <footer>Desenvolvido por <strong>Erik Henrique - 126841</strong></footer>
+    <footer>
+    Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+    <span style="opacity: 0.7; font-size: 11px; margin-top: 5px; display: block;">Sistema não oficial, criado para auxiliar o acompanhamento do atendimento de coração e checklist do cliente oculto, trazendo facilidade aos gestores</span>
+</footer>
+
 </div>
 
 <script>
@@ -213,7 +217,7 @@
             rel += "\n";
         }
         const nota = ((acertos / total) * 100).toFixed(0);
-        rel += `\n--------------------------------\n📊 *DESEMPENHO FINAL: ${nota}%*\n--------------------------------\n_Gerado por Erik Henrique - 126841_`;
+        rel += `\n--------------------------------\n📊 *DESEMPENHO FINAL: ${nota}%*\n--------------------------------\n_Gerado Por Erik Henrique - 126841_`;
         
         document.getElementById('relatorio').innerText = rel;
         document.getElementById('score').innerText = "NOTA: " + nota + "%";
