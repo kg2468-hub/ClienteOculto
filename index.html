@@ -14,7 +14,7 @@
             top: 15px; 
             left: 15px; 
             width: 95px; 
-            height: 35px; 
+             
             object-fit: cover; 
             z-index: 1000;
             opacity: 0.5; 
@@ -126,10 +126,11 @@
 </div>
 
 <script>
-    const perguntas = {
-        "SALÃO": ["Cliente foi abordado no salão", "Havia Clientes aguardando na fila enquanto colaborador organizava prateleira", "Colaborador foi atencioso", "Buscou entender a necessidade do cliente", "Foi acompanhado até a seção"],
-        "BALCÃO": ["Contato visual na fila", "Saudação Seja bem-vindo à Pague Menos", "Apresentou-se pelo nome", "Solicitou cadastro", "Atualizou cadastro", "Chamou cliente pelo nome", "Destacou descontos e vantagens", "Entregou cupom DSM e explicou", "Informou programas de fidelidade", "Informou Medalha do cliente", "Ofertou Clinicfarma", "Soube responder sobre medicamentos", "Atencioso, empático e cordial", "Ofertou Produto Foco (Prot Solar Dauf Kit)", "Ofertou Super Descontos"],
-        "CAIXA": ["Solicitou/bipou cupom do balcão", "Avaliação do Atendômetro", "Destacou desconto da compra", "Ofereceu Super Troco", "Ofertou cupom por e-mail", "Pagamento sem trava/lentidão", "Finalizou com Conte sempre com a Pague Menos", "Atencioso e cordial", "Acompanhou até a saída do caixa", "Ofertou produto Foco", "Ofertou Super Descontos", "Ofertou aumento UVC (Cliente crônico)"]
+   const perguntas = {
+        "SALÃO": ["Abordou cliente no salão?", "Havia cliente aguardando atendimento em loja em quanto colaborador realizava atividades administrativas, como: organizar/arrumar produtos, prateleiras?", "Colaborador se apresentou pelo nome?", "O colaborador foi atencioso, empático e cordial?","Buscou entender a necessidade do cliente?", "Acompanhou o cliente até a seção?"],
+        "BALCÃO": ["O colaborador se apresentou pelo nome?", "Solicitou o cadastro?", "Atualizou cadastro?", "Chamou o cliente pelo nome?", "Destacou descontos e vantagens, como promoções e/ou parcerias?", "Entregou cupom DSM explicando o que se tratava?", "Informou sobre programa de fidelidade?", "Informou Medalha do cliente?", "Ofertou Clinicfarma?", "Soube responder questionamento sobre medicamento/produto?", "Colaborador foi atencioso, empático e cordial?"],
+        "CAIXA": ["Solicitou CPF ou bipou cupom impresso no balcão?", "Solicitou a valiação do Atendômetro?", "Destacou desconto da compra?", "Perguntou as formas de pagamento? (PIX, DINHEIRO OU DÉBITO)", "Ofereceu Super Troco? (DOAÇÃO)", "Ofertou envio do cupom por e-mail?", "Pagamento ocorreu sem trava/lentidão?", "Finalizou com CONTE SEMPRE COM A PAGUE MENOS ?", "O colaborador foi atencioso, empático e cordial?", "Acompanhou o cliente até a saída ou saiu da área do caixa para entregar as compras?"],
+        "PERGUNTAS EXTRAS": ["Saudação Seja bem-vindo à Pague Menos", "Ofertou produto Foco?", "Ofertou aumento UVC (Cliente crônico)", "Ofertou produtos do Super Descontos?", "Organizou a fila de atendimento?"]
     };
 
     let respostas = {};
