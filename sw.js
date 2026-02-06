@@ -3,6 +3,7 @@ const ASSETS = [
   './',
   './index.html',
   './PagueMenosLogo.png',
+  './icone.png',
   './manifest.json'
 ];
 
