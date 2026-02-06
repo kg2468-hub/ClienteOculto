@@ -1,20 +1,20 @@
 {
   "name": "Checklist Pague Menos",
-  "short_name": "Checklist PM",
-  "description": "Sistema de Avaliação Cliente Oculto",
+  "short_name": "Checklist PGMN",
+  "description": "Sistema de Avaliação Cliente Oculto, aplicativo/sistema nãooficial, criado pelo assistente de gerente Erik Henrique, matrícula 126841",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#004a99",
   "theme_color": "#004a99",
   "icons": [
     {
-      "src": "PagueMenosLogo.png",
+      "src": "icone.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "PagueMenosLogo.png",
+      "src": "icone.png",
       "sizes": "512x512",
       "type": "image/png"
     }
