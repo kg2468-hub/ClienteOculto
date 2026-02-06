@@ -1,0 +1,22 @@
+{
+  "name": "Checklist Pague Menos",
+  "short_name": "Checklist PM",
+  "description": "Sistema de Avaliação Cliente Oculto",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#004a99",
+  "theme_color": "#004a99",
+  "icons": [
+    {
+      "src": "PagueMenosLogo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "PagueMenosLogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
