@@ -43,6 +43,20 @@
         .header-text h2 { margin: 0; font-size: 26px; letter-spacing: 2px; text-transform: uppercase; line-height: 1; }
         .header-text p { margin: 8px 0 0; opacity: 0.9; font-size: 14px; font-weight: bold; letter-spacing: 3px; }
 
+        #btnInstalar { 
+            display: none; 
+            background: #28a745; 
+            color: white; 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 12px; 
+            border: none; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            font-size: 16px;
+            cursor: pointer;
+        }
+
         .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e0e6ed; overflow: hidden; }
         label { font-weight: bold; font-size: 11px; color: #888; display: block; margin-top: 10px; text-transform: uppercase; }
         input { width: 100%; padding: 14px; margin: 6px 0; border: 1px solid #ccd6e0; border-radius: 8px; font-size: 16px; outline: none; }
@@ -62,8 +76,7 @@
         .btn-fin { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; margin: 25px 0; cursor: pointer; }
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 20000; padding: 20px; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
         .modal-question-box { background: #f8fafc; padding: 10px; border-radius: 8px; margin: 15px 0; font-style: italic; color: #4a5568; font-size: 14px; border-left: 4px solid var(--primary); }
         
         #results { display: none; background: white; padding: 20px; border-radius: 12px; width: 100%; border: 2px solid var(--primary); margin-bottom: 30px; }
@@ -105,6 +118,8 @@
             <p>CLIENTE OCULTO</p>
         </div>
     </header>
+
+    <button id="btnInstalar">📥 INSTALAR APLICATIVO</button>
     
     <div class="card">
         <label>Colaborador Avaliado</label>
@@ -132,16 +147,30 @@
 </div>
 
 <script>
-    // Registro do Service Worker para funcionamento Offline
+    /* 1. REGISTRO PWA */
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado!', reg))
-                .catch(err => console.error('Erro ao registrar Service Worker', err));
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
         });
     }
 
-   const perguntas = {
+    let deferredPrompt;
+    const btnInstalar = document.getElementById('btnInstalar');
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        btnInstalar.style.display = 'block';
+    });
+    btnInstalar.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt = null;
+            btnInstalar.style.display = 'none';
+        }
+    });
+
+    /* 2. DADOS E LÓGICA */
+    const perguntas = {
         "SALÃO": ["Abordou cliente no salão?", "O cliente foi atendido prontamente, sem aguardar enquanto o colaborador realizava atividades administrativas?", "Colaborador se apresentou pelo nome?", "O colaborador foi atencioso, empático e cordial?","Buscou entender a necessidade do cliente?", "Acompanhou o cliente até a seção?"],
         "BALCÃO": ["O colaborador se apresentou pelo nome?", "Solicitou o cadastro?", "Atualizou cadastro?", "Chamou o cliente pelo nome?", "Destacou descontos e vantagens, como promoções e/ou parcerias?", "Entregou cupom DSM explicando o que se tratava?", "Informou sobre programa de fidelidade?", "Informou Medalha do cliente?", "Ofertou Clinicfarma?", "Soube responder questionamento sobre medicamento/produto?", "Colaborador foi atencioso, empático e cordial?"],
         "CAIXA": ["Solicitou CPF ou bipou cupom impresso no balcão?", "Solicitou a valiação do Atendômetro?", "Destacou desconto da compra?", "Perguntou as formas de pagamento? (PIX, DINHEIRO OU DÉBITO)", "Ofereceu Super Troco? (DOAÇÃO)", "Ofertou envio do cupom por e-mail?", "Pagamento ocorreu sem trava/lentidão?", "Finalizou com CONTE SEMPRE COM A PAGUE MENOS ?", "O colaborador foi atencioso, empático e cordial?", "Acompanhou o cliente até a saída ou saiu da área do caixa para entregar as compras?"],
@@ -179,7 +208,7 @@
         if (respostas[id] !== undefined) {
             itemPendente = { id, valor };
             document.getElementById('modal-new-choice').innerText = valor === 1 ? "SIM" : "NÃO";
-            document.getElementById('modal-question-text').innerText = `"${document.getElementById('text-'+id).innerText}"`;
+            document.getElementById('modal-question-text').innerText = document.getElementById('text-'+id).innerText;
             document.getElementById('modal-confirm').style.display = 'flex';
         } else {
             executarMarcacao(id, valor);
@@ -194,23 +223,10 @@
     function executarMarcacao(id, valor) {
         respostas[id] = valor;
         const itemDiv = document.getElementById("item-" + id);
-        document.getElementById("y-"+id).className = "btn";
-        document.getElementById("n-"+id).className = "btn";
-        itemDiv.classList.remove("resp-sim", "resp-nao", "respondido");
-        void itemDiv.offsetWidth; 
-        itemDiv.classList.add("respondido");
-        if (valor === 1) { 
-            document.getElementById("y-"+id).classList.add("active-yes"); 
-            itemDiv.classList.add("resp-sim"); 
-        } else { 
-            document.getElementById("n-"+id).classList.add("active-no"); 
-            itemDiv.classList.add("resp-nao"); 
-        }
-    }
-
-    function showAlert(msg) {
-        document.getElementById('alert-msg').innerText = msg;
-        document.getElementById('modal-alert').style.display = 'flex';
+        document.getElementById("y-"+id).className = "btn " + (valor === 1 ? "active-yes" : "");
+        document.getElementById("n-"+id).className = "btn " + (valor === 0 ? "active-no" : "");
+        itemDiv.classList.remove("resp-sim", "resp-nao");
+        itemDiv.classList.add("respondido", valor === 1 ? "resp-sim" : "resp-nao");
     }
 
     function finalizar() {
@@ -219,26 +235,24 @@
         const total = Object.values(perguntas).flat().length;
         const respondidas = Object.keys(respostas).length;
 
-        if (!nome) return showAlert("Informe o nome do colaborador.");
-        if (!matri) return showAlert("Informe a matrícula.");
-        if (respondidas < total) return showAlert(`Responda as ${total - respondidas} perguntas restantes.`);
+        if (!nome || !matri) return showAlert("Preencha nome e matrícula.");
+        if (respondidas < total) return showAlert(`Faltam ${total - respondidas} perguntas.`);
 
         const agora = new Date();
         let acertos = 0;
-        let rel = "*AVALIAÇÃO CLIENTE OCULTO - PAGUE MENOS*\n--------------------------------\n";
-        rel += `👤 *Colaborador:* ${nome}\n🆔 *Matrícula:* ${matri}\n📅 *Data:* ${agora.toLocaleDateString('pt-BR')}\n⏰ *Início:* ${horaInicio} | *Fim:* ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}\n--------------------------------\n`;
+        let rel = "*AVALIAÇÃO CLIENTE OCULTO*\n";
+        rel += `👤 Colaborador: ${nome}\n🆔 Matrícula: ${matri}\n📅 Data: ${agora.toLocaleDateString('pt-BR')}\n------------------------\n`;
 
         for (let secao in perguntas) {
-            rel += `\n🔹 *${secao}*`;
+            rel += `\n🔹 ${secao}`;
             perguntas[secao].forEach((p, i) => {
                 const r = respostas[secao + "-" + i] === 1;
                 if (r) acertos++;
                 rel += `\n${r ? "✅" : "❌"} ${p}`;
             });
-            rel += "\n";
         }
         const nota = ((acertos / total) * 100).toFixed(0);
-        rel += `\n--------------------------------\n📊 *DESEMPENHO FINAL: ${nota}%*\n--------------------------------\n_Gerado Por Erik Henrique - 126841_`;
+        rel += `\n\n📊 DESEMPENHO: ${nota}%`;
         
         document.getElementById('relatorio').innerText = rel;
         document.getElementById('score').innerText = "NOTA: " + nota + "%";
@@ -246,12 +260,16 @@
         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     }
 
+    function showAlert(msg) {
+        document.getElementById('alert-msg').innerText = msg;
+        document.getElementById('modal-alert').style.display = 'flex';
+    }
+
     function copiar() {
         navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
-        const toast = document.getElementById('toast');
-        toast.innerText = "📋 Relatório copiado!";
-        toast.style.display = "block";
-        setTimeout(() => toast.style.display = "none", 2000);
+        const t = document.getElementById('toast');
+        t.innerText = "Copiado!"; t.style.display = "block";
+        setTimeout(() => t.style.display = "none", 2000);
     }
 
     window.onload = montar;
