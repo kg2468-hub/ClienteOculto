@@ -18,7 +18,7 @@
         .container { width: 100%; max-width: 550px; margin-top: 30px; }
         header { background: var(--primary); color: white; padding: 35px 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
         .header-text h2 { margin: 0; font-size: 26px; text-transform: uppercase; }
-        #btnInstalar { display: none; background: var(--success); color: white; width: 100%; padding: 18px; border-radius: 12px; border: none; font-weight: bold; margin-bottom: 20px; }
+        #btnInstalar { display: none; background: var(--success); color: white; width: 100%; padding: 18px; border-radius: 12px; border: none; font-weight: bold; margin-bottom: 20px; cursor: pointer; }
         .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e6ed; }
         label { font-weight: bold; font-size: 11px; color: #888; display: block; margin-top: 10px; text-transform: uppercase; }
         input { width: 100%; padding: 14px; margin: 6px 0; border: 1px solid #ccd6e0; border-radius: 8px; font-size: 16px; outline: none; }
@@ -28,18 +28,16 @@
         .btn { padding: 16px; border: 1px solid #ccd6e0; border-radius: 10px; background: #fff; font-weight: bold; cursor: pointer; }
         .active-yes { background: var(--success) !important; color: white; }
         .active-no { background: var(--danger) !important; color: white; }
-        .btn-fin { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; margin: 25px 0; }
-        #results { display: none; background: white; padding: 20px; border-radius: 12px; border: 2px solid var(--primary); margin-bottom: 30px; }
-        pre { background: #fdfdfd; padding: 15px; white-space: pre-wrap; font-size: 13px; border: 1px solid #eee; border-radius: 8px; }
+        .btn-fin { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; margin: 25px 0; cursor: pointer; }
+        #results { display: none; background: white; padding: 20px; border-radius: 12px; border: 2px solid var(--primary); margin-bottom: 30px; width: 100%; }
+        pre { background: #fdfdfd; padding: 15px; white-space: pre-wrap; font-size: 13px; border: 1px solid #eee; border-radius: 8px; font-family: monospace; }
         #toast { position: fixed; top: 20px; background: #000; color: #fff; padding: 10px 20px; border-radius: 20px; display: none; z-index: 10000; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 20000; padding: 20px; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
+        footer { margin: 20px 0 40px; text-align: center; color: #95a5a6; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <img src="PagueMenosLogo.png" class="logo-fixa" alt="Logo">
-
 <div id="toast"></div>
 
 <div class="container">
@@ -64,54 +62,98 @@
     <button class="btn-fin" onclick="finalizar()">GERAR RELATÓRIO FINAL</button>
 
     <div id="results">
-        <h3 id="score" style="text-align:center;"></h3>
+        <h3 id="score" style="text-align:center; color: var(--primary);"></h3>
         <pre id="relatorio"></pre>
         <button class="btn-fin" style="background:#4a5568;" onclick="copiar()">COPIAR PARA WHATSAPP</button>
     </div>
+
+    <footer>
+        Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+        Sistema não oficial para suporte à gestão.
+    </footer>
 </div>
 
 <script>
-    const perguntas = {
-        "SALÃO": ["Abordou cliente no salão?", "Atendimento sem espera?", "Apresentou-se pelo nome?", "Cordialidade?", "Entendeu a necessidade?", "Acompanhou até a seção?"],
-        "BALCÃO": ["Apresentou-se?", "Pediu cadastro?", "Atualizou cadastro?", "Chamou pelo nome?", "Vantagens e descontos?", "Cupom DSM?", "Fidelidade?", "Medalha?", "Clinicfarma?", "Conhecimento técnico?", "Atencioso?"],
-        "CAIXA": ["Pediu CPF?", "Atendômetro?", "Destacou desconto?", "Formas de pagamento?", "Super Troco?", "Cupom por e-mail?", "Lentidão?", "Frase de finalização?", "Cordialidade?", "Acompanhou até a saída?"],
-        "EXTRAS": ["Saudação?", "Produto Foco?", "UVC?", "Super Descontos?", "Fila?"]
+    var perguntas = {
+        'SALÃO': ['Abordou cliente no salão?', 'Atendimento sem espera?', 'Apresentou-se pelo nome?', 'Cordialidade?', 'Entendeu a necessidade?', 'Acompanhou até a seção?'],
+        'BALCÃO': ['Apresentou-se?', 'Pediu cadastro?', 'Atualizou cadastro?', 'Chamou pelo nome?', 'Vantagens e descontos?', 'Cupom DSM?', 'Fidelidade?', 'Medalha?', 'Clinicfarma?', 'Conhecimento técnico?', 'Cordialidade?'],
+        'CAIXA': ['Pediu CPF?', 'Atendômetro?', 'Destacou desconto?', 'Formas de pagamento?', 'Super Troco?', 'Cupom por e-mail?', 'Sem lentidão?', 'Frase finalização?', 'Cordialidade?', 'Acompanhou até a saída?'],
+        'EXTRAS': ['Saudação?', 'Produto Foco?', 'UVC?', 'Super Descontos?', 'Organizou Fila?']
     };
 
-    let respostas = {};
-    let deferredPrompt;
+    var respostas = {};
+    var deferredPrompt;
 
-    window.onload = () => {
-        const area = document.getElementById('checklist-area');
-        let html = '';
-        for (let secao in perguntas) {
-            html += `<div class="card"><div class="section-title">${secao}</div>`;
-            perguntas[secao].forEach((p, i) => {
-                const id = `${secao}-${i}`;
-                html += `<div class="item">
-                    <div style="margin-bottom:10px">${p}</div>
-                    <div class="btns">
-                        <button class="btn" id="y-${id}" onclick="marcar('${id}', 1)">SIM</button>
-                        <button class="btn" id="n-${id}" onclick="marcar('${id}', 0)">NÃO</button>
-                    </div>
-                </div>`;
-            });
-            html += `</div>`;
+    function montarChecklist() {
+        var area = document.getElementById('checklist-area');
+        var html = '';
+        for (var secao in perguntas) {
+            html += '<div class="card"><div class="section-title">' + secao + '</div>';
+            for (var i = 0; i < perguntas[secao].length; i++) {
+                var p = perguntas[secao][i];
+                var id = secao + '-' + i;
+                html += '<div class="item">';
+                html += '<div style="margin-bottom:10px; font-weight:500;">' + p + '</div>';
+                html += '<div class="btns">';
+                html += '<button class="btn" id="y-' + id + '" onclick="marcar(\'' + id + '\', 1)">SIM ✅</button>';
+                html += '<button class="btn" id="n-' + id + '" onclick="marcar(\'' + id + '\', 0)">NÃO ❌</button>';
+                html += '</div></div>';
+            }
+            html += '</div>';
         }
         area.innerHTML = html;
+    }
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js');
+    function marcar(id, valor) {
+        respostas[id] = valor;
+        document.getElementById('y-' + id).className = (valor === 1) ? 'btn active-yes' : 'btn';
+        document.getElementById('n-' + id).className = (valor === 0) ? 'btn active-no' : 'btn';
+    }
+
+    function finalizar() {
+        var nome = document.getElementById('nome').value;
+        var matri = document.getElementById('matri').value;
+        if (!nome || !matri) { alert('Preencha os dados!'); return; }
+
+        var acertos = 0;
+        var total = 0;
+        var rel = '*AVALIAÇÃO CLIENTE OCULTO*\nColaborador: ' + nome + '\nMatrícula: ' + matri + '\n\n';
+
+        for (var secao in perguntas) {
+            rel += '\n🔹 *' + secao + '*';
+            for (var i = 0; i < perguntas[secao].length; i++) {
+                total++;
+                var r = respostas[secao + '-' + i];
+                if (r === 1) acertos++;
+                rel += '\n' + (r === 1 ? '✅' : '❌') + ' ' + perguntas[secao][i];
+            }
         }
-    };
 
-    window.addEventListener('beforeinstallprompt', (e) => {
+        var nota = ((acertos / total) * 100).toFixed(0);
+        var textoFinal = rel + '\n\n📊 *NOTA FINAL: ' + nota + '%*\n_Gerado por Erik Henrique_';
+        
+        document.getElementById('relatorio').innerText = textoFinal;
+        document.getElementById('score').innerText = 'NOTA: ' + nota + '%';
+        document.getElementById('results').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function copiar() {
+        var texto = document.getElementById('relatorio').innerText;
+        navigator.clipboard.writeText(texto).then(function() {
+            var t = document.getElementById('toast');
+            t.style.display = 'block'; t.innerText = 'Copiado!';
+            setTimeout(function() { t.style.display = 'none'; }, 2000);
+        });
+    }
+
+    window.addEventListener('beforeinstallprompt', function(e) {
         e.preventDefault();
         deferredPrompt = e;
         document.getElementById('btnInstalar').style.display = 'block';
     });
 
-    async function dispararInstalacao() {
+    function dispararInstalacao() {
         if (deferredPrompt) {
             deferredPrompt.prompt();
             deferredPrompt = null;
@@ -119,44 +161,11 @@
         }
     }
 
-    function marcar(id, valor) {
-        respostas[id] = valor;
-        document.getElementById(`y-${id}`).className = "btn " + (valor === 1 ? "active-yes" : "");
-        document.getElementById(`n-${id}`).className = "btn " + (valor === 0 ? "active-no" : "");
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js');
     }
 
-    function finalizar() {
-        const nome = document.getElementById('nome').value;
-        const matri = document.getElementById('matri').value;
-        if (!nome || !matri) { alert("Preencha os dados!"); return; }
-
-        let acertos = 0;
-        let total = Object.values(perguntas).flat().length;
-        let rel = `*CHECKLIST PAGUE MENOS*\nColaborador: ${nome}\nMatrícula: ${matri}\n\n`;
-
-        for (let secao in perguntas) {
-            rel += `\n*${secao}*`;
-            perguntas[secao].forEach((p, i) => {
-                const r = respostas[`${secao}-${i}`];
-                if (r === 1) acertos++;
-                rel += `\n${r === 1 ? '✅' : '❌'} ${p}`;
-            });
-        }
-
-        const nota = ((acertos / total) * 100).toFixed(0);
-        document.getElementById('relatorio').innerText = rel + `\n\n📊 NOTA: ${nota}%`;
-        document.getElementById('score').innerText = `NOTA: ${nota}%`;
-        document.getElementById('results').style.display = 'block';
-        window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function copiar() {
-        navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
-        const t = document.getElementById('toast');
-        t.style.display = "block"; t.innerText = "Copiado!";
-        setTimeout(() => t.style.display = "none", 2000);
-    }
+    window.onload = montarChecklist;
 </script>
 </body>
 </html>
-
