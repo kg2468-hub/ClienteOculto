@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -28,6 +27,21 @@
             touch-action: pan-y; 
         }
 
+        /* --- ANIMAÇÃO DE TRANSIÇÃO DE TELA --- */
+        #transition-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            pointer-events: none; z-index: 10000;
+        }
+        .transition-bar { 
+            flex: 1; width: 100%; background: var(--primary); 
+            transform: scaleX(0); transform-origin: left; 
+            transition: transform 0.4s ease-in-out; 
+        }
+        .transition-bar:nth-child(even) { transform-origin: right; background: #003a7a; }
+        body.page-exit .transition-bar { transform: scaleX(1); }
+
         /* Forçar Tema Claro Incondicionalmente */
         @media (prefers-color-scheme: dark) {
             body { background: var(--bg) !important; color: #333 !important; }
@@ -56,6 +70,26 @@
         }
         
         h1 { font-size: clamp(24px, 8vw, 32px) !important; margin: 0; font-weight: 800; letter-spacing: 2px; }
+
+        /* Botão Voltar */
+        .btn-voltar {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
         .logo-fixa { 
             position: absolute; 
@@ -104,7 +138,6 @@
         
         .btn-fin { width: 92%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; margin: 10px 0; cursor: pointer; }
         
-        /* Estilização da Caixa de Notificação/Pergunta */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 20000; padding: 20px; }
         .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
         
@@ -138,11 +171,22 @@
             body * { visibility: hidden; }
             #results, #results * { visibility: visible; }
             #results { position: absolute; left: 0; top: 0; width: 100%; border: none; }
-            .btn-fin, .extra-options { display: none !important; }
+            .btn-fin, .extra-options, .btn-voltar { display: none !important; }
         }
     </style>
 </head>
 <body>
+
+<div id="transition-overlay">
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+</div>
+
+<button class="btn-voltar" onclick="voltarInicio()">
+    <i class="fas fa-arrow-left"></i> VOLTAR
+</button>
 
 <img src="icone.png" alt="Ícone" class="logo-fixa">
 
@@ -211,6 +255,14 @@
 </div>
 
 <script>
+    // Função para voltar ao index com animação
+    function voltarInicio() {
+        document.body.classList.add('page-exit');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 450);
+    }
+
     document.addEventListener('wheel', function(e) {
         if (e.ctrlKey) e.preventDefault();
     }, { passive: false });
