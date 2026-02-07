@@ -1,82 +1,118 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light">
     <title>Checklist Pague Menos</title>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        :root { 
-            --primary: #004a99; 
-            --success: #28a745; 
-            --danger: #dc3545; 
-            --bg: #f4f7f9; 
-            --accent: #f9b233; 
+        :root {
+            --primary: #004a99;
+            --success: #28a745;
+            --danger: #dc3545;
+            --bg: #f4f7f9;
+            --accent: #f9b233;
         }
-        
+
         /* Bloqueio de seleção, zoom e rolagem horizontal */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            user-select: none; 
-            -webkit-user-select: none; 
-            -ms-user-select: none; 
-            touch-action: pan-y; 
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            touch-action: pan-y;
         }
 
         /* --- ANIMAÇÃO DE TRANSIÇÃO DE TELA --- */
         #transition-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            pointer-events: none; z-index: 10000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+            z-index: 10000;
         }
-        .transition-bar { 
-            flex: 1; width: 100%; background: var(--primary); 
-            transform: scaleX(0); transform-origin: left; 
-            transition: transform 0.4s ease-in-out; 
+
+        .transition-bar {
+            flex: 1;
+            width: 100%;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease-in-out;
         }
-        .transition-bar:nth-child(even) { transform-origin: right; background: #003a7a; }
-        body.page-exit .transition-bar { transform: scaleX(1); }
+
+        .transition-bar:nth-child(even) {
+            transform-origin: right;
+            background: #003a7a;
+        }
+
+        body.page-exit .transition-bar {
+            transform: scaleX(1);
+        }
 
         /* Forçar Tema Claro Incondicionalmente */
         @media (prefers-color-scheme: dark) {
-            body { background: var(--bg) !important; color: #333 !important; }
-            .card { background: white !important; color: #333 !important; }
-            input { background: white !important; color: #333 !important; }
+            body {
+                background: var(--bg) !important;
+                color: #333 !important;
+            }
+
+            .card {
+                background: white !important;
+                color: #333 !important;
+            }
+
+            input {
+                background: white !important;
+                color: #333 !important;
+            }
         }
 
         /* Permite seleção apenas nos inputs */
-        input, textarea { 
-            user-select: text !important; 
-            -webkit-user-select: text !important; 
+        input,
+        textarea {
+            user-select: text !important;
+            -webkit-user-select: text !important;
         }
 
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg); 
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
             color: #333;
-            margin: 0; 
-            padding: 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             min-height: 100vh;
-            overflow-x: hidden; 
+            overflow-x: hidden;
             width: 100%;
+            overscroll-behavior: none;
         }
-        
-        h1 { font-size: clamp(24px, 8vw, 32px) !important; margin: 0; font-weight: 800; letter-spacing: 2px; }
+        }
+
+        h1 {
+            font-size: clamp(24px, 8vw, 32px) !important;
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
 
         /* Botão Voltar */
         .btn-voltar {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
             border: none;
             padding: 8px 12px;
@@ -91,56 +127,180 @@
             gap: 5px;
         }
 
-        .logo-fixa { 
-            position: absolute; 
-            top: 15px; 
-            left: 15px; 
-            width: clamp(35px, 10vw, 45px); 
+        .logo-fixa {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: clamp(35px, 10vw, 45px);
             height: auto;
-            object-fit: cover; 
+            object-fit: cover;
             z-index: 1000;
-            border-radius: 10px; 
+            border-radius: 10px;
         }
 
-        .container { width: 100%; max-width: 550px; display: flex; flex-direction: column; align-items: center; }
-        
-        header { 
+        .container {
+            width: 100%;
+            max-width: 550px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
             position: relative;
             width: 100%;
-            background: var(--primary); 
-            color: white; 
-            padding: 50px 20px 30px 20px; 
-            border-bottom-left-radius: 30px; 
-            border-bottom-right-radius: 30px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: var(--primary);
+            color: white;
+            padding: 50px 20px 30px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
             overflow: hidden;
         }
 
-        .header-text p { margin: 3px 0 0; opacity: 0.8; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; }
+        .header-text p {
+            margin: 3px 0 0;
+            opacity: 0.8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
 
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e0e6ed; overflow: hidden; width: 92%; }
-        label { font-weight: bold; font-size: 11px; color: #888; display: block; margin-top: 10px; text-transform: uppercase; }
-        input { width: 100%; padding: 14px; margin: 6px 0; border: 1px solid #ccd6e0; border-radius: 8px; font-size: 16px; outline: none; background: #fff; color: #333; }
-        
-        .section-title { font-weight: bold; color: var(--primary); background: #f0f4f8; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-transform: uppercase; text-align: center; font-size: 13px; }
-        
-        .item { padding: 18px 10px; border-bottom: 1px solid #f1f1f1; transition: all 0.5s ease; background-repeat: no-repeat; background-size: 0% 100%; }
-        .item.respondido { opacity: 0.6; }
-        .item.resp-sim { background-image: linear-gradient(to right, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.1)); background-size: 100% 100%; }
-        .item.resp-nao { background-image: linear-gradient(to left, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.1)); background-size: 100% 100%; }
-        
-        .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { padding: 16px; border: 1px solid #ccd6e0; border-radius: 10px; background: #fff; font-weight: bold; cursor: pointer; font-size: 14px; transition: all 0.2s ease; color: #333; }
-        .btn.active-yes { background: var(--success) !important; color: white; border-color: var(--success); }
-        .btn.active-no { background: var(--danger) !important; color: white; border-color: var(--danger); }
-        
-        .btn-fin { width: 92%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; margin: 10px 0; cursor: pointer; }
-        
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 20000; padding: 20px; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
-        
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e6ed;
+            overflow: hidden;
+            width: 92%;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 11px;
+            color: #888;
+            display: block;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 6px 0;
+            border: 1px solid #ccd6e0;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            background: #fff;
+            color: #333;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: var(--primary);
+            background: #f0f4f8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .item {
+            padding: 18px 10px;
+            border-bottom: 1px solid #f1f1f1;
+            transition: all 0.5s ease;
+            background-repeat: no-repeat;
+            background-size: 0% 100%;
+        }
+
+        .item.respondido {
+            opacity: 0.6;
+        }
+
+        .item.resp-sim {
+            background-image: linear-gradient(to right, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.1));
+            background-size: 100% 100%;
+        }
+
+        .item.resp-nao {
+            background-image: linear-gradient(to left, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.1));
+            background-size: 100% 100%;
+        }
+
+        .btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 16px;
+            border: 1px solid #ccd6e0;
+            border-radius: 10px;
+            background: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            color: #333;
+        }
+
+        .btn.active-yes {
+            background: var(--success) !important;
+            color: white;
+            border-color: var(--success);
+        }
+
+        .btn.active-no {
+            background: var(--danger) !important;
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .btn-fin {
+            width: 92%;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
         .modal-question-box {
             background: #f8f9fa;
             border-left: 5px solid var(--primary);
@@ -154,265 +314,573 @@
             line-height: 1.4;
         }
 
-        #results { display: none; background: white; padding: 20px; border-radius: 12px; width: 92%; border: 2px solid var(--primary); margin-bottom: 30px; }
-        pre { background: #fdfdfd; padding: 15px; white-space: pre-wrap; font-size: 13px; border: 1px solid #eee; color: #2c3e50; border-radius: 8px; font-family: monospace; user-select: text !important; -webkit-user-select: text !important; }
-        #toast { position: fixed; top: 20px; background: rgba(0,0,0,0.9); color: white; padding: 15px 25px; border-radius: 30px; display: none; z-index: 10000; font-weight: bold; }
-        
-        .footer-logo { margin-top: auto; padding: 20px 0; text-align: center; width: 100%; }
-        .footer-logo img { width: clamp(90px, 25vw, 110px); border-radius: 12px; margin-bottom: 8px; }
-        footer { font-size: clamp(10px, 3vw, 11px); color: #999; text-align: center; padding: 0 20px 40px; }
+        #results {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            width: 92%;
+            border: 2px solid var(--primary);
+            margin-bottom: 30px;
+        }
 
-        .extra-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 10px; }
-        .btn-small { padding: 12px; border-radius: 8px; border: 1px solid #ddd; background: #f8f9fa; font-size: 12px; font-weight: bold; cursor: pointer; color: #555; }
+        pre {
+            background: #fdfdfd;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-size: 13px;
+            border: 1px solid #eee;
+            color: #2c3e50;
+            border-radius: 8px;
+            font-family: monospace;
+            user-select: text !important;
+            -webkit-user-select: text !important;
+        }
 
-        #checklist-area { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        #toast {
+            position: fixed;
+            top: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            display: none;
+            z-index: 10000;
+            font-weight: bold;
+        }
+
+        .footer-logo {
+            margin-top: auto;
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer-logo img {
+            width: clamp(90px, 25vw, 110px);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        footer {
+            font-size: clamp(10px, 3vw, 11px);
+            color: #999;
+            text-align: center;
+            padding: 0 20px 40px;
+        }
+
+        .extra-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-small {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #555;
+        }
+
+        #checklist-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
         @media print {
-            body * { visibility: hidden; }
-            #results, #results * { visibility: visible; }
-            #results { position: absolute; left: 0; top: 0; width: 100%; border: none; }
-            .btn-fin, .extra-options, .btn-voltar { display: none !important; }
+            body * {
+                visibility: hidden;
+            }
+
+            #results,
+            #results * {
+                visibility: visible;
+            }
+
+            #results {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+            }
+
+            .btn-fin,
+            .extra-options,
+            .btn-voltar {
+                display: none !important;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div id="transition-overlay">
-    <div class="transition-bar"></div>
-    <div class="transition-bar"></div>
-    <div class="transition-bar"></div>
-    <div class="transition-bar"></div>
-</div>
-
-<button class="btn-voltar" onclick="voltarInicio()">
-    <i class="fas fa-arrow-left"></i> VOLTAR
-</button>
-
-<img src="icone_novo.png" alt="Ícone" class="logo-fixa">
-
-<div id="toast"></div>
-
-<div id="modal-confirm" class="modal-overlay">
-    <div class="modal-content">
-        <h3 style="color: var(--primary); margin-top: 0;">Alterar Resposta?</h3>
-        <p style="margin-bottom: 5px;">Você deseja mudar para <strong id="modal-new-choice"></strong> a pergunta:</p>
-        <div id="modal-question-text" class="modal-question-box"></div>
-        <div class="modal-btns" style="display: flex; gap: 10px;">
-            <button class="btn" style="flex:1" onclick="fecharModalConfirm(false)">CANCELAR</button>
-            <button class="btn" style="flex:1; background: var(--primary); color: white;" onclick="fecharModalConfirm(true)">CONFIRMAR</button>
-        </div>
-    </div>
-</div>
-
-<div id="modal-alert" class="modal-overlay">
-    <div class="modal-content">
-        <h3 id="alert-title" style="color: var(--danger);">⚠️ Atenção</h3>
-        <p id="alert-msg"></p>
-        <button class="btn-fin" style="margin: 10px 0 0; padding: 15px; width: 100%;" onclick="document.getElementById('modal-alert').style.display='none'">ENTENDI</button>
-    </div>
-</div>
-
-<div class="container">
-    <header>
-        <div class="header-text">
-            <h1>CHECK-LIST</h1>
-            <p>CLIENTE OCULTO</p>
-        </div>
-    </header>
-    
-    <div class="card">
-        <label>Colaborador Avaliado</label>
-        <input type="text" id="nome" placeholder="Nome completo">
-        <label>Matrícula</label>
-        <input type="tel" id="matri" placeholder="Ex: 000000" inputmode="numeric">
+    <div id="transition-overlay">
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
     </div>
 
-    <div id="checklist-area"></div>
+    <button class="btn-voltar" onclick="voltarInicio()">
+        <i class="fas fa-arrow-left"></i> VOLTAR
+    </button>
 
-    <button class="btn-fin" onclick="finalizar()">GERAR RELATÓRIO FINAL</button>
+    <img src="icone_novo.png" alt="Ícone" class="logo-fixa">
 
-    <div id="results">
-        <h3 id="score" style="text-align:center; color: var(--primary); margin: 0 0 15px 0;"></h3>
-        <pre id="relatorio"></pre>
-        
-        <button class="btn-fin" style="background:#25D366; margin-bottom: 5px; width: 100%;" onclick="copiar()">
-            <i class="fab fa-whatsapp"></i> COPIAR PARA WHATSAPP
-        </button>
+    <div id="toast"></div>
 
-        <div class="extra-options">
-            <button class="btn-small" onclick="gerarPDF()"><i class="fas fa-file-pdf"></i> SALVAR PDF</button>
-            <button class="btn-small" onclick="gerarExcel()"><i class="fas fa-file-excel"></i> GERAR EXCEL</button>
+    <div id="modal-confirm" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--primary); margin-top: 0;">Alterar Resposta?</h3>
+            <p style="margin-bottom: 5px;">Você deseja mudar para <strong id="modal-new-choice"></strong> a pergunta:
+            </p>
+            <div id="modal-question-text" class="modal-question-box"></div>
+            <div class="modal-btns" style="display: flex; gap: 10px;">
+                <button class="btn" style="flex:1" onclick="fecharModalConfirm(false)">CANCELAR</button>
+                <button class="btn" style="flex:1; background: var(--primary); color: white;"
+                    onclick="fecharModalConfirm(true)">CONFIRMAR</button>
+            </div>
         </div>
     </div>
 
-    <div class="footer-logo">
-        <img src="PagueMenosLogo.png" alt="Pague Menos">
-        <footer>
-            Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
-            <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente oculto.
-        </footer>
+    <div id="modal-alert" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="alert-title" style="color: var(--danger);">⚠️ Atenção</h3>
+            <p id="alert-msg"></p>
+            <button class="btn-fin" style="margin: 10px 0 0; padding: 15px; width: 100%;"
+                onclick="document.getElementById('modal-alert').style.display='none'">ENTENDI</button>
+        </div>
     </div>
-</div>
 
-<script>
-    // Função para voltar ao index com animação
-    function voltarInicio() {
-        document.body.classList.add('page-exit');
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 450);
-    }
+    <div class="container">
+        <header>
+            <div class="header-text">
+                <h1>CHECK-LIST</h1>
+                <p>CLIENTE OCULTO</p>
+            </div>
+        </header>
 
-    document.addEventListener('wheel', function(e) {
-        if (e.ctrlKey) e.preventDefault();
-    }, { passive: false });
+        <div class="card">
+            <label>Colaborador Avaliado</label>
+            <input type="text" id="nome" placeholder="Nome completo">
+            <label>Matrícula</label>
+            <input type="tel" id="matri" placeholder="Ex: 000000" inputmode="numeric">
+        </div>
 
-    document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && (e.keyCode === 61 || e.keyCode === 107 || e.keyCode === 173 || e.keyCode === 109 || e.keyCode === 187 || e.keyCode === 189)) {
-            e.preventDefault();
+        <div id="checklist-area"></div>
+
+        <button class="btn-fin" onclick="finalizar()">GERAR RELATÓRIO FINAL</button>
+
+        <div id="results">
+            <h3 id="score" style="text-align:center; color: var(--primary); margin: 0 0 15px 0;"></h3>
+            <pre id="relatorio"></pre>
+
+            <button class="btn-fin" style="background:#25D366; margin-bottom: 5px; width: 100%;" onclick="copiar()">
+                <i class="fab fa-whatsapp"></i> COPIAR PARA WHATSAPP
+            </button>
+
+            <div class="extra-options">
+                <button class="btn-small" onclick="gerarPDF()"><i class="fas fa-file-pdf"></i> SALVAR PDF</button>
+                <button class="btn-small" onclick="gerarExcel()"><i class="fas fa-file-excel"></i> GERAR EXCEL</button>
+            </div>
+        </div>
+
+        <div class="footer-logo">
+            <img src="PagueMenosLogo.png" alt="Pague Menos">
+            <footer>
+                Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+                <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao
+                cliente oculto.
+            </footer>
+        </div>
+    </div>
+
+    <!-- 1️⃣ Bibliotecas externas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+
+
+
+        // Empurra um estado falso no histórico
+        history.pushState(null, null, location.href);
+
+        window.addEventListener("popstate", function () {
+            // Sempre volta pro mesmo estado
+            history.pushState(null, null, location.href);
+        });
+
+        // Função para voltar ao index com animação
+        function voltarInicio() {
+            document.body.classList.add('page-exit');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 450);
         }
-    });
 
-   const perguntas = {
-        "SALÃO": ["Abordou cliente no salão?", "Havia cliente aguardando atendimento em loja em quanto colaborador realizava atividades administrativas, como: organizar/arrumar produtos, prateleiras?", "Colaborador se apresentou pelo nome?", "O colaborador foi atencioso, empático e cordial?","Buscou entender a necessidade do cliente?", "Acompanhou o cliente até a seção?"],
-        "BALCÃO": ["O colaborador se apresentou pelo nome?", "Solicitou o cadastro?", "Atualizou cadastro?", "Chamou o cliente pelo nome?", "Destacou descontos e vantagens, como promoções e/ou parcerias?", "Entregou cupom DSM explicando o que se tratava?", "Informou sobre programa de fidelidade?", "Informou Medalha do cliente?", "Ofertou Clinicfarma?", "Soube responder questionamento sobre medicamento/produto?", "Colaborador foi atencioso, empático e cordial?"],
-        "CAIXA": ["Solicitou CPF ou bipou cupom impresso no balcão?", "Solicitou a valiação do Atendômetro?", "Destacou desconto da compra?", "Perguntou as formas de pagamento? (PIX, DINHEIRO OU DÉBITO)", "Ofereceu Super Troco? (DOAÇÃO)", "Ofertou envio do cupom por e-mail?", "Pagamento ocorreu sem trava/lentidão?", "Finalizou com CONTE SEMPRE COM A PAGUE MENOS ?", "O colaborador foi atencioso, empático e cordial?", "Acompanhou o cliente até a saída ou saiu da área do caixa para entregar as compras?"],
-        "PERGUNTAS EXTRAS": ["Saudação Seja bem-vindo à Pague Menos", "Ofertou produto Foco?", "Ofertou aumento UVC (Cliente crônico)", "Ofertou produtos do Super Descontos?", "Organizou a fila de atendimento?"]
-    };
+        document.addEventListener('wheel', function (e) {
+            if (e.ctrlKey) e.preventDefault();
+        }, { passive: false });
 
-    let respostas = {};
-    let horaInicio = "";
-    let itemPendente = { id: null, valor: null };
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && (e.keyCode === 61 || e.keyCode === 107 || e.keyCode === 173 || e.keyCode === 109 || e.keyCode === 187 || e.keyCode === 189)) {
+                e.preventDefault();
+            }
+        });
 
-    function montar() {
-        const agora = new Date();
-        horaInicio = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-        const area = document.getElementById('checklist-area');
-        let html = '';
-        for (let secao in perguntas) {
-            html += `<div class="card"><div class="section-title">${secao}</div>`;
-            perguntas[secao].forEach((p, i) => {
-                const id = secao + "-" + i;
-                html += `<div class="item" id="item-${id}">
+        const perguntas = {
+            "SALÃO": ["Abordou cliente no salão?", "Havia cliente aguardando atendimento em loja em quanto colaborador realizava atividades administrativas, como: organizar/arrumar produtos, prateleiras?", "Colaborador se apresentou pelo nome?", "O colaborador foi atencioso, empático e cordial?", "Buscou entender a necessidade do cliente?", "Acompanhou o cliente até a seção?"],
+            "BALCÃO": ["O colaborador se apresentou pelo nome?", "Solicitou o cadastro?", "Atualizou cadastro?", "Chamou o cliente pelo nome?", "Destacou descontos e vantagens, como promoções e/ou parcerias?", "Entregou cupom DSM explicando o que se tratava?", "Informou sobre programa de fidelidade?", "Informou Medalha do cliente?", "Ofertou Clinicfarma?", "Soube responder questionamento sobre medicamento/produto?", "Colaborador foi atencioso, empático e cordial?"],
+            "CAIXA": ["Solicitou CPF ou bipou cupom impresso no balcão?", "Solicitou a valiação do Atendômetro?", "Destacou desconto da compra?", "Perguntou as formas de pagamento? (PIX, DINHEIRO OU DÉBITO)", "Ofereceu Super Troco? (DOAÇÃO)", "Ofertou envio do cupom por e-mail?", "Pagamento ocorreu sem trava/lentidão?", "Finalizou com CONTE SEMPRE COM A PAGUE MENOS ?", "O colaborador foi atencioso, empático e cordial?", "Acompanhou o cliente até a saída ou saiu da área do caixa para entregar as compras?"],
+            "PERGUNTAS EXTRAS": ["Saudação Seja bem-vindo à Pague Menos", "Ofertou produto Foco?", "Ofertou aumento UVC (Cliente crônico)", "Ofertou produtos do Super Descontos?", "Organizou a fila de atendimento?"]
+        };
+
+        let respostas = {};
+        let horaInicio = "";
+        let itemPendente = { id: null, valor: null };
+        let relatorioObj = null;
+
+        function montar() {
+            const agora = new Date();
+            horaInicio = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const area = document.getElementById('checklist-area');
+            let html = '';
+            for (let secao in perguntas) {
+                html += `<div class="card"><div class="section-title">${secao}</div>`;
+                perguntas[secao].forEach((p, i) => {
+                    const id = secao + "-" + i;
+                    html += `<div class="item" id="item-${id}">
                     <div id="text-${id}" style="font-size:15px; margin-bottom:12px; font-weight:500; color:#333;">${p}</div>
                     <div class="btns">
                         <button class="btn" id="y-${id}" onclick="tentarMarcar('${id}', 1)">SIM ✅</button>
                         <button class="btn" id="n-${id}" onclick="tentarMarcar('${id}', 0)">NÃO ❌</button>
                     </div>
                 </div>`;
-            });
-            html += `</div>`;
+                });
+                html += `</div>`;
+            }
+            area.innerHTML = html;
         }
-        area.innerHTML = html;
-    }
 
-    function tentarMarcar(id, valor) {
-        if (respostas[id] === valor) return;
-        if (respostas[id] !== undefined) {
-            itemPendente = { id, valor };
-            document.getElementById('modal-new-choice').innerText = valor === 1 ? "SIM ✅" : "NÃO ❌";
-            document.getElementById('modal-question-text').innerText = document.getElementById('text-'+id).innerText;
-            document.getElementById('modal-confirm').style.display = 'flex';
-        } else {
-            executarMarcacao(id, valor);
+        function tentarMarcar(id, valor) {
+            if (respostas[id] === valor) return;
+            if (respostas[id] !== undefined) {
+                itemPendente = { id, valor };
+                document.getElementById('modal-new-choice').innerText = valor === 1 ? "SIM ✅" : "NÃO ❌";
+                document.getElementById('modal-question-text').innerText = document.getElementById('text-' + id).innerText;
+                document.getElementById('modal-confirm').style.display = 'flex';
+            } else {
+                executarMarcacao(id, valor);
+            }
         }
-    }
 
-    function fecharModalConfirm(confirmado) {
-        if (confirmado) executarMarcacao(itemPendente.id, itemPendente.valor);
-        document.getElementById('modal-confirm').style.display = 'none';
-    }
-
-    function executarMarcacao(id, valor) {
-        respostas[id] = valor;
-        const itemDiv = document.getElementById("item-" + id);
-        document.getElementById("y-"+id).className = "btn";
-        document.getElementById("n-"+id).className = "btn";
-        itemDiv.classList.remove("resp-sim", "resp-nao", "respondido");
-        void itemDiv.offsetWidth; 
-        itemDiv.classList.add("respondido");
-        if (valor === 1) { 
-            document.getElementById("y-"+id).classList.add("active-yes"); 
-            itemDiv.classList.add("resp-sim"); 
-        } else { 
-            document.getElementById("n-"+id).classList.add("active-no"); 
-            itemDiv.classList.add("resp-nao"); 
+        function fecharModalConfirm(confirmado) {
+            if (confirmado) executarMarcacao(itemPendente.id, itemPendente.valor);
+            document.getElementById('modal-confirm').style.display = 'none';
         }
-    }
 
-    function showAlert(msg) {
-        document.getElementById('alert-msg').innerText = msg;
-        document.getElementById('modal-alert').style.display = 'flex';
-    }
-
-    function finalizar() {
-        const nome = document.getElementById('nome').value.trim();
-        const matri = document.getElementById('matri').value.trim();
-        const total = Object.values(perguntas).flat().length;
-        const respondidas = Object.keys(respostas).length;
-
-        if (!nome) return showAlert("Informe o nome do colaborador.");
-        if (!matri) return showAlert("Informe a matrícula.");
-        if (respondidas < total) return showAlert(`Responda as ${total - respondidas} perguntas restantes.`);
-
-        const agora = new Date();
-        let acertos = 0;
-        let rel = "*AVALIAÇÃO CLIENTE OCULTO - PAGUE MENOS*\n--------------------------------\n";
-        rel += `👤 *Colaborador:* ${nome}\n🆔 *Matrícula:* ${matri}\n📅 *Data:* ${agora.toLocaleDateString('pt-BR')}\n⏰ *Início:* ${horaInicio} | *Fim:* ${agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}\n--------------------------------\n`;
-
-        for (let secao in perguntas) {
-            rel += `\n🔹 *${secao}*`;
-            perguntas[secao].forEach((p, i) => {
-                const r = respostas[secao + "-" + i] === 1;
-                if (r) acertos++;
-                rel += `\n${r ? "✅" : "❌"} ${p}`;
-            });
-            rel += "\n";
+        function executarMarcacao(id, valor) {
+            respostas[id] = valor;
+            const itemDiv = document.getElementById("item-" + id);
+            document.getElementById("y-" + id).className = "btn";
+            document.getElementById("n-" + id).className = "btn";
+            itemDiv.classList.remove("resp-sim", "resp-nao", "respondido");
+            void itemDiv.offsetWidth;
+            itemDiv.classList.add("respondido");
+            if (valor === 1) {
+                document.getElementById("y-" + id).classList.add("active-yes");
+                itemDiv.classList.add("resp-sim");
+            } else {
+                document.getElementById("n-" + id).classList.add("active-no");
+                itemDiv.classList.add("resp-nao");
+            }
         }
-        const nota = ((acertos / total) * 100).toFixed(0);
-        rel += `\n--------------------------------\n📊 *DESEMPENHO FINAL: ${nota}%*\n--------------------------------\n_Gerado Por Erik Henrique - 126841_`;
-        
-        document.getElementById('relatorio').innerText = rel;
-        document.getElementById('score').innerText = "NOTA: " + nota + "%";
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-    }
 
-    function copiar() {
-        navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
-        const toast = document.getElementById('toast');
-        toast.innerText = "📋 Relatório copiado!";
-        toast.style.display = "block";
-        setTimeout(() => toast.style.display = "none", 2000);
-    }
-
-    function gerarPDF() {
-        window.print();
-    }
-
-    function gerarExcel() {
-        const nome = document.getElementById('nome').value || "relatorio";
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Pergunta;Resposta\r\n";
-        
-        for (let secao in perguntas) {
-            csvContent += `--- ${secao} ---;\r\n`;
-            perguntas[secao].forEach((p, i) => {
-                const r = respostas[secao + "-" + i] === 1 ? "SIM" : "NAO";
-                csvContent += `${p};${r}\r\n`;
-            });
+        function showAlert(msg) {
+            document.getElementById('alert-msg').innerText = msg;
+            document.getElementById('modal-alert').style.display = 'flex';
         }
-        
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `Checklist_${nome}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
 
-    window.onload = montar;
-</script>
+        function finalizar() {
+            const nome = document.getElementById('nome').value.trim();
+            const matri = document.getElementById('matri').value.trim();
+            const total = Object.values(perguntas).flat().length;
+            const respondidas = Object.keys(respostas).length;
+
+            if (!nome) return showAlert("Informe o nome do colaborador.");
+            if (!matri) return showAlert("Informe a matrícula.");
+            if (respondidas < total) return showAlert(`Responda as ${total - respondidas} perguntas restantes.`);
+
+            const agora = new Date();
+            let acertos = 0;
+            let rel = "*AVALIAÇÃO CLIENTE OCULTO - PAGUE MENOS*\n--------------------------------\n";
+            rel += `👤 *Colaborador:* ${nome}\n🆔 *Matrícula:* ${matri}\n📅 *Data:* ${agora.toLocaleDateString('pt-BR')}\n⏰ *Início:* ${horaInicio} | *Fim:* ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}\n--------------------------------\n`;
+
+            for (let secao in perguntas) {
+                rel += `\n🔹 *${secao}*`;
+                perguntas[secao].forEach((p, i) => {
+                    const r = respostas[secao + "-" + i] === 1;
+                    if (r) acertos++;
+                    rel += `\n${r ? "✅" : "❌"} ${p}`;
+                });
+                rel += "\n";
+            }
+            const nota = ((acertos / total) * 100).toFixed(0);
+            rel += `\n--------------------------------\n📊 *DESEMPENHO FINAL: ${nota}%*\n--------------------------------\n_Gerado Por Erik Henrique - 126841_`;
+
+            document.getElementById('relatorio').innerText = rel;
+            document.getElementById('score').innerText = "NOTA: " + nota + "%";
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+
+            // ===== OBJETO BASE DO RELATÓRIO (PDF / EXCEL) =====
+            relatorioObj = {
+                colaborador: nome,
+                matricula: matri,
+                data: agora.toLocaleDateString('pt-BR'),
+                inicio: horaInicio,
+                fim: agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                nota,
+                secoes: []
+            };
+
+            for (let secao in perguntas) {
+                const itens = perguntas[secao].map((p, i) => ({
+                    pergunta: p,
+                    resposta: respostas[secao + "-" + i] === 1 ? "SIM" : "NÃO"
+                }));
+                relatorioObj.secoes.push({ nome: secao, itens });
+            }
+        }
+
+        function copiar() {
+            navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
+            const toast = document.getElementById('toast');
+            toast.innerText = "📋 Relatório copiado!";
+            toast.style.display = "block";
+            setTimeout(() => toast.style.display = "none", 2000);
+        }
+
+        function gerarPDF() {
+            if (!relatorioObj) {
+                alert("Gere o relatório antes de salvar o PDF.");
+                return;
+            }
+
+            const logo = new Image();
+            logo.src = "PagueMenosLogo.png";
+
+            logo.onload = function () {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF("p", "mm", "a4");
+
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+
+                const marginX = 10;
+                const topMargin = 10;
+                const bottomMargin = 10;
+
+                const usableWidth = pageWidth - marginX * 2;
+                const usableHeight = pageHeight - topMargin - bottomMargin;
+
+                let baseFont = 8.5;
+                let lineHeight = 3.6;
+
+                function calcularAltura(fontSize) {
+                    doc.setFontSize(fontSize);
+                    let h = 0;
+
+                    h += 12; // cabeçalho
+                    h += 16; // identificação
+                    h += 9;  // nota
+
+                    relatorioObj.secoes.forEach(secao => {
+                        h += 7;
+                        secao.itens.forEach(item => {
+                            const linhas = doc.splitTextToSize(
+                                item.pergunta,
+                                usableWidth - 24
+                            );
+                            h += linhas.length * (fontSize * 0.42) + 2;
+                        });
+                        h += 3;
+                    });
+
+                    return h;
+                }
+
+                while (calcularAltura(baseFont) > usableHeight && baseFont > 6.5) {
+                    baseFont -= 0.3;
+                }
+
+                doc.setFontSize(baseFont);
+                lineHeight = baseFont * 0.42;
+
+                let y = topMargin;
+
+                /* ================= CABEÇALHO ================= */
+                doc.setFillColor(0, 74, 153);
+                doc.rect(marginX, y, usableWidth, 10, "F");
+
+                doc.setTextColor(255);
+                doc.setFontSize(baseFont + 4);
+                doc.setFont(undefined, "bold");
+                doc.text(
+                    "RELATÓRIO DE AVALIAÇÃO - CLIENTE OCULTO",
+                    pageWidth / 2,
+                    y + 7,
+                    { align: "center" }
+                );
+
+                y += 13;
+                doc.setTextColor(0);
+                doc.setFontSize(baseFont);
+                doc.setFont(undefined, "normal");
+
+                /* ================= IDENTIFICAÇÃO COM LOGO ================= */
+                const boxHeight = 16;
+                doc.rect(marginX, y, usableWidth, boxHeight);
+
+                // Texto à esquerda
+                doc.setFont(undefined, "bold");
+                doc.text(`Colaborador: ${relatorioObj.colaborador}`, marginX + 2, y + 6);
+                doc.text(`Matrícula: ${relatorioObj.matricula}`, marginX + 2, y + 11);
+
+                doc.setFont(undefined, "normal");
+                doc.text(`Data: ${relatorioObj.data}`, marginX + 80, y + 6);
+                doc.text(`Horário: ${relatorioObj.inicio} às ${relatorioObj.fim}`, marginX + 80, y + 11);
+
+                // Logo à direita (discreto)
+                const logoWidth = 24;
+                const logoHeight = 10;
+                const logoX = marginX + usableWidth - logoWidth - 3;
+                const logoY = y + (boxHeight - logoHeight) / 2;
+
+                doc.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight);
+
+                y += boxHeight + 4;
+
+                /* ================= NOTA FINAL ================= */
+                doc.setFillColor(240, 244, 248);
+                doc.rect(marginX, y, usableWidth, 9, "F");
+                doc.rect(marginX, y, usableWidth, 9);
+
+                doc.setFontSize(baseFont + 2);
+                doc.setFont(undefined, "bold");
+                doc.text(
+                    `DESEMPENHO FINAL: ${relatorioObj.nota}%`,
+                    pageWidth / 2,
+                    y + 6.5,
+                    { align: "center" }
+                );
+
+                y += 12;
+                doc.setFontSize(baseFont);
+                doc.setFont(undefined, "normal");
+
+                /* ================= SEÇÕES ================= */
+                relatorioObj.secoes.forEach(secao => {
+                    doc.setFillColor(230, 236, 242);
+                    doc.rect(marginX, y, usableWidth, 6, "F");
+                    doc.rect(marginX, y, usableWidth, 6);
+
+                    doc.setFont(undefined, "bold");
+                    doc.setTextColor(0);
+                    doc.text(secao.nome, marginX + 2, y + 4.5);
+
+                    y += 8;
+                    doc.setFont(undefined, "normal");
+
+                    secao.itens.forEach(item => {
+                        const linhas = doc.splitTextToSize(
+                            item.pergunta,
+                            usableWidth - 24
+                        );
+
+                        const altura = linhas.length * lineHeight + 2;
+                        const isNao = item.resposta === "NÃO";
+
+                        if (isNao) {
+                            doc.setFillColor(40, 40, 40);
+                            doc.setDrawColor(255, 255, 255);
+                            doc.rect(marginX, y, usableWidth, altura, "FD");
+                            doc.setTextColor(255);
+                        } else {
+                            doc.setDrawColor(0);
+                            doc.setFillColor(255, 255, 255);
+                            doc.rect(marginX, y, usableWidth, altura);
+                            doc.setTextColor(0);
+                        }
+
+                        doc.text(linhas, marginX + 2, y + lineHeight);
+
+                        doc.setFont(undefined, "bold");
+                        doc.text(
+                            item.resposta,
+                            pageWidth - marginX - 2,
+                            y + lineHeight,
+                            { align: "right" }
+                        );
+                        doc.setFont(undefined, "normal");
+
+                        y += altura;
+                    });
+
+                    y += 3;
+                });
+
+                /* ================= RODAPÉ ================= */
+                doc.setFontSize(7);
+                doc.setTextColor(0);
+                doc.text(
+                    "Sistema não oficial • Gerado por Erik Henrique - 126841",
+                    pageWidth / 2,
+                    pageHeight - 6,
+                    { align: "center" }
+                );
+
+                doc.save(`Checklist_${relatorioObj.colaborador}.pdf`);
+            };
+        }
+
+
+        function gerarExcel() {
+            const nome = document.getElementById('nome').value || "relatorio";
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Pergunta;Resposta\r\n";
+
+            for (let secao in perguntas) {
+                csvContent += `--- ${secao} ---;\r\n`;
+                perguntas[secao].forEach((p, i) => {
+                    const r = respostas[secao + "-" + i] === 1 ? "SIM" : "NAO";
+                    csvContent += `${p};${r}\r\n`;
+                });
+            }
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Checklist_${nome}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = montar;
+    </script>
 </body>
+
 </html>
