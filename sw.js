@@ -3,7 +3,7 @@ const ASSETS = [
   './',
   './index.html',
   './checklist.html',
-  './icone.png',
+  './icone_novo.png',
   './PagueMenosLogo.png',
   './manifest.json',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
