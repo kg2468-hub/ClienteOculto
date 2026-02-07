@@ -3,169 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Checklist Pague Menos</title>
-    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#004a99">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="PagueMenosLogo.png">
-
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Checklist Pague Menos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        :root { --primary: #004a99; --success: #28a745; --danger: #dc3545; --bg: #f4f7f9; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .logo-fixa { position: fixed; top: 15px; left: 15px; width: 95px; opacity: 0.5; z-index: 1000; pointer-events: none; }
-        .container { width: 100%; max-width: 550px; margin-top: 30px; }
-        header { background: var(--primary); color: white; padding: 35px 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
-        .header-text h2 { margin: 0; font-size: 26px; text-transform: uppercase; }
-        #btnInstalar { display: none; background: var(--success); color: white; width: 100%; padding: 18px; border-radius: 12px; border: none; font-weight: bold; margin-bottom: 20px; cursor: pointer; }
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e6ed; }
-        label { font-weight: bold; font-size: 11px; color: #888; display: block; margin-top: 10px; text-transform: uppercase; }
-        input { width: 100%; padding: 14px; margin: 6px 0; border: 1px solid #ccd6e0; border-radius: 8px; font-size: 16px; outline: none; }
-        .section-title { font-weight: bold; color: var(--primary); background: #f0f4f8; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-transform: uppercase; text-align: center; }
-        .item { padding: 18px 10px; border-bottom: 1px solid #f1f1f1; }
-        .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .btn { padding: 16px; border: 1px solid #ccd6e0; border-radius: 10px; background: #fff; font-weight: bold; cursor: pointer; }
-        .active-yes { background: var(--success) !important; color: white; }
-        .active-no { background: var(--danger) !important; color: white; }
-        .btn-fin { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; margin: 25px 0; cursor: pointer; }
-        #results { display: none; background: white; padding: 20px; border-radius: 12px; border: 2px solid var(--primary); margin-bottom: 30px; width: 100%; }
-        pre { background: #fdfdfd; padding: 15px; white-space: pre-wrap; font-size: 13px; border: 1px solid #eee; border-radius: 8px; font-family: monospace; }
-        #toast { position: fixed; top: 20px; background: #000; color: #fff; padding: 10px 20px; border-radius: 20px; display: none; z-index: 10000; }
-        footer { margin: 20px 0 40px; text-align: center; color: #95a5a6; font-size: 12px; }
+        :root { 
+            --primary: #004a99; 
+            --accent: #f9b233;
+            --bg: #f4f7f9; 
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            padding: 0;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            overflow-x: hidden;
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        /* --- BOTÃO ENGRENAGEM FIXO --- */
+        .btn-settings {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1001;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+
+        /* --- MODAL DE CONFIGURAÇÕES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-content h3 { color: var(--primary); margin-top: 0; margin-bottom: 20px; }
+
+        .menu-opt {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            background: #f9f9f9;
+            color: #444;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .menu-opt i { color: var(--primary); width: 20px; }
+        .menu-opt.install-ready { background: #fff4e0; border-color: var(--accent); }
+
+        /* --- ANIMAÇÃO DE TRANSIÇÃO --- */
+        #transition-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            pointer-events: none; z-index: 10000;
+        }
+        .transition-bar { flex: 1; width: 100%; background: var(--primary); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease-in-out; }
+        .transition-bar:nth-child(even) { transform-origin: right; background: #003a7a; }
+        body.page-exit .transition-bar { transform: scaleX(1); }
+
+        .hero h1 { font-size: clamp(32px, 12vw, 48px) !important; }
+
+        #toast-container {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; width: auto; pointer-events: none;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .toast {
+            background: rgba(0, 74, 153, 0.95); color: white; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 500;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15); margin-bottom: 8px; opacity: 0; transition: all 0.3s ease;
+            transform: translateY(20px); display: flex; align-items: center; gap: 10px; border-left: 4px solid var(--accent);
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        .icon-fixo { position: absolute; top: 15px; left: 15px; width: clamp(35px, 10vw, 45px); border-radius: 10px; z-index: 100; }
+
+        .hero {
+            position: relative; width: 100%; background: var(--primary); padding: clamp(60px, 15vh, 100px) 20px clamp(40px, 10vh, 60px) 20px;
+            text-align: center; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden; perspective: 1000px;
+        }
+
+        .lupa-container {
+            position: absolute; z-index: 5; pointer-events: none; display: flex; align-items: center; justify-content: center;
+            animation: inspecaoZ 7s infinite ease-in-out; will-change: transform, top, left;
+        }
+        .lupa-vidro { width: 38px; height: 38px; border: 3px solid #fff; border-radius: 50%; position: relative; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(1.5px); box-shadow: inset 0 0 8px rgba(255,255,255,0.4), 0 5px 15px rgba(0,0,0,0.3); }
+        .lupa-cabo { width: 12px; height: 4px; background: #fff; position: absolute; right: -8px; bottom: 2px; transform: rotate(45deg); border-radius: 2px; }
+
+        @keyframes inspecaoZ {
+            0%   { top: 20%; left: 15%; transform: translateZ(0px) rotate(0deg); }
+            25%  { top: 35%; left: 40%; transform: translateZ(50px) scale(1.3) rotate(-5deg); }
+            55%  { top: 55%; left: 55%; transform: translateZ(-20px) scale(0.9) rotate(10deg); }
+            100% { top: 20%; left: 15%; transform: translateZ(0px) scale(1) rotate(0deg); }
+        }
+
+        .hero h1 { margin: 0; font-size: clamp(24px, 8vw, 32px); font-weight: 800; letter-spacing: 2px; }
+        .hero p { margin: 5px 0 0 0; font-size: clamp(12px, 4vw, 16px); opacity: 0.9; text-transform: uppercase; letter-spacing: clamp(2px, 1vw, 4px); }
+
+        .menu-container { width: 90%; max-width: 450px; margin-top: -30px; z-index: 10; padding-bottom: 20px; }
+        .main-button {
+            background: white; display: flex; align-items: center; padding: clamp(15px, 5vw, 22px); border-radius: 20px;
+            text-decoration: none; color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.08); margin-bottom: 15px;
+            border: 1px solid rgba(0,0,0,0.05); transition: transform 0.2s; cursor: pointer;
+        }
+        .main-button i { font-size: clamp(30px, 10vw, 38px); margin-right: 15px; color: var(--accent); }
+        .main-button h3 { margin: 0; font-size: clamp(16px, 5vw, 18px); }
+        .main-button p { margin: 0; font-size: clamp(11px, 3.5vw, 13px); color: #777; }
+
+        .secondary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .sec-button {
+            background: white; padding: clamp(12px, 4vw, 18px); border-radius: 20px; text-align: center; text-decoration: none; color: #444;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-size: clamp(12px, 3.5vw, 14px); font-weight: 600; transition: transform 0.2s; cursor: pointer;
+        }
+        .sec-button i { display: block; font-size: clamp(18px, 6vw, 22px); margin-bottom: 8px; color: var(--primary); }
+        
+        .footer-logo { margin-top: auto; padding: 20px 0; text-align: center; width: 100%; }
+        .footer-logo img { width: clamp(90px, 25vw, 110px); border-radius: 12px; margin-bottom: 8px; }
+        footer { font-size: clamp(10px, 3vw, 11px); color: #999; }
     </style>
 </head>
 <body>
 
-<img src="PagueMenosLogo.png" class="logo-fixa" alt="Logo">
-<div id="toast"></div>
+    <button class="btn-settings" onclick="toggleMenu(true)">
+        <i class="fas fa-cog"></i>
+    </button>
 
-<div class="container">
-    <header>
-        <div class="header-text">
-            <h2>CHECK-LIST</h2>
-            <p>CLIENTE OCULTO</p>
+    <div id="modal-settings" class="modal-overlay" onclick="toggleMenu(false)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>Configurações</h3>
+            
+            <div id="opt-instalar" class="menu-opt" style="display: none;" onclick="instalarApp()">
+                <i class="fas fa-mobile-alt"></i> Instalar Aplicativo
+            </div>
+
+            <div class="menu-opt" onclick="limparCacheSistema()">
+                <i class="fas fa-sync-alt"></i> Atualizar Sistema
+            </div>
+
+            <button class="main-button" style="margin-top: 15px; width: 100%; justify-content: center; padding: 12px;" onclick="toggleMenu(false)">
+                FECHAR
+            </button>
         </div>
-    </header>
-
-    <button id="btnInstalar" onclick="dispararInstalacao()">📥 INSTALAR APLICATIVO</button>
-    
-    <div class="card">
-        <label>Colaborador Avaliado</label>
-        <input type="text" id="nome" placeholder="Nome completo">
-        <label>Matrícula</label>
-        <input type="tel" id="matri" placeholder="Ex: 000000">
     </div>
 
-    <div id="checklist-area"></div>
-
-    <button class="btn-fin" onclick="finalizar()">GERAR RELATÓRIO FINAL</button>
-
-    <div id="results">
-        <h3 id="score" style="text-align:center; color: var(--primary);"></h3>
-        <pre id="relatorio"></pre>
-        <button class="btn-fin" style="background:#4a5568;" onclick="copiar()">COPIAR PARA WHATSAPP</button>
+    <div id="transition-overlay">
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
     </div>
 
-    <footer>
-        Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
-        Sistema não oficial para suporte à gestão.
-    </footer>
-</div>
+    <div id="toast-container"></div>
 
-<script>
-    var perguntas = {
-        'SALÃO': ['Abordou cliente no salão?', 'Atendimento sem espera?', 'Apresentou-se pelo nome?', 'Cordialidade?', 'Entendeu a necessidade?', 'Acompanhou até a seção?'],
-        'BALCÃO': ['Apresentou-se?', 'Pediu cadastro?', 'Atualizou cadastro?', 'Chamou pelo nome?', 'Vantagens e descontos?', 'Cupom DSM?', 'Fidelidade?', 'Medalha?', 'Clinicfarma?', 'Conhecimento técnico?', 'Cordialidade?'],
-        'CAIXA': ['Pediu CPF?', 'Atendômetro?', 'Destacou desconto?', 'Formas de pagamento?', 'Super Troco?', 'Cupom por e-mail?', 'Sem lentidão?', 'Frase finalização?', 'Cordialidade?', 'Acompanhou até a saída?'],
-        'EXTRAS': ['Saudação?', 'Produto Foco?', 'UVC?', 'Super Descontos?', 'Organizou Fila?']
-    };
+    <img src="icone.png" class="icon-fixo" alt="Ícone">
 
-    var respostas = {};
-    var deferredPrompt;
+    <div class="hero">
+        <div class="lupa-container">
+            <div class="lupa-vidro"></div>
+            <div class="lupa-cabo"></div>
+        </div>
+        <h1>CHECK-LIST</h1>
+        <p>CLIENTE OCULTO</p>
+    </div>
 
-    function montarChecklist() {
-        var area = document.getElementById('checklist-area');
-        var html = '';
-        for (var secao in perguntas) {
-            html += '<div class="card"><div class="section-title">' + secao + '</div>';
-            for (var i = 0; i < perguntas[secao].length; i++) {
-                var p = perguntas[secao][i];
-                var id = secao + '-' + i;
-                html += '<div class="item">';
-                html += '<div style="margin-bottom:10px; font-weight:500;">' + p + '</div>';
-                html += '<div class="btns">';
-                html += '<button class="btn" id="y-' + id + '" onclick="marcar(\'' + id + '\', 1)">SIM ✅</button>';
-                html += '<button class="btn" id="n-' + id + '" onclick="marcar(\'' + id + '\', 0)">NÃO ❌</button>';
-                html += '</div></div>';
-            }
-            html += '</div>';
-        }
-        area.innerHTML = html;
-    }
+    <div class="menu-container">
+        <a href="javascript:void(0)" onclick="transitionTo('gemini_v2.html')" class="main-button">
+            <i class="fas fa-file-signature"></i>
+            <div>
+                <h3>Nova Avaliação</h3>
+                <p>Iniciar auditoria agora</p>
+            </div>
+        </a>
 
-    function marcar(id, valor) {
-        respostas[id] = valor;
-        document.getElementById('y-' + id).className = (valor === 1) ? 'btn active-yes' : 'btn';
-        document.getElementById('n-' + id).className = (valor === 0) ? 'btn active-no' : 'btn';
-    }
+        <div class="secondary-grid">
+            <a href="#" class="sec-button" onclick="showToast('Histórico em desenvolvimento')">
+                <i class="fas fa-history"></i> Histórico
+            </a>
+            <a href="#" class="sec-button" onclick="showToast('Relatórios em desenvolvimento')">
+                <i class="fas fa-chart-line"></i> Relatórios
+            </a>
+        </div>
+    </div>
 
-    function finalizar() {
-        var nome = document.getElementById('nome').value;
-        var matri = document.getElementById('matri').value;
-        if (!nome || !matri) { alert('Preencha os dados!'); return; }
+    <div class="footer-logo">
+        <img src="PagueMenosLogo.png" alt="Pague Menos">
+        <footer>Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+            <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente oculto.</footer>
+    </div>
 
-        var acertos = 0;
-        var total = 0;
-        var rel = '*AVALIAÇÃO CLIENTE OCULTO*\nColaborador: ' + nome + '\nMatrícula: ' + matri + '\n\n';
+    <script>
+        /* --- LÓGICA PWA --- */
+        let deferredPrompt;
+        const optInstalar = document.getElementById('opt-instalar');
 
-        for (var secao in perguntas) {
-            rel += '\n🔹 *' + secao + '*';
-            for (var i = 0; i < perguntas[secao].length; i++) {
-                total++;
-                var r = respostas[secao + '-' + i];
-                if (r === 1) acertos++;
-                rel += '\n' + (r === 1 ? '✅' : '❌') + ' ' + perguntas[secao][i];
-            }
-        }
-
-        var nota = ((acertos / total) * 100).toFixed(0);
-        var textoFinal = rel + '\n\n📊 *NOTA FINAL: ' + nota + '%*\n_Gerado por Erik Henrique_';
-        
-        document.getElementById('relatorio').innerText = textoFinal;
-        document.getElementById('score').innerText = 'NOTA: ' + nota + '%';
-        document.getElementById('results').style.display = 'block';
-        window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function copiar() {
-        var texto = document.getElementById('relatorio').innerText;
-        navigator.clipboard.writeText(texto).then(function() {
-            var t = document.getElementById('toast');
-            t.style.display = 'block'; t.innerText = 'Copiado!';
-            setTimeout(function() { t.style.display = 'none'; }, 2000);
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            optInstalar.style.display = 'flex';
+            optInstalar.classList.add('install-ready');
         });
-    }
 
-    window.addEventListener('beforeinstallprompt', function(e) {
-        e.preventDefault();
-        deferredPrompt = e;
-        document.getElementById('btnInstalar').style.display = 'block';
-    });
-
-    function dispararInstalacao() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt = null;
-            document.getElementById('btnInstalar').style.display = 'none';
+        async function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    optInstalar.style.display = 'none';
+                    toggleMenu(false);
+                }
+                deferredPrompt = null;
+            }
         }
-    }
 
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js');
-    }
+        /* --- LIMPAR CACHE --- */
+        async function limparCacheSistema() {
+            if ('caches' in window) {
+                const names = await caches.keys();
+                await Promise.all(names.map(name => caches.delete(name)));
+                
+                if ('serviceWorker' in navigator) {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    for (let reg of regs) await reg.unregister();
+                }
 
-    window.onload = montarChecklist;
-</script>
+                showToast("Cache limpo! Reiniciando...");
+                setTimeout(() => window.location.reload(true), 1500);
+            }
+        }
+
+        /* --- UI FUNCTIONS --- */
+        function toggleMenu(show) {
+            document.getElementById('modal-settings').style.display = show ? 'flex' : 'none';
+        }
+
+        function transitionTo(url) {
+            document.body.classList.add('page-exit');
+            setTimeout(() => { window.location.href = url; }, 450);
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            if (container.children.length >= 2) container.removeChild(container.firstChild);
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+        }
+    </script>
+
 </body>
 </html>
