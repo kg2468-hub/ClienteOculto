@@ -1,7 +1,7 @@
 {
   "name": "Checklist Pague Menos",
   "short_name": "Checklist PM",
-  "description": "Sistema de Avaliação Cliente Oculto",
+  "description": "Sistema de Avaliação Cliente Oculto - Desenvolvido por Erik Henrique , matrícula 126841",
   "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
@@ -9,19 +9,19 @@
   "theme_color": "#004a99",
   "icons": [
     {
-      "src": "icone.png",
+      "src": "icone_novo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icone.png",
+      "src": "icone_novo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icone.png",
+      "src": "icone_novo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
