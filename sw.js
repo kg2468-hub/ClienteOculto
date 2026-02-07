@@ -1,22 +1,40 @@
-const CACHE_NAME = 'checklist-v1';
+const CACHE_NAME = 'checklist-pm-v1';
 const ASSETS = [
   './',
   './index.html',
-  './PagueMenosLogo.png',
+  './checklist.html',
   './icone.png',
-  './manifest.json'
+  './PagueMenosLogo.png',
+  './manifest.json',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
 ];
 
-// Instala e faz o cache dos arquivos
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+// Instalação: Salva os arquivos no cache
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
+  );
+  self.skipWaiting();
+});
+
+// Ativação: Limpa caches antigos
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
   );
 });
 
-// Responde as requisições usando o cache (Permite uso offline)
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
+// Estratégia Fetch: Tenta carregar do cache primeiro, se falhar busca na rede
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
   );
 });
