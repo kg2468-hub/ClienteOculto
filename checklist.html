@@ -108,24 +108,39 @@
         }
 
         /* Botão Voltar */
-        .btn-voltar {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            z-index: 1001;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+       .btn-voltar {
+    position: fixed; /* Fixa o botão na tela mesmo ao rolar */
+    top: 15px;
+    right: 15px;
+    background: white; /* Fundo branco para alto contraste */
+    color: var(--primary); /* Texto na cor azul do seu sistema */
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 2000; /* Acima de quase tudo, menos do banner de update */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Sombra para dar profundidade */
+    transition: transform 0.2s active;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Efeito visual ao tocar/clicar */
+.btn-voltar:active {
+    transform: scale(0.95);
+    background: #f0f4f8;
+}
+
+/* Ajuste opcional para ícone */
+.btn-voltar i {
+    font-size: 16px;
+}
+
 
         .logo-fixa {
             position: absolute;
@@ -543,7 +558,7 @@
             "SALÃO": ["Abordou cliente no salão?", "O colaborador interrompeu as atividades administrativas para priorizar o atendimento ao cliente?", "Colaborador se apresentou pelo nome?", "O colaborador foi atencioso, empático e cordial?", "Buscou entender a necessidade do cliente?", "Acompanhou o cliente até a seção?"],
             "BALCÃO": ["O colaborador se apresentou pelo nome?", "Solicitou o cadastro?", "Atualizou cadastro?", "Chamou o cliente pelo nome?", "Destacou descontos e vantagens, como promoções e/ou parcerias?", "Entregou cupom DSM explicando o que se tratava?", "Informou sobre programa de fidelidade?", "Informou Medalha do cliente?", "Ofertou Clinicfarma?", "Soube responder questionamento sobre medicamento/produto?", "Colaborador foi atencioso, empático e cordial?"],
             "CAIXA": ["Solicitou CPF ou bipou cupom impresso no balcão?", "Solicitou a valiação do Atendômetro?", "Destacou desconto da compra?", "Perguntou as formas de pagamento? (PIX, DINHEIRO OU DÉBITO)", "Ofereceu Super Troco? (DOAÇÃO)", "Ofertou envio do cupom por e-mail?", "Pagamento ocorreu sem trava/lentidão?", "Finalizou com CONTE SEMPRE COM A PAGUE MENOS ?", "O colaborador foi atencioso, empático e cordial?", "Acompanhou o cliente até a saída ou saiu da área do caixa para entregar as compras?"],
-            "PERGUNTAS EXTRAS": ["Saudação Seja bem-vindo à Pague Menos","Realizou o processo correto do CONVERTE+ ? (identificação do cliente pelo cadastro, pesquisa do produto no painel e registro com cupom no caixa - exatamente nessa ordem)", "Ofertou produto Foco?", "Ofertou aumento UVC (Cliente crônico)", "Ofertou produtos do Super Descontos?", "Organizou a fila de atendimento?"]
+            "PERGUNTAS EXTRAS": ["Saudação Seja bem-vindo à Pague Menos", "Ofertou produto Foco?", "Ofertou aumento UVC (Cliente crônico)", "Ofertou produtos do Super Descontos?", "Organizou a fila de atendimento?"]
         };
 
         let respostas = {};
