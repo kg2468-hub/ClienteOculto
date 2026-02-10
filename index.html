@@ -178,6 +178,33 @@
     </style>
 </head>
 <body>
+    
+<div id="update-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 99998;"></div>
+
+<div id="update-banner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: white; z-index: 99999; padding: 30px 20px; border-radius: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; flex-direction: column; align-items: center; gap: 15px; border: none; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+    <div style="background: #f4f7f9; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #004a99; font-size: 32px; margin-bottom: 5px;">
+        <i class="fas fa-sync-alt fa-spin"></i>
+    </div>
+    <div style="margin-bottom: 10px;">
+        <h3 style="margin: 0; color: #004a99; font-size: 20px; font-weight: 800; font-family: sans-serif;">Atualização Necessária</h3>
+        <p style="margin: 12px 0 0 0; color: #555; font-size: 14px; line-height: 1.5; font-family: sans-serif;">Uma nova versão do Checklist está disponível com melhorias essenciais.</p>
+    </div>
+    <button onclick="forceUpdate()" id="btn-update-now" style="background: #004a99; color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; box-shadow: 0 8px 20px rgba(0,74,153,0.3); transition: all 0.2s; font-family: sans-serif;">
+        ATUALIZAR AGORA
+    </button>
+</div>
+
+<style>
+    @keyframes modalPop {
+        from { opacity: 0; transform: translate(-50%, -60%) scale(0.8); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    /* Garante que o corpo não role quando o modal estiver aberto */
+    body.modal-open { overflow: hidden !important; height: 100vh !important; }
+</style>
+
+
+
 
     <button class="btn-settings" onclick="toggleMenu(true)">
         <i class="fas fa-cog"></i>
@@ -246,74 +273,142 @@
             <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente oculto.</footer>
     </div>
 
-    <script>
-        /* --- LÓGICA PWA --- */
-        let deferredPrompt;
-        const optInstalar = document.getElementById('opt-instalar');
+   
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
+ <script>
+    /* --- LÓGICA DE VERSÃO DINÂMICA --- */
+    let deferredPrompt;
+    const optInstalar = document.getElementById('opt-instalar');
+    const updateBanner = document.getElementById('update-banner');
+    const updateOverlay = document.getElementById('update-overlay');
+
+    /* --- INSTALAÇÃO PWA --- */
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (optInstalar) {
             optInstalar.style.display = 'flex';
             optInstalar.classList.add('install-ready');
-        });
+        }
+    });
 
-        async function instalarApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    optInstalar.style.display = 'none';
-                    toggleMenu(false);
-                }
-                deferredPrompt = null;
+    async function instalarApp() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                optInstalar.style.display = 'none';
+                toggleMenu(false);
             }
+            deferredPrompt = null;
         }
+    }
 
-        /* --- LIMPAR CACHE --- */
-        async function limparCacheSistema() {
-            if ('caches' in window) {
-                const names = await caches.keys();
-                await Promise.all(names.map(name => caches.delete(name)));
-                
-                if ('serviceWorker' in navigator) {
-                    const regs = await navigator.serviceWorker.getRegistrations();
-                    for (let reg of regs) await reg.unregister();
-                }
+    /* --- CONTROLE DE ATUALIZAÇÃO --- */
+    async function checkVersion() {
+        try {
+            const response = await fetch(`version.json?v=${Date.now()}`);
+            if (!response.ok) return;
+            
+            const data = await response.json();
+            const serverVersion = data.version;
+            const localVersion = localStorage.getItem('app_version');
 
-                showToast("Cache limpo! Reiniciando...");
-                setTimeout(() => window.location.reload(true), 1500);
+            if (!localVersion) {
+                localStorage.setItem('app_version', serverVersion);
+                return;
             }
+
+            if (serverVersion !== localVersion) {
+                exibirBloqueioAtualizacao();
+                localStorage.setItem('app_version', serverVersion);
+            }
+        } catch (err) {
+            console.warn("Erro ao validar versão.");
+        }
+    }
+
+    function exibirBloqueioAtualizacao() {
+        if (updateBanner && updateOverlay) {
+            updateOverlay.style.display = 'block';
+            updateBanner.style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+    }
+
+    async function forceUpdate() {
+        const btn = document.getElementById('btn-update-now');
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+            btn.disabled = true;
         }
 
-        /* --- UI FUNCTIONS --- */
-        function toggleMenu(show) {
-            document.getElementById('modal-settings').style.display = show ? 'flex' : 'none';
-        }
-
-        function transitionTo(url) {
-            document.body.classList.add('page-exit');
-            setTimeout(() => { window.location.href = url; }, 450);
-        }
-
-        function showToast(message) {
-            const container = document.getElementById('toast-container');
-            if (container.children.length >= 2) container.removeChild(container.firstChild);
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.add('show'), 10);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 2500);
-        }
-
+        showToast("Limpando cache...");
+        
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+            const regs = await navigator.serviceWorker.getRegistrations();
+            for (let reg of regs) await reg.unregister();
         }
-    </script>
+        
+        if ('caches' in window) {
+            const names = await caches.keys();
+            await Promise.all(names.map(name => caches.delete(name)));
+        }
+
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 1000);
+    }
+
+    /* --- UI FUNCTIONS --- */
+    function toggleMenu(show) {
+        const modal = document.getElementById('modal-settings');
+        if (modal) modal.style.display = show ? 'flex' : 'none';
+    }
+
+    function transitionTo(url) {
+        document.body.classList.add('page-exit');
+        setTimeout(() => { window.location.href = url; }, 450);
+    }
+
+    function showToast(message) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        if (container.children.length >= 2) container.removeChild(container.firstChild);
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+
+    /* --- INICIALIZAÇÃO --- */
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        exibirBloqueioAtualizacao();
+                    }
+                });
+            });
+        });
+    }
+
+    checkVersion();
+    setInterval(checkVersion, 1000 * 60 * 15);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') checkVersion();
+    });
+</script>
+
+   
+
 
 </body>
 </html>
