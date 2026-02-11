@@ -32,10 +32,11 @@
             padding: 0;
             display: flex; 
             flex-direction: column; 
+            justify-content: space-between;
             align-items: center;
-            overflow-x: hidden;
+            overflow: hidden;
             width: 100vw;
-            min-height: 100vh;
+            height: 100dvh;
            overscroll-behavior: none;
 
         }
@@ -175,6 +176,44 @@
         .footer-logo { margin-top: auto; padding: 20px 0; text-align: center; width: 100%; }
         .footer-logo img { width: clamp(90px, 25vw, 110px); border-radius: 12px; margin-bottom: 8px; }
         footer { font-size: clamp(10px, 3vw, 11px); color: #999; }
+        
+        
+        /* Container do card de versão */
+.version-card {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: rgba(0, 74, 153, 0.05); /* Azul bem clarinho e transparente */
+    border: 1px solid rgba(0, 74, 153, 0.1);
+    border-radius: 100px; /* Estilo pílula */
+    transition: all 0.3s ease;
+}
+
+/* Texto "VERSÃO:" */
+.version-label {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* O número da versão em si */
+#app-version-display {
+    font-family: 'Courier New', Courier, monospace; /* Fonte estilo sistema */
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--accent); /* Destaque na cor amarela do seu sistema */
+}
+
+/* Efeito sutil ao passar o mouse (opcional) */
+.version-card:hover {
+    background: rgba(0, 74, 153, 0.1);
+    transform: translateY(-1px);
+}
+
     </style>
 </head>
 <body>
@@ -267,11 +306,20 @@
         </div>
     </div>
 
-    <div class="footer-logo">
-        <img src="PagueMenosLogo.png" alt="Pague Menos">
-        <footer>Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
-            <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente oculto.</footer>
-    </div>
+  <div class="footer-logo">
+    <img src="PagueMenosLogo.png" alt="Pague Menos">
+    <footer>
+        Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+        <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente oculto.
+        <br>
+        
+        <div class="version-card">
+            <span class="version-label">Versão</span>
+            <span id="app-version-display">---</span>
+        </div>
+    </footer>
+</div>
+
 
    
 
@@ -405,6 +453,22 @@
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') checkVersion();
     });
+    
+    async function displayVersion() {
+    try {
+        const response = await fetch(`version.json?v=${Date.now()}`);
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('app-version-display').innerText = data.version;
+        }
+    } catch (err) {
+        document.getElementById('app-version-display').innerText = "---";
+    }
+}
+
+// Chame a função logo após o checkVersion() no final do arquivo
+displayVersion();
+
 </script>
 
    
