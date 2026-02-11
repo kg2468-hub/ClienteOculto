@@ -13,50 +13,36 @@
     
     <style>
         :root { 
-    --primary: #004a99; 
-    --accent: #f9b233;
-    --bg: #f4f7f9; 
-    /* Variáveis de suporte ao Modo Escuro */
-    --text-color: #333;
-    --card-bg: #ffffff;
-    --border-color: rgba(0,0,0,0.05);
-}
+            --primary: #004a99; 
+            --accent: #f9b233;
+            --bg: #f4f7f9; 
+        }
 
-/* Quando o Modo Escuro está ativo */
-body.dark-mode {
-    --bg: #121212;
-    --text-color: #ffffff;
-    --card-bg: #1e1e1e;
-    --border-color: rgba(255,255,255,0.1);
-    /* Ajuste opcional: um azul mais profundo para o Modo Escuro */
-    --primary: #0a192f; 
-}
+        * { 
+            box-sizing: border-box; 
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-* { 
-    box-sizing: border-box; 
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body { 
-    font-family: 'Segoe UI', sans-serif; 
-    background: var(--bg); 
-    color: var(--text-color); /* Aplicando cor de texto variável */
-    margin: 0; 
-    padding: 0;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: flex-start;
-    align-items: center;
-    overflow-x: hidden;
-    overflow-y: auto;
-    width: 100vw;
-    height: 100dvh;
-    overscroll-behavior: none;
-    transition: background 0.3s ease, color 0.3s ease; /* Transição suave ao trocar */
-}
-
+      body { font-family: 'Segoe UI',
+        sans-serif;
+        background: var(--bg);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+/* Alterado de space-between para
+        flex-start */
+        justify-content: flex-start;
+        align-items: center;
+        overflow-x: hidden;
+/* overflow-y: auto permite que o usuário role se o teclado ou barra de navegação subir */
+        overflow-y: auto;
+        width: 100vw;
+        height: 100dvh;
+        overscroll-behavior: none;
+    }
 
         /* --- BOTÃO ENGRENAGEM FIXO --- */
         .btn-settings {
@@ -822,7 +808,6 @@ function ajustarFonte() {
 if (localStorage.getItem('dark-mode') === 'true') {
     document.body.classList.add('dark-mode');
 }
-
 
 
 </script>
