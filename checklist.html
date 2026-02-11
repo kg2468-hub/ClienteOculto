@@ -434,6 +434,35 @@
                 display: none !important;
             }
         }
+        
+        /* Card de Versão no Rodapé */
+.version-card {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: rgba(0, 74, 153, 0.05);
+    border: 1px solid rgba(0, 74, 153, 0.1);
+    border-radius: 100px;
+    transition: all 0.3s ease;
+}
+
+.version-label {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+#app-version-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--accent);
+}
+
     </style>
 </head>
 
@@ -511,14 +540,18 @@
         </div>
 
         <div class="footer-logo">
-            <img src="PagueMenosLogo.png" alt="Pague Menos">
-            <footer>
-                Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
-                <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao
-                cliente oculto.
-            </footer>
+    <img src="PagueMenosLogo.png" alt="Pague Menos">
+    <footer>
+        Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+        <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente oculto.
+        <br>
+        <div class="version-card">
+            <span class="version-label">Versão</span>
+            <span id="app-version-display">Carregando...</span>
         </div>
-    </div>
+    </footer>
+</div>
+
 
     <!-- 1️⃣ Bibliotecas externas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -895,6 +928,28 @@
         }
 
         window.onload = montar;
+        
+        async function displayVersion() {
+    try {
+        // O cache: 'no-store' ou o timestamp (?v=...) garante que pegamos a versão real do servidor
+        const response = await fetch(`version.json?v=${Date.now()}`);
+        if (response.ok) {
+            const data = await response.json();
+            const displayElement = document.getElementById('app-version-display');
+            if (displayElement) {
+                displayElement.innerText = data.version;
+            }
+        }
+    } catch (err) {
+        const displayElement = document.getElementById('app-version-display');
+        if (displayElement) displayElement.innerText = "---";
+        console.warn("Não foi possível carregar a versão no rodapé.");
+    }
+}
+
+// Inicializa a exibição da versão
+displayVersion();
+
     </script>
 </body>
 
