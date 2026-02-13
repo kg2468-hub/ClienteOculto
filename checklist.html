@@ -463,10 +463,95 @@
     color: var(--accent);
 }
 
+
+/* --- TELA DE CARREGAMENTO (ESTILO UNIFICADO) --- */
+#loading-screen {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100vw; height: 100dvh;
+    background: #004a99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.logo-container img {
+    width: 90px;
+    height: 90px;
+    border-radius: 22px;
+    object-fit: cover;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    animation: logoFloat 2.5s ease-in-out infinite;
+}
+
+.loading-text {
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.loading-bar-container {
+    width: 160px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.loading-bar-fill {
+    width: 45%;
+    height: 100%;
+    background: #f9b233;
+    border-radius: 10px;
+    animation: progressMove 1.5s infinite ease-in-out;
+}
+
+.loader-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes progressMove {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
+}
+
     </style>
 </head>
 
 <body>
+    
+    <div id="loading-screen">
+    <div class="loader-content">
+        <div class="logo-container">
+            <img src="icone_novo.png" alt="Logo">
+        </div>
+        <p class="loading-text">CARREGANDO SISTEMA</p>
+        <div class="loading-bar-container">
+            <div class="loading-bar-fill"></div>
+        </div>
+    </div>
+</div>
+
 
     <div id="transition-overlay">
         <div class="transition-bar"></div>
@@ -949,6 +1034,29 @@
 
 // Inicializa a exibição da versão
 displayVersion();
+
+/* --- LÓGICA DE FECHAMENTO DO LOADER --- */
+function fecharLoader() {
+    const loader = document.getElementById('loading-screen');
+    if (loader) {
+        loader.classList.add('loader-hidden');
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 600);
+    }
+}
+
+// 1. Fecha quando a página carregar (incluindo bibliotecas JS externas)
+window.addEventListener('load', fecharLoader);
+
+// 2. Plano B: Força o fechamento em 3.5 segundos para evitar travamentos
+setTimeout(fecharLoader, 3500);
+
+// 3. Caso o script seja lido após o carregamento já ter terminado
+if (document.readyState === 'complete') {
+    fecharLoader();
+}
+
 
     </script>
 </body>
