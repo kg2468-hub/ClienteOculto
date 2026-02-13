@@ -25,25 +25,41 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-      body { font-family: 'Segoe UI',
-        sans-serif;
-        background: var(--bg);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-/* Alterado de space-between para
-        flex-start */
-        justify-content: flex-start;
-        align-items: center;
-        overflow-x: hidden;
-/* overflow-y: auto permite que o usuário role se o teclado ou barra de navegação subir */
-        overflow-y: auto;
-        width: 100vw;
-        height: 100dvh;
-        overscroll-behavior: none;
-    }
+      body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 0;
     
+    /* Trava de Layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    
+    /* Dimensões Fixas (Anti-Esticar) */
+    width: 100vw;
+    height: 100dvh;
+    max-width: 100%;
+    max-height: 100dvh;
+    
+    /* Anti-Rolagem e Anti-Zoom */
+    overflow: hidden; 
+    touch-action: pan-x pan-y; /* Permite toques, mas ajuda a evitar zoom pinça indesejado */
+    overscroll-behavior: none;
+    
+    /* Polimento Visual */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    
+    /* Garante que o fundo não "pule" em transições */
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+ 
     
 /* --- LOADER PREMIUM CSS CORRIGIDO --- */
 #loading-screen {
@@ -194,7 +210,7 @@
         .transition-bar:nth-child(even) { transform-origin: right; background: #003a7a; }
         body.page-exit .transition-bar { transform: scaleX(1); }
 
-        .hero h1 { font-size: clamp(32px, 12vw, 48px) !important; }
+
 
         #toast-container {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -210,11 +226,43 @@
 
         .icon-fixo { position: absolute; top: 15px; left: 15px; width: clamp(35px, 10vw, 45px); border-radius: 10px; z-index: 100; }
 
-        .hero {
-            position: relative; width: 100%; background: var(--primary); padding: clamp(60px, 15vh, 100px) 20px clamp(40px, 10vh, 60px) 20px;
-            text-align: center; color: white; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden; perspective: 1000px;
-        }
+.hero {
+    position: relative; 
+    width: 100%; 
+    background: var(--primary); 
+    /* Padding generoso para o título grande e respiro inferior */
+    padding: 75px 20px 65px 20px;
+    text-align: center; 
+    color: white; 
+    border-bottom-left-radius: 45px; 
+    border-bottom-right-radius: 45px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    /* Trava de segurança para não ser esmagado pelo flexbox */
+    flex-shrink: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.hero h1 { 
+    margin: 0; 
+    /* Tamanho imponente e peso máximo */
+    font-size: 42px; 
+    font-weight: 900; 
+    /* Ajuste de entrelinha para fontes grandes não ocuparem espaço vertical extra */
+    line-height: 0.9;
+    letter-spacing: -1px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.hero p { 
+    margin: 10px 0 0 0; 
+    font-size: 13px; 
+    opacity: 0.9; 
+    font-weight: 600;
+    text-transform: uppercase; 
+    /* Espaçamento entre letras para estética "premium" */
+    letter-spacing: 5px; 
+}
 
 /* --- ANIMAÇÃO LUPA: LEITURA LENTA --- */
 .lupa-container {
@@ -284,10 +332,17 @@
 }
 
 
-        .hero h1 { margin: 0; font-size: clamp(24px, 8vw, 32px); font-weight: 800; letter-spacing: 2px; }
-        .hero p { margin: 5px 0 0 0; font-size: clamp(12px, 4vw, 16px); opacity: 0.9; text-transform: uppercase; letter-spacing: clamp(2px, 1vw, 4px); }
+        
 
-        .menu-container { width: 90%; max-width: 450px; margin-top: -30px; z-index: 10; padding-bottom: 20px; }
+      .menu-container {
+    width: 90%;
+    max-width: 450px;
+    margin-top: -25px;
+    /* Reduzido levemente para dar respiro ao texto acima */
+    z-index: 10;
+    padding-bottom: 10px;
+    flex-shrink: 0;
+}
         .main-button {
             background: white; display: flex; align-items: center; padding: clamp(15px, 5vw, 22px); border-radius: 20px;
             text-decoration: none; color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.08); margin-bottom: 15px;
@@ -370,17 +425,18 @@ acima */
 #banner-container {
     width: 90%;
     max-width: 450px;
-    height: 125px;
+    /* Mantém a proporção 16:9 exata baseada na largura */
+    aspect-ratio: 16 / 9;
     margin: 15px auto;
     border-radius: 24px;
-    overflow: hidden; /* Importante para o efeito de andar não sair da borda */
+    overflow: hidden;
     background: #ffffff;
     position: relative;
-    pointer-events: none;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 4px 10px rgba(0, 0, 0, 0.03);
+    flex-shrink: 0;
+    /* Impede que o flexbox amasse o banner */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(0, 74, 153, 0.08);
 }
-
 #banner-progress-bar {
     position: absolute;
     top: 0;
@@ -401,9 +457,9 @@ acima */
 #banner-content img, #banner-content video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Corta as bordas excedentes para não achatar */
+    object-position: center; /* Mantém o foco no meio do banner */
     display: block;
-    transition: transform 0.5s ease;
 }
 
 .fade-out { opacity: 0 !important; }
