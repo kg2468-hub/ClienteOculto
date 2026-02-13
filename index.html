@@ -43,6 +43,80 @@
         height: 100dvh;
         overscroll-behavior: none;
     }
+    
+    
+/* --- LOADER PREMIUM CSS CORRIGIDO --- */
+#loading-screen {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100vw; height: 100dvh;
+    background: #004a99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    transition: opacity 0.5s ease, visibility 0.5s;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.logo-container img {
+    width: 90px;
+    height: 90px;
+    border-radius: 22px; /* Cantos arredondados */
+    object-fit: cover;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    animation: logoFloat 2.5s ease-in-out infinite;
+}
+
+.loading-text {
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.loading-bar-container {
+    width: 160px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.loading-bar-fill {
+    width: 45%;
+    height: 100%;
+    background: #f9b233;
+    border-radius: 10px;
+    animation: progressMove 1.5s infinite ease-in-out;
+}
+
+/* Classe que o JS ativa para sumir com a tela */
+.loader-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes progressMove {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
+}
+
 
         /* --- BOTÃO ENGRENAGEM FIXO --- */
         .btn-settings {
@@ -393,8 +467,18 @@ body.dark-mode footer {
 </head>
 <body>
     
-<div id="update-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 99998;"></div>
-
+<div id="loading-screen">
+    <div class="loader-content">
+        <div class="logo-container">
+            <img src="icone_novo.png" alt="Logo">
+        </div>
+        <p class="loading-text">CARREGANDO SISTEMA</p>
+        <div class="loading-bar-container">
+            <div class="loading-bar-fill"></div>
+        </div>
+    </div>
+</div>
+   
 <div id="update-banner" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: white; z-index: 99999; padding: 30px 20px; border-radius: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; flex-direction: column; align-items: center; gap: 15px; border: none; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
     <div style="background: #f4f7f9; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #004a99; font-size: 32px; margin-bottom: 5px;">
         <i class="fas fa-sync-alt fa-spin"></i>
@@ -676,7 +760,9 @@ function inicializarBanner() {
         'banners/kitressaca.jpg', 
         'banners/app.png',
         'banners/converteMAIS.jpg',
-        'banners/atendimento2.mp4'
+        'banners/atendimento2.mp4',
+        'banners/onyou.jpg'
+        
         
     ];
     
@@ -809,6 +895,30 @@ if (localStorage.getItem('dark-mode') === 'true') {
     document.body.classList.add('dark-mode');
 }
 
+
+
+/* --- LÓGICA DE FECHAMENTO DO LOADER --- */
+function fecharLoader() {
+    const loader = document.getElementById('loading-screen');
+    if (loader) {
+        loader.classList.add('loader-hidden');
+        // Remove do processamento após a transição
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 600);
+    }
+}
+
+// Fecha quando a página carregar totalmente
+window.addEventListener('load', fecharLoader);
+
+// Plano B: Força o fechamento após 3.5 segundos (evita travamento eterno)
+setTimeout(fecharLoader, 3500);
+
+// Se por acaso o script carregar após o evento load
+if (document.readyState === 'complete') {
+    fecharLoader();
+}
 
 </script>
 
