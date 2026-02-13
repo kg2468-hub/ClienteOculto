@@ -26,38 +26,21 @@
         }
 
       body {
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background: var(--bg);
     margin: 0;
     padding: 0;
-    
-    /* Trava de Layout */
+    width: 100vw;
+    height: 100vh; /* Fixa a altura na janela */
+    height: 100dvh; /* Suporte para barras mobile */
+    overflow: hidden; /* Proíbe rolagem */
     display: flex;
     flex-direction: column;
+    justify-content: space-between; /* Empurra o footer para a base */
     align-items: center;
-    justify-content: flex-start;
-    
-    /* Dimensões Fixas (Anti-Esticar) */
-    width: 100vw;
-    height: 100dvh;
-    max-width: 100%;
-    max-height: 100dvh;
-    
-    /* Anti-Rolagem e Anti-Zoom */
-    overflow: hidden; 
-    touch-action: pan-x pan-y; /* Permite toques, mas ajuda a evitar zoom pinça indesejado */
-    overscroll-behavior: none;
-    
-    /* Polimento Visual */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    
-    /* Garante que o fundo não "pule" em transições */
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: fixed; /* Evita que o teclado mobile desloque o layout */
 }
+
 
  
     
@@ -226,22 +209,23 @@
 
         .icon-fixo { position: absolute; top: 15px; left: 15px; width: clamp(35px, 10vw, 45px); border-radius: 10px; z-index: 100; }
 
+
 .hero {
     position: relative; 
     width: 100%; 
     background: var(--primary); 
-    /* Padding generoso para o título grande e respiro inferior */
-    padding: 75px 20px 65px 20px;
+    /* Aumentei o padding superior e reduzi o inferior para equilibrar */
+    padding: 60px 20px 20px 20px; 
     text-align: center; 
     color: white; 
-    border-bottom-left-radius: 45px; 
-    border-bottom-right-radius: 45px; 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    /* Trava de segurança para não ser esmagado pelo flexbox */
+    /* Removido as bordas arredondadas de baixo para o azul descer liso */
+    border-bottom-left-radius: 0px; 
+    border-bottom-right-radius: 0px; 
     flex-shrink: 0;
     z-index: 1;
     overflow: hidden;
 }
+
 
 .hero h1 { 
     margin: 0; 
@@ -334,15 +318,30 @@
 
         
 
-      .menu-container {
+    .menu-container {
+    width: 100%; /* Ocupa a largura total para o azul preencher as laterais */
+    max-width: none; /* Remove restrição para o fundo azul */
+    background: var(--primary); /* Continua o azul do Hero */
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; /* Centraliza os botões horizontalmente */
+    gap: 10px;
+    z-index: 10;
+    /* Aqui criamos o arredondamento final antes do banner */
+    border-bottom-left-radius: 45px;
+    border-bottom-right-radius: 45px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding-bottom: 20px; /* Espaço antes de começar o banner */
+}
+
+/* Ajuste para os botões não ficarem colados na borda da tela */
+.main-button, .secondary-grid {
     width: 90%;
     max-width: 450px;
-    margin-top: -25px;
-    /* Reduzido levemente para dar respiro ao texto acima */
-    z-index: 10;
-    padding-bottom: 10px;
-    flex-shrink: 0;
 }
+
         .main-button {
             background: white; display: flex; align-items: center; padding: clamp(15px, 5vw, 22px); border-radius: 20px;
             text-decoration: none; color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.08); margin-bottom: 15px;
@@ -360,13 +359,14 @@
         .sec-button i { display: block; font-size: clamp(18px, 6vw, 22px); margin-bottom: 8px; color: var(--primary); }
         
          .footer-logo {
-/* Garante que ele sempre fique no fim, mas respeite o espaço dos itens
-acima */
-        margin-top: auto;
-        padding: 20px 0;
-        text-align: center;
-        width: 100%;
-        flex-shrink: 0; /* Impede que o footer seja esmagado */
+    width: 100%;
+    padding: 10px 0;
+    flex-shrink: 0;
+    /* Jamais encolhe ou sai da tela */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg);
 }
 
         .footer-logo img {
@@ -427,6 +427,7 @@ acima */
     max-width: 450px;
     /* Mantém a proporção 16:9 exata baseada na largura */
     aspect-ratio: 16 / 9;
+    margin: 20px auto; /* Aumentado para não colar no arredondado azul */
     margin: 15px auto;
     border-radius: 24px;
     overflow: hidden;
@@ -452,6 +453,8 @@ acima */
     width: 100%;
     height: 100%;
     transition: opacity 0.5s ease-in-out;
+    background: #004a99;
+    /* Fundo sólido enquanto carrega */
 }
 
 #banner-content img, #banner-content video {
@@ -817,7 +820,8 @@ function inicializarBanner() {
         'banners/app.png',
         'banners/converteMAIS.jpg',
         'banners/atendimento2.mp4',
-        'banners/onyou.jpg'
+        'banners/onyou.jpg',
+        'banners/show.png'
         
         
     ];
@@ -856,18 +860,29 @@ function inicializarBanner() {
             container.innerHTML = '';
             let element;
 
-            if (isVideo) {
-                element = document.createElement('video');
-                element.src = file;
-                element.autoplay = true;
-                element.muted = true;
-                element.playsInline = true;
-                
-                element.onloadedmetadata = () => {
-                    animateProgress(element.duration * 1000);
-                };
-                element.onended = playNext;
-            } else {
+            // ... dentro da função playNext()
+if (isVideo) {
+    element = document.createElement('video');
+    element.src = file;
+    element.autoplay = true;
+    element.muted = true;
+    element.playsInline = true;
+    element.setAttribute('preload', 'auto'); // FORÇA O CARREGAMENTO
+
+    // CORREÇÃO: Se o vídeo demorar a carregar metadados, 
+    // definimos uma duração padrão ou tentamos rodar assim que possível
+    element.onloadedmetadata = () => {
+        animateProgress(element.duration * 1000);
+    };
+
+    // Fallback caso o evento metadata demore no GitHub
+    element.oncanplay = () => {
+        element.play();
+    };
+
+    element.onended = playNext;
+}
+ else {
                 element = document.createElement('img');
                 element.src = file;
                 
