@@ -214,16 +214,13 @@
     position: relative; 
     width: 100%; 
     background: var(--primary); 
-    /* Aumentei o padding superior e reduzi o inferior para equilibrar */
-    padding: 60px 20px 20px 20px; 
+    padding: 50px 20px 40px 20px; /* Reduzi para ganhar espaço */
     text-align: center; 
     color: white; 
-    /* Removido as bordas arredondadas de baixo para o azul descer liso */
-    border-bottom-left-radius: 0px; 
-    border-bottom-right-radius: 0px; 
-    flex-shrink: 0;
+    border-bottom-left-radius: 45px; 
+    border-bottom-right-radius: 45px; 
+    flex-shrink: 0; /* Impede que o flexbox amasse o topo */
     z-index: 1;
-    overflow: hidden;
 }
 
 
@@ -319,29 +316,15 @@
         
 
     .menu-container {
-    width: 100%; /* Ocupa a largura total para o azul preencher as laterais */
-    max-width: none; /* Remove restrição para o fundo azul */
-    background: var(--primary); /* Continua o azul do Hero */
-    flex-grow: 1; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    align-items: center; /* Centraliza os botões horizontalmente */
-    gap: 10px;
-    z-index: 10;
-    /* Aqui criamos o arredondamento final antes do banner */
-    border-bottom-left-radius: 45px;
-    border-bottom-right-radius: 45px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    padding-bottom: 20px; /* Espaço antes de começar o banner */
-}
-
-/* Ajuste para os botões não ficarem colados na borda da tela */
-.main-button, .secondary-grid {
     width: 90%;
     max-width: 450px;
+    flex-grow: 1; /* Ocupa o espaço central disponível */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza os botões verticalmente */
+    gap: 10px;
+    z-index: 10;
 }
-
         .main-button {
             background: white; display: flex; align-items: center; padding: clamp(15px, 5vw, 22px); border-radius: 20px;
             text-decoration: none; color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.08); margin-bottom: 15px;
@@ -427,7 +410,6 @@
     max-width: 450px;
     /* Mantém a proporção 16:9 exata baseada na largura */
     aspect-ratio: 16 / 9;
-    margin: 20px auto; /* Aumentado para não colar no arredondado azul */
     margin: 15px auto;
     border-radius: 24px;
     overflow: hidden;
