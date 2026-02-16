@@ -33,15 +33,14 @@
             margin: 0;
             padding: 0;
             width: 100vw;
-            /* Permite que a tela cresça se precisar */
-            min-height: 100dvh;
+            height: 100dvh;
+            /* ← Força a tela a ter exatamente 100% da altura, nem mais, nem menos */
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            /* Permite rolar para baixo se o conteúdo não couber, mas bloqueia pros lados */
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden;
+            /* ← Bloqueia totalmente a rolagem (scroll) */
         }
 
         /* Oculta a barra de rolagem (opcional, para manter visual de app) */
