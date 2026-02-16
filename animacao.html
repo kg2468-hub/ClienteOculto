@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pague Menos - Cliente Oculto</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root { 
+            --primary: #004a99; 
+            --accent: #f9b233; 
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+
+        body { 
+            background: var(--primary); 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden;
+            color: white;
+        }
+
+        .splash-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+        }
+
+        /* Container do Icone com animação bounce */
+        .icon-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin-bottom: 30px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .main-icon {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(8px 8px 0px rgba(0,0,0,0.2));
+        }
+
+        /* Selo de check que aparece sobre o ícone */
+        .cartoon-check {
+            position: absolute;
+            background: var(--accent);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 5px solid #b37700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            bottom: 5px;
+            right: 5px;
+            transform: scale(0);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.8s;
+        }
+
+        .cartoon-check i {
+            color: white;
+            font-size: 22px;
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--white);
+            text-shadow: 4px 4px 0px #003366;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards 0.3s;
+        }
+
+        .brand-subtitle {
+            background: var(--accent);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            box-shadow: 3px 3px 0px #b37700;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards 0.5s;
+        }
+
+        .loader-wrapper {
+            width: 180px;
+            height: 14px;
+            background: #003366;
+            border-radius: 20px;
+            margin-top: 45px;
+            padding: 3px;
+            border: 2px solid #00254a;
+        }
+
+        .loader-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--accent);
+            border-radius: 20px;
+            animation: loading 3s ease-in-out forwards;
+        }
+
+        /* Keyframes */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes loading {
+            to { width: 100%; }
+        }
+
+        .fade-out {
+            animation: fadeOutScreen 0.6s ease forwards;
+        }
+
+        @keyframes fadeOutScreen {
+            to { opacity: 0; transform: scale(0.9); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-container" id="splash">
+        <div class="icon-wrapper">
+            <img src="icone_novo.png" alt="Logo" class="main-icon">
+            <div class="cartoon-check">
+                <i class="fas fa-check"></i>
+            </div>
+        </div>
+
+        <div class="brand-title">PAGUE MENOS</div>
+        <div class="brand-subtitle">CLIENTE OCULTO</div>
+
+        <div class="loader-wrapper">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                splash.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    // Redireciona após a animação
+                    window.location.href = 'checklist.html'; 
+                }, 600);
+            }, 3500); 
+        });
+    </script>
+</body>
+</html>

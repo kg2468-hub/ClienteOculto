@@ -1,0 +1,6 @@
+const perguntas = {
+        "SALÃO": ["Cliente foi abordado no salão", "Havia Clientes aguardando na fila enquanto colaborador organizava prateleira", "Colaborador foi atencioso", "Buscou entender a necessidade do cliente", "Foi acompanhado até a seção"],
+        "BALCÃO": ["Contato visual na fila", "Saudação Seja bem-vindo à Pague Menos", "Apresentou-se pelo nome", "Solicitou cadastro", "Atualizou cadastro", "Chamou cliente pelo nome", "Destacou descontos e vantagens", "Entregou cupom DSM e explicou", "Informou programas de fidelidade", "Informou Medalha do cliente", "Ofertou Clinicfarma", "Soube responder sobre medicamentos", "Atencioso, empático e cordial", "Ofertou Produto Foco (Prot Solar Dauf Kit)", "Ofertou Super Descontos"],
+        "CAIXA": ["Solicitou/bipou cupom do balcão", "Avaliação do Atendômetro", "Destacou desconto da compra", "Ofereceu Super Troco", "Ofertou cupom por e-mail", "Pagamento sem trava/lentidão", "Finalizou com Conte sempre com a Pague Menos", "Atencioso e cordial", "Acompanhou até a saída do caixa", "Ofertou produto Foco", "Ofertou Super Descontos", "Ofertou aumento UVC (Cliente crônico)"],
+        "PERGUNTAS EXTRAS": ["Teste"]
+    };

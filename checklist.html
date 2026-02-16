@@ -59,22 +59,47 @@
             transform: scaleX(1);
         }
 
-        /* Forçar Tema Claro Incondicionalmente */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: var(--bg) !important;
-                color: #333 !important;
-            }
+        /* --- MODO ESCURO DO CHECKLIST --- */
+        body.dark-mode {
+            --bg: #121212;
+            --primary: #0a192f;
+            color: #e0e0e0;
+        }
 
-            .card {
-                background: white !important;
-                color: #333 !important;
-            }
+        body.dark-mode .card,
+        body.dark-mode input,
+        body.dark-mode #results {
+            background: #1e1e1e !important;
+            color: #fff !important;
+            border-color: #333 !important;
+        }
 
-            input {
-                background: white !important;
-                color: #333 !important;
-            }
+        body.dark-mode .section-title {
+            background: #2a2a2a;
+            color: var(--accent);
+        }
+
+        body.dark-mode .modal-content {
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        body.dark-mode .modal-question-box {
+            background: #2a2a2a;
+            color: #ccc;
+            border-left-color: var(--accent);
+        }
+
+        body.dark-mode .btn-voltar {
+            background: #1e1e1e;
+            color: #fff;
+            border: 1px solid #333;
+        }
+
+        /* Badge de Pontos para Modo Escuro */
+        body.dark-mode .badge-pontos {
+            background: rgba(249, 178, 51, 0.2);
+            color: var(--accent);
         }
 
         /* Permite seleção apenas nos inputs */
@@ -97,7 +122,7 @@
             overflow-x: hidden;
             width: 100%;
             overscroll-behavior: none;
-        
+
         }
 
         h1 {
@@ -108,49 +133,54 @@
         }
 
         /* Botão Voltar */
-       .btn-voltar {
-    position: fixed; /* Fixa o botão na tela mesmo ao rolar */
-    top: 15px;
-    right: 15px;
-    background: white; /* Fundo branco para alto contraste */
-    color: var(--primary); /* Texto na cor azul do seu sistema */
-    border: none;
-    padding: 10px 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    z-index: 2000; /* Acima de quase tudo, menos do banner de update */
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Sombra para dar profundidade */
-    transition: transform 0.2s active;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+        .btn-voltar {
+            position: fixed;
+            top: 15px;
+            right: 15px;
 
-/* Efeito visual ao tocar/clicar */
-.btn-voltar:active {
-    transform: scale(0.95);
-    background: #f0f4f8;
-}
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 14px;
 
-/* Ajuste opcional para ícone */
-.btn-voltar i {
-    font-size: 16px;
-}
+            padding: 10px 16px;
+            min-height: 35px;
+
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            cursor: pointer;
+            z-index: 2000;
+        }
+
+        /* Efeito visual ao tocar/clicar */
+        .btn-voltar:active {
+            transform: scale(0.95);
+            background: #f0f4f8;
+        }
+
+        /* Ajuste opcional para ícone */
+        .btn-voltar i {
+            font-size: 16px;
+        }
 
 
         .logo-fixa {
             position: absolute;
             top: 15px;
             left: 15px;
-            width: clamp(35px, 10vw, 45px);
+            width: clamp(45px, 12vw, 60px);
             height: auto;
             object-fit: cover;
             z-index: 1000;
-            border-radius: 10px;
         }
 
         .container {
@@ -247,6 +277,21 @@
         .item.resp-nao {
             background-image: linear-gradient(to left, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.1));
             background-size: 100% 100%;
+        }
+
+        /* Estilo da Etiqueta de Pontuação */
+        .badge-pontos {
+            display: inline-block;
+            font-size: 10px;
+            background: var(--accent);
+            color: #6a4600;
+            padding: 3px 6px;
+            border-radius: 6px;
+            margin-left: 6px;
+            font-weight: 800;
+            vertical-align: middle;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btns {
@@ -434,123 +479,136 @@
                 display: none !important;
             }
         }
-        
+
         /* Card de Versão no Rodapé */
-.version-card {
-    margin-top: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    background: rgba(0, 74, 153, 0.05);
-    border: 1px solid rgba(0, 74, 153, 0.1);
-    border-radius: 100px;
-    transition: all 0.3s ease;
-}
+        .version-card {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(0, 74, 153, 0.05);
+            border: 1px solid rgba(0, 74, 153, 0.1);
+            border-radius: 100px;
+            transition: all 0.3s ease;
+        }
 
-.version-label {
-    font-size: 9px;
-    font-weight: 800;
-    color: var(--primary);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-}
+        .version-label {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
 
-#app-version-display {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 11px;
-    font-weight: bold;
-    color: var(--accent);
-}
+        #app-version-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent);
+        }
 
 
-/* --- TELA DE CARREGAMENTO (ESTILO UNIFICADO) --- */
-#loading-screen {
-    position: fixed;
-    top: 0; left: 0; 
-    width: 100vw; height: 100dvh;
-    background: #004a99;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100000;
-    transition: opacity 0.5s ease, visibility 0.5s;
-}
+        /* --- TELA DE CARREGAMENTO (ESTILO UNIFICADO) --- */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: #004a99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
 
-.loader-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-}
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
 
-.logo-container img {
-    width: 90px;
-    height: 90px;
-    border-radius: 22px;
-    object-fit: cover;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    animation: logoFloat 2.5s ease-in-out infinite;
-}
+        .logo-container img {
+            width: 90px;
+            height: 90px;
+            border-radius: 22px;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            animation: logoFloat 2.5s ease-in-out infinite;
+        }
 
-.loading-text {
-    color: white;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 3px;
-    margin: 0;
-    opacity: 0.8;
-}
+        .loading-text {
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin: 0;
+            opacity: 0.8;
+        }
 
-.loading-bar-container {
-    width: 160px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-}
+        .loading-bar-container {
+            width: 160px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
 
-.loading-bar-fill {
-    width: 45%;
-    height: 100%;
-    background: #f9b233;
-    border-radius: 10px;
-    animation: progressMove 1.5s infinite ease-in-out;
-}
+        .loading-bar-fill {
+            width: 45%;
+            height: 100%;
+            background: #f9b233;
+            border-radius: 10px;
+            animation: progressMove 1.5s infinite ease-in-out;
+        }
 
-.loader-hidden {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
+        .loader-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
 
-@keyframes logoFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
+        @keyframes logoFloat {
 
-@keyframes progressMove {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(250%); }
-}
+            0%,
+            100% {
+                transform: translateY(0);
+            }
 
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes progressMove {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(250%);
+            }
+        }
     </style>
 </head>
 
 <body>
-    
+
     <div id="loading-screen">
-    <div class="loader-content">
-        <div class="logo-container">
-            <img src="icone_novo.png" alt="Logo">
-        </div>
-        <p class="loading-text">CARREGANDO SISTEMA</p>
-        <div class="loading-bar-container">
-            <div class="loading-bar-fill"></div>
+        <div class="loader-content">
+            <div class="logo-container">
+                <img src="icone_novo.png" alt="Logo">
+            </div>
+            <p class="loading-text">CARREGANDO SISTEMA</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar-fill"></div>
+            </div>
         </div>
     </div>
-</div>
 
 
     <div id="transition-overlay">
@@ -587,7 +645,7 @@
             <h3 id="alert-title" style="color: var(--danger);">⚠️ Atenção</h3>
             <p id="alert-msg"></p>
             <button class="btn-fin" style="margin: 10px 0 0; padding: 15px; width: 100%;"
-                onclick="document.getElementById('modal-alert').style.display='none'">ENTENDI</button>
+                onclick="fecharAlerta()">ENTENDI</button>
         </div>
     </div>
 
@@ -608,8 +666,7 @@
 
         <div id="checklist-area"></div>
 
-        <button class="btn-fin" onclick="finalizar()">GERAR RELATÓRIO FINAL</button>
-
+        <button id="btn-gerar-relatorio" class="btn-fin" onclick="finalizar()">GERAR RELATÓRIO FINAL</button>
         <div id="results">
             <h3 id="score" style="text-align:center; color: var(--primary); margin: 0 0 15px 0;"></h3>
             <pre id="relatorio"></pre>
@@ -625,440 +682,558 @@
         </div>
 
         <div class="footer-logo">
-    <img src="PagueMenosLogo.png" alt="Pague Menos">
-    <footer>
-        Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
-        <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente oculto.
-        <br>
-        <div class="version-card">
-            <span class="version-label">Versão</span>
-            <span id="app-version-display">Carregando...</span>
+            <img src="PagueMenosLogo.png" alt="Pague Menos">
+            <footer>
+                Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+                <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao
+                cliente oculto.
+                <br>
+                <div class="version-card">
+                    <span class="version-label">Versão</span>
+                    <span id="app-version-display">Carregando...</span>
+                </div>
+            </footer>
         </div>
-    </footer>
-</div>
 
 
-    <!-- 1️⃣ Bibliotecas externas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-    <script>
+        <script>
 
+            // 1. Lê a memória instantaneamente ao abrir a tela (FECHA O BLOCO AQUI!)
+            if (localStorage.getItem('dark-mode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
 
+            // 2. Limpa a animação de saída caso o usuário retorne pelo botão de voltar do celular (bfcache)
+            window.addEventListener('pageshow', function (event) {
+                if (document.body.classList.contains('page-exit')) {
+                    document.body.classList.remove('page-exit');
+                }
+            });
 
-        // Empurra um estado falso no histórico
-        history.pushState(null, null, location.href);
-
-        window.addEventListener("popstate", function () {
-            // Sempre volta pro mesmo estado
+            // 3. Empurra um estado falso no histórico para evitar saída acidental
             history.pushState(null, null, location.href);
-        });
+            window.addEventListener("popstate", function () {
+                history.pushState(null, null, location.href);
+            });
 
-        // Função para voltar ao index com animação
-        function voltarInicio() {
-            document.body.classList.add('page-exit');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 450);
-        }
-
-        document.addEventListener('wheel', function (e) {
-            if (e.ctrlKey) e.preventDefault();
-        }, { passive: false });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && (e.keyCode === 61 || e.keyCode === 107 || e.keyCode === 173 || e.keyCode === 109 || e.keyCode === 187 || e.keyCode === 189)) {
-                e.preventDefault();
+            // 4. Função para voltar ao index com animação
+            function voltarInicio() {
+                document.body.classList.add('page-exit');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 450);
             }
-        });
 
-        const perguntas = {
-            "SALÃO": ["Abordou cliente no salão?", "O colaborador interrompeu as atividades administrativas para priorizar o atendimento ao cliente?", "Colaborador se apresentou pelo nome?", "O colaborador foi atencioso, empático e cordial?", "Buscou entender a necessidade do cliente?", "Acompanhou o cliente até a seção?"],
-            "BALCÃO": ["O colaborador se apresentou pelo nome?", "Solicitou o cadastro?", "Atualizou cadastro?", "Chamou o cliente pelo nome?", "Destacou descontos e vantagens, como promoções e/ou parcerias?", "Entregou cupom DSM explicando o que se tratava?", "Informou sobre programa de fidelidade?", "Informou Medalha do cliente?", "Ofertou Clinicfarma?", "Soube responder questionamento sobre medicamento/produto?", "Colaborador foi atencioso, empático e cordial?"],
-            "CAIXA": ["Solicitou CPF ou bipou cupom impresso no balcão?", "Solicitou a valiação do Atendômetro?", "Destacou desconto da compra?", "Perguntou as formas de pagamento? (PIX, DINHEIRO OU DÉBITO)", "Ofereceu Super Troco? (DOAÇÃO)", "Ofertou envio do cupom por e-mail?", "Pagamento ocorreu sem trava/lentidão?", "Finalizou com CONTE SEMPRE COM A PAGUE MENOS ?", "O colaborador foi atencioso, empático e cordial?", "Acompanhou o cliente até a saída ou saiu da área do caixa para entregar as compras?"],
-            "PERGUNTAS EXTRAS": ["Saudação Seja bem-vindo à Pague Menos", "Ofertou produto Foco?", "Ofertou aumento UVC (Cliente crônico)", "Ofertou produtos do Super Descontos?", "Organizou a fila de atendimento?"]
-        };
+            // Bloqueio de zoom
+            document.addEventListener('wheel', function (e) {
+                if (e.ctrlKey) e.preventDefault();
+            }, { passive: false });
 
-        let respostas = {};
-        let horaInicio = "";
-        let itemPendente = { id: null, valor: null };
-        let relatorioObj = null;
+            document.addEventListener('keydown', function (e) {
+                if (e.ctrlKey && (e.keyCode === 61 || e.keyCode === 107 || e.keyCode === 173 || e.keyCode === 109 || e.keyCode === 187 || e.keyCode === 189)) {
+                    e.preventDefault();
+                }
+            });
 
-        function montar() {
-            const agora = new Date();
-            horaInicio = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            const area = document.getElementById('checklist-area');
-            let html = '';
-            for (let secao in perguntas) {
-                html += `<div class="card"><div class="section-title">${secao}</div>`;
-                perguntas[secao].forEach((p, i) => {
-                    const id = secao + "-" + i;
-                    html += `<div class="item" id="item-${id}">
-                    <div id="text-${id}" style="font-size:15px; margin-bottom:12px; font-weight:500; color:#333;">${p}</div>
-                    <div class="btns">
-                        <button class="btn" id="y-${id}" onclick="tentarMarcar('${id}', 1)">SIM ✅</button>
-                        <button class="btn" id="n-${id}" onclick="tentarMarcar('${id}', 0)">NÃO ❌</button>
-                    </div>
-                </div>`;
-                });
-                html += `</div>`;
-            }
-            area.innerHTML = html;
-        }
-
-        function tentarMarcar(id, valor) {
-            if (respostas[id] === valor) return;
-            if (respostas[id] !== undefined) {
-                itemPendente = { id, valor };
-                document.getElementById('modal-new-choice').innerText = valor === 1 ? "SIM ✅" : "NÃO ❌";
-                document.getElementById('modal-question-text').innerText = document.getElementById('text-' + id).innerText;
-                document.getElementById('modal-confirm').style.display = 'flex';
-            } else {
-                executarMarcacao(id, valor);
-            }
-        }
-
-        function fecharModalConfirm(confirmado) {
-            if (confirmado) executarMarcacao(itemPendente.id, itemPendente.valor);
-            document.getElementById('modal-confirm').style.display = 'none';
-        }
-
-        function executarMarcacao(id, valor) {
-            respostas[id] = valor;
-            const itemDiv = document.getElementById("item-" + id);
-            document.getElementById("y-" + id).className = "btn";
-            document.getElementById("n-" + id).className = "btn";
-            itemDiv.classList.remove("resp-sim", "resp-nao", "respondido");
-            void itemDiv.offsetWidth;
-            itemDiv.classList.add("respondido");
-            if (valor === 1) {
-                document.getElementById("y-" + id).classList.add("active-yes");
-                itemDiv.classList.add("resp-sim");
-            } else {
-                document.getElementById("n-" + id).classList.add("active-no");
-                itemDiv.classList.add("resp-nao");
-            }
-        }
-
-        function showAlert(msg) {
-            document.getElementById('alert-msg').innerText = msg;
-            document.getElementById('modal-alert').style.display = 'flex';
-        }
-
-        function finalizar() {
-            const nome = document.getElementById('nome').value.trim();
-            const matri = document.getElementById('matri').value.trim();
-            const total = Object.values(perguntas).flat().length;
-            const respondidas = Object.keys(respostas).length;
-
-            if (!nome) return showAlert("Informe o nome do colaborador.");
-            if (!matri) return showAlert("Informe a matrícula.");
-            if (respondidas < total) return showAlert(`Responda as ${total - respondidas} perguntas restantes.`);
-
-            const agora = new Date();
-            let acertos = 0;
-            let rel = "*AVALIAÇÃO CLIENTE OCULTO - PAGUE MENOS*\n--------------------------------\n";
-            rel += `👤 *Colaborador:* ${nome}\n🆔 *Matrícula:* ${matri}\n📅 *Data:* ${agora.toLocaleDateString('pt-BR')}\n⏰ *Início:* ${horaInicio} | *Fim:* ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}\n--------------------------------\n`;
-
-            for (let secao in perguntas) {
-                rel += `\n🔹 *${secao}*`;
-                perguntas[secao].forEach((p, i) => {
-                    const r = respostas[secao + "-" + i] === 1;
-                    if (r) acertos++;
-                    rel += `\n${r ? "✅" : "❌"} ${p}`;
-                });
-                rel += "\n";
-            }
-            const nota = ((acertos / total) * 100).toFixed(0);
-            rel += `\n--------------------------------\n📊 *DESEMPENHO FINAL: ${nota}%*\n--------------------------------\n_Gerado Por Erik Henrique - 126841_`;
-
-            document.getElementById('relatorio').innerText = rel;
-            document.getElementById('score').innerText = "NOTA: " + nota + "%";
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-
-
-            // ===== OBJETO BASE DO RELATÓRIO (PDF / EXCEL) =====
-            relatorioObj = {
-                colaborador: nome,
-                matricula: matri,
-                data: agora.toLocaleDateString('pt-BR'),
-                inicio: horaInicio,
-                fim: agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                nota,
-                secoes: []
+            // --- DADOS DO CHECKLIST (AGORA COM PONTOS) ---
+            // Altere o valor de "pontos" para a nota real de cada pergunta. Use 0 para perguntas que não pontuam.
+            const perguntas = {
+                "SALÃO": [
+                    { texto: "Abordou cliente no salão?", pontos: 3 },
+                    { texto: "O colaborador interrompeu as atividades administrativas para priorizar o atendimento ao cliente?", pontos: 3 },
+                    { texto: "Colaborador se apresentou pelo nome?", pontos: 3 },
+                    { texto: "O colaborador foi atencioso, empático e cordial?", pontos: 3 },
+                    { texto: "Buscou entender a necessidade do cliente?", pontos: 2 },
+                    { texto: "Acompanhou o cliente até a seção?", pontos: 2 }
+                ],
+                "BALCÃO": [
+                    { texto: "O colaborador se apresentou pelo nome?", pontos: 2 },
+                    { texto: "Solicitou o cadastro?", pontos: 3 },
+                    { texto: "Atualizou cadastro?", pontos: 1 },
+                    { texto: "Chamou o cliente pelo nome?", pontos: 3 },
+                    { texto: "Destacou descontos e vantagens, como promoções e/ou parcerias?", pontos: 3 },
+                    { texto: "Entregou cupom DSM explicando o que se tratava?", pontos: 2 },
+                    { texto: "Informou sobre programa de fidelidade?", pontos: 2 },
+                    { texto: "Informou Medalha do cliente?", pontos: 1 },
+                    { texto: "Ofertou Clinicfarma?", pontos: 0 },
+                    { texto: "Soube responder questionamento sobre medicamento/produto?", pontos: 2 },
+                    { texto: "Colaborador foi atencioso, empático e cordial?", pontos: 3 }
+                ],
+                "CAIXA": [
+                    { texto: "Solicitou CPF ou bipou cupom impresso no balcão?", pontos: 3 },
+                    { texto: "Solicitou a avaliação do Atendômetro?", pontos: 1 },
+                    { texto: "Destacou desconto da compra?", pontos: 3 },
+                    { texto: "Perguntou as formas de pagamento? (PIX, DINHEIRO OU DÉBITO)", pontos: 1 },
+                    { texto: "Ofereceu Super Troco? (DOAÇÃO)", pontos: 0 },
+                    { texto: "Ofertou envio do cupom por e-mail?", pontos: 1 },
+                    { texto: "Pagamento ocorreu sem trava/lentidão?", pontos: 1 },
+                    { texto: "Finalizou com CONTE SEMPRE COM A PAGUE MENOS ?", pontos: 3 },
+                    { texto: "O colaborador foi atencioso, empático e cordial?", pontos: 3 },
+                    { texto: "Acompanhou o cliente até a saída ou saiu da área do caixa para entregar as compras?", pontos: 1 }
+                ],
+                "PERGUNTAS EXTRAS": [
+                    { texto: "Saudação Seja bem-vindo à Pague Menos", pontos: 0 },
+                    { texto: "Ofertou produto Foco?", pontos: 0 },
+                    { texto: "Ofertou aumento UVC (Cliente crônico)", pontos: 0 },
+                    { texto: "Ofertou produtos do Super Descontos?", pontos: 0 },
+                    { texto: "Organizou a fila de atendimento?", pontos: 0 }
+                ]
             };
 
-            for (let secao in perguntas) {
-                const itens = perguntas[secao].map((p, i) => ({
-                    pergunta: p,
-                    resposta: respostas[secao + "-" + i] === 1 ? "SIM" : "NÃO"
-                }));
-                relatorioObj.secoes.push({ nome: secao, itens });
-            }
-        }
+            let respostas = {};
+            let horaInicio = "";
+            let itemPendente = { id: null, valor: null };
+            let relatorioObj = null;
+            let elementoFocoPendente = null; // Guarda onde a tela deve rolar
+            let totalPerguntasGeral = 0;     // Guarda o total de perguntas
 
-        function copiar() {
-            navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
-            const toast = document.getElementById('toast');
-            toast.innerText = "📋 Relatório copiado!";
-            toast.style.display = "block";
-            setTimeout(() => toast.style.display = "none", 2000);
-        }
+            function montar() {
+                const agora = new Date();
+                horaInicio = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                const area = document.getElementById('checklist-area');
+                let html = '';
+                totalPerguntasGeral = 0;
 
-        function gerarPDF() {
-            if (!relatorioObj) {
-                alert("Gere o relatório antes de salvar o PDF.");
-                return;
-            }
+                for (let secao in perguntas) {
+                    html += `<div class="card"><div class="section-title">${secao}</div>`;
+                    perguntas[secao].forEach((p, i) => {
+                        totalPerguntasGeral++;
+                        const id = secao + "-" + i;
 
-            const logo = new Image();
-            logo.src = "PagueMenosLogo.png";
+                        // Etiqueta de pontos
+                        const badgeHTML = p.pontos > 0 ? `<span class="badge-pontos">${p.pontos} pts</span>` : ``;
 
-            logo.onload = function () {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF("p", "mm", "a4");
-
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const pageHeight = doc.internal.pageSize.getHeight();
-
-                const marginX = 10;
-                const topMargin = 10;
-                const bottomMargin = 10;
-
-                const usableWidth = pageWidth - marginX * 2;
-                const usableHeight = pageHeight - topMargin - bottomMargin;
-
-                let baseFont = 8.5;
-                let lineHeight = 3.6;
-
-                function calcularAltura(fontSize) {
-                    doc.setFontSize(fontSize);
-                    let h = 0;
-
-                    h += 12; // cabeçalho
-                    h += 16; // identificação
-                    h += 9;  // nota
-
-                    relatorioObj.secoes.forEach(secao => {
-                        h += 7;
-                        secao.itens.forEach(item => {
-                            const linhas = doc.splitTextToSize(
-                                item.pergunta,
-                                usableWidth - 24
-                            );
-                            h += linhas.length * (fontSize * 0.42) + 2;
-                        });
-                        h += 3;
+                        html += `<div class="item" id="item-${id}">
+                        <div id="text-${id}" style="font-size:15px; margin-bottom:12px; font-weight:500;">
+                            ${p.texto} ${badgeHTML}
+                        </div>
+                        <div class="btns">
+                            <button class="btn" id="y-${id}" onclick="tentarMarcar('${id}', 1)">SIM ✅</button>
+                            <button class="btn" id="n-${id}" onclick="tentarMarcar('${id}', 0)">NÃO ❌</button>
+                        </div>
+                    </div>`;
                     });
+                    html += `</div>`;
+                }
+                area.innerHTML = html;
+            }
 
-                    return h;
+            function tentarMarcar(id, valor) {
+                if (respostas[id] === valor) return;
+                if (respostas[id] !== undefined) {
+                    itemPendente = { id, valor };
+                    document.getElementById('modal-new-choice').innerText = valor === 1 ? "SIM ✅" : "NÃO ❌";
+                    // Extrai o texto limpo sem o HTML do badge
+                    let textoLimpo = document.getElementById('text-' + id).innerText;
+                    document.getElementById('modal-question-text').innerText = textoLimpo;
+                    document.getElementById('modal-confirm').style.display = 'flex';
+                } else {
+                    executarMarcacao(id, valor);
+                }
+            }
+
+            function fecharModalConfirm(confirmado) {
+                if (confirmado) executarMarcacao(itemPendente.id, itemPendente.valor);
+                document.getElementById('modal-confirm').style.display = 'none';
+            }
+
+            function executarMarcacao(id, valor) {
+                respostas[id] = valor;
+                const itemDiv = document.getElementById("item-" + id);
+                document.getElementById("y-" + id).className = "btn";
+                document.getElementById("n-" + id).className = "btn";
+                itemDiv.classList.remove("resp-sim", "resp-nao", "respondido");
+                void itemDiv.offsetWidth;
+                itemDiv.classList.add("respondido");
+                if (valor === 1) {
+                    document.getElementById("y-" + id).classList.add("active-yes");
+                    itemDiv.classList.add("resp-sim");
+                } else {
+                    document.getElementById("n-" + id).classList.add("active-no");
+                    itemDiv.classList.add("resp-nao");
                 }
 
-                while (calcularAltura(baseFont) > usableHeight && baseFont > 6.5) {
-                    baseFont -= 0.3;
+                // Se respondeu a última pergunta, rola para o botão de finalizar
+                if (Object.keys(respostas).length === totalPerguntasGeral) {
+                    setTimeout(() => {
+                        document.getElementById('btn-gerar-relatorio').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 400);
+                }
+            }
+
+            function showAlert(msg) {
+                document.getElementById('alert-msg').innerText = msg;
+                document.getElementById('modal-alert').style.display = 'flex';
+            }
+
+            function fecharAlerta() {
+                document.getElementById('modal-alert').style.display = 'none';
+
+                // Se houver algo pendente gravado, rola até ele
+                if (elementoFocoPendente) {
+                    setTimeout(() => {
+                        elementoFocoPendente.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Se for campo de texto (Nome/Matrícula), já abre o teclado
+                        if (elementoFocoPendente.tagName === 'INPUT') {
+                            elementoFocoPendente.focus();
+                        }
+                        elementoFocoPendente = null;
+                    }, 300);
+                }
+            }
+
+            function finalizar() {
+                const inputNome = document.getElementById('nome');
+                const inputMatri = document.getElementById('matri');
+                const nome = inputNome.value.trim();
+                const matri = inputMatri.value.trim();
+                const respondidas = Object.keys(respostas).length;
+
+                if (!nome) {
+                    elementoFocoPendente = inputNome;
+                    return showAlert("Informe o nome do colaborador.");
                 }
 
-                doc.setFontSize(baseFont);
-                lineHeight = baseFont * 0.42;
+                if (!matri) {
+                    elementoFocoPendente = inputMatri;
+                    return showAlert("Informe a matrícula.");
+                }
 
-                let y = topMargin;
+                if (respondidas < totalPerguntasGeral) {
+                    for (let secao in perguntas) {
+                        for (let i = 0; i < perguntas[secao].length; i++) {
+                            const id = secao + "-" + i;
+                            if (respostas[id] === undefined) {
+                                elementoFocoPendente = document.getElementById('item-' + id);
+                                return showAlert(`Responda as ${totalPerguntasGeral - respondidas} perguntas restantes.`);
+                            }
+                        }
+                    }
+                }
 
-                /* ================= CABEÇALHO ================= */
-                doc.setFillColor(0, 74, 153);
-                doc.rect(marginX, y, usableWidth, 10, "F");
+                const agora = new Date();
+                let acertosDeSim = 0;
 
-                doc.setTextColor(255);
-                doc.setFontSize(baseFont + 4);
-                doc.setFont(undefined, "bold");
-                doc.text(
-                    "RELATÓRIO DE AVALIAÇÃO - CLIENTE OCULTO",
-                    pageWidth / 2,
-                    y + 7,
-                    { align: "center" }
-                );
+                // ==========================================
+                // ⚙️ CONFIGURAÇÃO DOS PONTOS OCULTOS
+                // ==========================================
+                // Defina aqui a pontuação das perguntas que NÃO estão no checklist
+                let pontosOcultosPossiveis = 45; // Quantos pontos as perguntas ocultas valem no total
+                let pontosOcultosObtidos = 45;   // Quantos pontos o colaborador ganha automaticamente nelas
 
-                y += 13;
-                doc.setTextColor(0);
-                doc.setFontSize(baseFont);
-                doc.setFont(undefined, "normal");
+                // Iniciamos a contagem já com os pontos ocultos
+                let pontosObtidos = pontosOcultosObtidos;
+                let totalPontosPossiveis = pontosOcultosPossiveis;
+                // ==========================================
 
-                /* ================= IDENTIFICAÇÃO COM LOGO ================= */
-                const boxHeight = 16;
-                doc.rect(marginX, y, usableWidth, boxHeight);
+                let rel = "*AVALIAÇÃO CLIENTE OCULTO - PAGUE MENOS*\n--------------------------------\n";
+                rel += `👤 *Colaborador:* ${nome}\n🆔 *Matrícula:* ${matri}\n📅 *Data:* ${agora.toLocaleDateString('pt-BR')}\n⏰ *Início:* ${horaInicio} | *Fim:* ${agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}\n--------------------------------\n`;
 
-                // Texto à esquerda
-                doc.setFont(undefined, "bold");
-                doc.text(`Colaborador: ${relatorioObj.colaborador}`, marginX + 2, y + 6);
-                doc.text(`Matrícula: ${relatorioObj.matricula}`, marginX + 2, y + 11);
+                for (let secao in perguntas) {
+                    rel += `\n🔹 *${secao}*`;
+                    perguntas[secao].forEach((p, i) => {
+                        const r = respostas[secao + "-" + i] === 1;
+                        totalPontosPossiveis += p.pontos;
 
-                doc.setFont(undefined, "normal");
-                doc.text(`Data: ${relatorioObj.data}`, marginX + 80, y + 6);
-                doc.text(`Horário: ${relatorioObj.inicio} às ${relatorioObj.fim}`, marginX + 80, y + 11);
-
-                // Logo à direita (discreto)
-                const logoWidth = 24;
-                const logoHeight = 10;
-                const logoX = marginX + usableWidth - logoWidth - 3;
-                const logoY = y + (boxHeight - logoHeight) / 2;
-
-                doc.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight);
-
-                y += boxHeight + 4;
-
-                /* ================= NOTA FINAL ================= */
-                doc.setFillColor(240, 244, 248);
-                doc.rect(marginX, y, usableWidth, 9, "F");
-                doc.rect(marginX, y, usableWidth, 9);
-
-                doc.setFontSize(baseFont + 2);
-                doc.setFont(undefined, "bold");
-                doc.text(
-                    `DESEMPENHO FINAL: ${relatorioObj.nota}%`,
-                    pageWidth / 2,
-                    y + 6.5,
-                    { align: "center" }
-                );
-
-                y += 12;
-                doc.setFontSize(baseFont);
-                doc.setFont(undefined, "normal");
-
-                /* ================= SEÇÕES ================= */
-                relatorioObj.secoes.forEach(secao => {
-                    doc.setFillColor(230, 236, 242);
-                    doc.rect(marginX, y, usableWidth, 6, "F");
-                    doc.rect(marginX, y, usableWidth, 6);
-
-                    doc.setFont(undefined, "bold");
-                    doc.setTextColor(0);
-                    doc.text(secao.nome, marginX + 2, y + 4.5);
-
-                    y += 8;
-                    doc.setFont(undefined, "normal");
-
-                    secao.itens.forEach(item => {
-                        const linhas = doc.splitTextToSize(
-                            item.pergunta,
-                            usableWidth - 24
-                        );
-
-                        const altura = linhas.length * lineHeight + 2;
-                        const isNao = item.resposta === "NÃO";
-
-                        if (isNao) {
-                            doc.setFillColor(40, 40, 40);
-                            doc.setDrawColor(255, 255, 255);
-                            doc.rect(marginX, y, usableWidth, altura, "FD");
-                            doc.setTextColor(255);
-                        } else {
-                            doc.setDrawColor(0);
-                            doc.setFillColor(255, 255, 255);
-                            doc.rect(marginX, y, usableWidth, altura);
-                            doc.setTextColor(0);
+                        if (r) {
+                            acertosDeSim++;
+                            pontosObtidos += p.pontos;
                         }
 
-                        doc.text(linhas, marginX + 2, y + lineHeight);
+                        // Formata o texto para WhatsApp mostrando os pontos
+                        let txtPontos = p.pontos > 0 ? ` (${p.pontos} pts)` : "";
+                        rel += `\n${r ? "✅" : "❌"} ${p.texto}${txtPontos}`;
+                    });
+                    rel += "\n";
+                }
+
+                // Garante que os pontos obtidos nunca ultrapassem o total possível
+                pontosObtidos = Math.min(pontosObtidos, totalPontosPossiveis);
+
+                // Cálculos Finais
+                const porcentagemSim = ((acertosDeSim / totalPerguntasGeral) * 100).toFixed(0);
+                let notaCalculada = totalPontosPossiveis > 0 ? ((pontosObtidos / totalPontosPossiveis) * 100) : 0;
+
+                // Trava a nota máxima em 100%
+                const notaClienteOculto = Math.min(notaCalculada, 100).toFixed(0);
+                rel += `\n--------------------------------\n🏆 *NOTA CLIENTE OCULTO: ${notaClienteOculto}%* (${pontosObtidos}/${totalPontosPossiveis} pts)\n📊 *TAXA DE ACERTOS (SIM): ${porcentagemSim}%*\n--------------------------------\n_Gerado Por Erik Henrique - 126841_`;
+
+                document.getElementById('relatorio').innerText = rel;
+                document.getElementById('score').innerText = `NOTA: ${notaClienteOculto}% | ACERTOS: ${porcentagemSim}%`;
+                document.getElementById('results').style.display = 'block';
+                document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+                // ===== OBJETO BASE DO RELATÓRIO (PDF / EXCEL) =====
+                relatorioObj = {
+                    colaborador: nome,
+                    matricula: matri,
+                    data: agora.toLocaleDateString('pt-BR'),
+                    inicio: horaInicio,
+                    fim: agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                    nota: notaClienteOculto,
+                    porcentagemSim: porcentagemSim,
+                    secoes: []
+                };
+
+                for (let secao in perguntas) {
+                    const itens = perguntas[secao].map((p, i) => ({
+                        // Passa os pontos para o PDF também
+                        pergunta: p.pontos > 0 ? `${p.texto} (${p.pontos} pts)` : p.texto,
+                        resposta: respostas[secao + "-" + i] === 1 ? "SIM" : "NÃO"
+                    }));
+                    relatorioObj.secoes.push({ nome: secao, itens });
+                }
+            }
+            function copiar() {
+                navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
+                const toast = document.getElementById('toast');
+                toast.innerText = "📋 Relatório copiado!";
+                toast.style.display = "block";
+                setTimeout(() => toast.style.display = "none", 2000);
+            }
+
+            function gerarPDF() {
+                if (!relatorioObj) {
+                    alert("Gere o relatório antes de salvar o PDF.");
+                    return;
+                }
+
+                const logo = new Image();
+                logo.src = "PagueMenosLogo.png";
+
+                logo.onload = function () {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF("p", "mm", "a4");
+
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const pageHeight = doc.internal.pageSize.getHeight();
+
+                    const marginX = 10;
+                    const topMargin = 10;
+                    const bottomMargin = 10;
+
+                    const usableWidth = pageWidth - marginX * 2;
+                    const usableHeight = pageHeight - topMargin - bottomMargin;
+
+                    let baseFont = 8.5;
+                    let lineHeight = 3.6;
+
+                    function calcularAltura(fontSize) {
+                        doc.setFontSize(fontSize);
+                        let h = 0;
+
+                        h += 12; // cabeçalho
+                        h += 16; // identificação
+                        h += 9;  // nota
+
+                        relatorioObj.secoes.forEach(secao => {
+                            h += 7;
+                            secao.itens.forEach(item => {
+                                const linhas = doc.splitTextToSize(item.pergunta, usableWidth - 24);
+                                h += linhas.length * (fontSize * 0.42) + 2;
+                            });
+                            h += 3;
+                        });
+
+                        return h;
+                    }
+
+                    while (calcularAltura(baseFont) > usableHeight && baseFont > 6.5) {
+                        baseFont -= 0.3;
+                    }
+
+                    doc.setFontSize(baseFont);
+                    lineHeight = baseFont * 0.42;
+
+                    let y = topMargin;
+
+                    /* ================= CABEÇALHO ================= */
+                    doc.setFillColor(0, 74, 153);
+                    doc.rect(marginX, y, usableWidth, 10, "F");
+
+                    doc.setTextColor(255);
+                    doc.setFontSize(baseFont + 4);
+                    doc.setFont(undefined, "bold");
+                    doc.text("RELATÓRIO DE AVALIAÇÃO - CLIENTE OCULTO", pageWidth / 2, y + 7, { align: "center" });
+
+                    y += 13;
+                    doc.setTextColor(0);
+                    doc.setFontSize(baseFont);
+                    doc.setFont(undefined, "normal");
+
+                    /* ================= IDENTIFICAÇÃO COM LOGO ================= */
+                    const boxHeight = 16;
+                    doc.rect(marginX, y, usableWidth, boxHeight);
+
+                    doc.setFont(undefined, "bold");
+                    doc.text(`Colaborador: ${relatorioObj.colaborador}`, marginX + 2, y + 6);
+                    doc.text(`Matrícula: ${relatorioObj.matricula}`, marginX + 2, y + 11);
+
+                    doc.setFont(undefined, "normal");
+                    doc.text(`Data: ${relatorioObj.data}`, marginX + 80, y + 6);
+                    doc.text(`Horário: ${relatorioObj.inicio} às ${relatorioObj.fim}`, marginX + 80, y + 11);
+
+                    const logoWidth = 24;
+                    const logoHeight = 10;
+                    const logoX = marginX + usableWidth - logoWidth - 3;
+                    const logoY = y + (boxHeight - logoHeight) / 2;
+
+                    doc.addImage(logo, "PNG", logoX, logoY, logoWidth, logoHeight);
+
+                    y += boxHeight + 4;
+
+                    /* ================= NOTA FINAL ================= */
+                    doc.setFillColor(240, 244, 248);
+                    doc.rect(marginX, y, usableWidth, 9, "F");
+                    doc.rect(marginX, y, usableWidth, 9);
+
+                    doc.setFontSize(baseFont + 1);
+                    doc.setFont(undefined, "bold");
+                    doc.text(
+                        `NOTA CLIENTE OCULTO(em desenvolvimento!): ${relatorioObj.nota}%  |  TAXA DE ACERTOS: ${relatorioObj.porcentagemSim}%`,
+                        pageWidth / 2,
+                        y + 6,
+                        { align: "center" }
+                    );
+
+                    y += 12;
+                    doc.setFontSize(baseFont);
+                    doc.setFont(undefined, "normal");
+
+                    /* ================= SEÇÕES ================= */
+                    relatorioObj.secoes.forEach(secao => {
+                        doc.setFillColor(230, 236, 242);
+                        doc.rect(marginX, y, usableWidth, 6, "F");
+                        doc.rect(marginX, y, usableWidth, 6);
 
                         doc.setFont(undefined, "bold");
-                        doc.text(
-                            item.resposta,
-                            pageWidth - marginX - 2,
-                            y + lineHeight,
-                            { align: "right" }
-                        );
+                        doc.setTextColor(0);
+                        doc.text(secao.nome, marginX + 2, y + 4.5);
+
+                        y += 8;
                         doc.setFont(undefined, "normal");
 
-                        y += altura;
+                        secao.itens.forEach(item => {
+                            const linhas = doc.splitTextToSize(item.pergunta, usableWidth - 24);
+                            const altura = linhas.length * lineHeight + 2;
+                            const isNao = item.resposta === "NÃO";
+
+                            if (isNao) {
+                                doc.setFillColor(40, 40, 40);
+                                doc.setDrawColor(255, 255, 255);
+                                doc.rect(marginX, y, usableWidth, altura, "FD");
+                                doc.setTextColor(255);
+                            } else {
+                                doc.setDrawColor(0);
+                                doc.setFillColor(255, 255, 255);
+                                doc.rect(marginX, y, usableWidth, altura);
+                                doc.setTextColor(0);
+                            }
+
+                            doc.text(linhas, marginX + 2, y + lineHeight);
+                            doc.setFont(undefined, "bold");
+                            doc.text(item.resposta, pageWidth - marginX - 2, y + lineHeight, { align: "right" });
+                            doc.setFont(undefined, "normal");
+
+                            y += altura;
+                        });
+
+                        y += 3;
                     });
 
-                    y += 3;
-                });
+                    /* ================= RODAPÉ ================= */
+                    doc.setFontSize(7);
+                    doc.setTextColor(0);
+                    doc.text("Sistema não oficial • Gerado por Erik Henrique - 126841", pageWidth / 2, pageHeight - 6, { align: "center" });
 
-                /* ================= RODAPÉ ================= */
-                doc.setFontSize(7);
-                doc.setTextColor(0);
-                doc.text(
-                    "Sistema não oficial • Gerado por Erik Henrique - 126841",
-                    pageWidth / 2,
-                    pageHeight - 6,
-                    { align: "center" }
-                );
-
-                doc.save(`Checklist_${relatorioObj.colaborador}.pdf`);
-            };
-        }
-
-
-        function gerarExcel() {
-            const nome = document.getElementById('nome').value || "relatorio";
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Pergunta;Resposta\r\n";
-
-            for (let secao in perguntas) {
-                csvContent += `--- ${secao} ---;\r\n`;
-                perguntas[secao].forEach((p, i) => {
-                    const r = respostas[secao + "-" + i] === 1 ? "SIM" : "NAO";
-                    csvContent += `${p};${r}\r\n`;
-                });
+                    doc.save(`Checklist_${relatorioObj.colaborador}.pdf`);
+                };
             }
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Checklist_${nome}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+            function gerarExcel() {
+                const nome = document.getElementById('nome').value || "relatorio";
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Pergunta;Resposta\r\n";
 
-        window.onload = montar;
-        
-        async function displayVersion() {
-    try {
-        // O cache: 'no-store' ou o timestamp (?v=...) garante que pegamos a versão real do servidor
-        const response = await fetch(`version.json?v=${Date.now()}`);
-        if (response.ok) {
-            const data = await response.json();
-            const displayElement = document.getElementById('app-version-display');
-            if (displayElement) {
-                displayElement.innerText = data.version;
+                for (let secao in perguntas) {
+                    csvContent += `--- ${secao} ---;\r\n`;
+                    perguntas[secao].forEach((p, i) => {
+                        const r = respostas[secao + "-" + i] === 1 ? "SIM" : "NAO";
+                        // Mostra os pontos no Excel também
+                        const perguntaFormatada = p.pontos > 0 ? `${p.texto} (${p.pontos} pts)` : p.texto;
+                        csvContent += `${perguntaFormatada};${r}\r\n`;
+                    });
+                }
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `Checklist_${nome}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
-        }
-    } catch (err) {
-        const displayElement = document.getElementById('app-version-display');
-        if (displayElement) displayElement.innerText = "---";
-        console.warn("Não foi possível carregar a versão no rodapé.");
-    }
-}
 
-// Inicializa a exibição da versão
-displayVersion();
+            async function displayVersion() {
+                try {
+                    const response = await fetch(`version.json?v=${Date.now()}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const displayElement = document.getElementById('app-version-display');
+                        if (displayElement) {
+                            displayElement.innerText = data.version;
+                        }
+                    }
+                } catch (err) {
+                    const displayElement = document.getElementById('app-version-display');
+                    if (displayElement) displayElement.innerText = "---";
+                    console.warn("Não foi possível carregar a versão no rodapé.");
+                }
+            }
 
-/* --- LÓGICA DE FECHAMENTO DO LOADER --- */
-function fecharLoader() {
-    const loader = document.getElementById('loading-screen');
-    if (loader) {
-        loader.classList.add('loader-hidden');
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 600);
-    }
-}
+            /* --- LÓGICA DE CARREGAMENTO ROBUSTA --- */
+            function fecharLoader() {
+                const loader = document.getElementById('loading-screen');
+                if (loader) {
+                    loader.classList.add('loader-hidden');
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 600);
+                }
+            }
 
-// 1. Fecha quando a página carregar (incluindo bibliotecas JS externas)
-window.addEventListener('load', fecharLoader);
+            async function inicializarAppCompleto() {
+                // 1. Aguarda os recursos estáticos (HTML, CSS e as bibliotecas jsPDF/Excel)
+                const aguardarEstatico = new Promise(resolve => {
+                    if (document.readyState === 'complete') {
+                        resolve();
+                    } else {
+                        window.addEventListener('load', resolve);
+                    }
+                });
 
-// 2. Plano B: Força o fechamento em 3.5 segundos para evitar travamentos
-setTimeout(fecharLoader, 3500);
+                // 2. Requisição dinâmica do servidor
+                const aguardarVersao = displayVersion();
 
-// 3. Caso o script seja lido após o carregamento já ter terminado
-if (document.readyState === 'complete') {
-    fecharLoader();
-}
+                try {
+                    await aguardarEstatico;
+                    montar(); // Cria o formulário na tela
+                    await aguardarVersao;
+                } catch (erro) {
+                    console.error("Erro durante o carregamento da tela de checklist:", erro);
+                } finally {
+                    // Remove o tela azul apenas quando tudo estiver pronto
+                    fecharLoader();
+                }
+            }
 
+            // Inicia o processo
+            inicializarAppCompleto();
 
-    </script>
+        </script>
 </body>
 
 </html>

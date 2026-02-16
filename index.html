@@ -1,93 +1,1329 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#004a99">
-    <title>Manutenção - Checklist Pague Menos</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <title>PagueMenos CheckList</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <link rel="icon" type="image/png" href="icone_novo.png">
+
     <style>
-        :root { 
-            --primary: #004a99; 
+        :root {
+            --primary: #004a99;
             --accent: #f9b233;
-            --bg: #f4f7f9; 
+            --bg: #f4f7f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: var(--primary); /* Fundo azul para manter a identidade */
+            background: var(--bg);
             margin: 0;
             padding: 0;
             width: 100vw;
+            /* Permite que a tela cresça se precisar */
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            /* Permite rolar para baixo se o conteúdo não couber, mas bloqueia pros lados */
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Oculta a barra de rolagem (opcional, para manter visual de app) */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+
+
+
+        /* --- LOADER PREMIUM CSS CORRIGIDO --- */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
             height: 100dvh;
+            background: #004a99;
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 100000;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .logo-container img {
+            width: 90px;
+            height: 90px;
+            border-radius: 22px;
+            /* Cantos arredondados */
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            animation: logoFloat 2.5s ease-in-out infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .loading-bar-container {
+            width: 160px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
             overflow: hidden;
+            position: relative;
+        }
+
+        .loading-bar-fill {
+            width: 45%;
+            height: 100%;
+            background: #f9b233;
+            border-radius: 10px;
+            animation: progressMove 1.5s infinite ease-in-out;
+        }
+
+        /* Classe que o JS ativa para sumir com a tela */
+        .loader-hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        @keyframes logoFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes progressMove {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(250%);
+            }
+        }
+
+
+        /* --- BOTÃO ENGRENAGEM FIXO --- */
+        .btn-settings {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+
+        /* --- MODAL DE CONFIGURAÇÕES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .menu-opt {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            background: #f9f9f9;
+            color: #444;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .menu-opt i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .menu-opt.install-ready {
+            background: #fff4e0;
+            border-color: var(--accent);
+        }
+
+        /* --- ANIMAÇÃO DE TRANSIÇÃO --- */
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        .transition-bar {
+            flex: 1;
+            width: 100%;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .transition-bar:nth-child(even) {
+            transform-origin: right;
+            background: #003a7a;
+        }
+
+        body.page-exit .transition-bar {
+            transform: scaleX(1);
+        }
+
+
+
+        #toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: auto;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .toast {
+            background: rgba(0, 74, 153, 0.95);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+            margin-bottom: 8px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .icon-fixo {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: clamp(45px, 12vw, 60px);
+
+            z-index: 100;
+        }
+
+
+        .hero {
+            position: relative;
+            width: 100%;
+            background: var(--primary);
+            padding: 50px 20px 40px 20px;
+            /* Reduzi para ganhar espaço */
+            text-align: center;
+            color: white;
+            border-bottom-left-radius: 45px;
+            border-bottom-right-radius: 45px;
+            flex-shrink: 0;
+            /* Impede que o flexbox amasse o topo */
+            z-index: 1;
+        }
+
+
+        .hero h1 {
+            margin: 0;
+            /* Tamanho imponente e peso máximo */
+            font-size: 42px;
+            font-weight: 900;
+            /* Ajuste de entrelinha para fontes grandes não ocuparem espaço vertical extra */
+            line-height: 0.9;
+            letter-spacing: -1px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            margin: 10px 0 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 600;
+            text-transform: uppercase;
+            /* Espaçamento entre letras para estética "premium" */
+            letter-spacing: 5px;
+        }
+
+        /* --- ANIMAÇÃO LUPA: LEITURA LENTA --- */
+        .lupa-container {
+            position: absolute;
+            z-index: 5;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Velocidade reduzida para 12s para parecer uma leitura real */
+            animation: leituraLenta 12s infinite ease-in-out;
+            will-change: transform, top, left;
+        }
+
+        .lupa-vidro {
+            width: 38px;
+            height: 38px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(1.5px);
+            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4), 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .lupa-cabo {
+            width: 12px;
+            height: 4px;
+            background: #fff;
+            position: absolute;
+            right: -8px;
+            bottom: 2px;
+            transform: rotate(45deg);
+            border-radius: 2px;
+        }
+
+        @keyframes leituraLenta {
+            0% {
+                top: 15%;
+                left: 10%;
+                transform: rotate(0deg) scale(1);
+            }
+
+            /* Lendo Título (movimento linear lento) */
+            15% {
+                top: 34%;
+                left: 20%;
+                transform: rotate(-5deg) scale(1.1);
+            }
+
+            30% {
+                top: 34%;
+                left: 80%;
+                transform: rotate(5deg) scale(1.1);
+            }
+
+            /* Movimento "aleatório" de busca */
+            40% {
+                top: 20%;
+                left: 50%;
+                transform: rotate(15deg) scale(0.9);
+            }
+
+            50% {
+                top: 45%;
+                left: 15%;
+                transform: rotate(-10deg) scale(1);
+            }
+
+            /* Lendo Subtítulo */
+            65% {
+                top: 56%;
+                left: 25%;
+                transform: rotate(0deg) scale(1.2);
+            }
+
+            80% {
+                top: 56%;
+                left: 75%;
+                transform: rotate(10deg) scale(1.2);
+            }
+
+            /* Desvio inesperado antes de reiniciar */
+            90% {
+                top: 30%;
+                left: 85%;
+                transform: rotate(-20deg) scale(0.8);
+            }
+
+            100% {
+                top: 15%;
+                left: 10%;
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
+        .lupa-container {
+            position: absolute;
+            z-index: 5;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* 15 segundos torna o "aleatório" mais natural e menos repetitivo */
+            animation: leituraLenta 15s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            will-change: transform, top, left;
+        }
+
+
+
+
+        .menu-container {
+            width: 90%;
+            max-width: 450px;
+            flex-grow: 1;
+            /* Ocupa o espaço central disponível */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* Centraliza os botões verticalmente */
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .main-button {
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: clamp(15px, 5vw, 22px);
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .main-button i {
+            font-size: clamp(30px, 10vw, 38px);
+            margin-right: 15px;
+            color: var(--accent);
+        }
+
+        .main-button h3 {
+            margin: 0;
+            font-size: clamp(16px, 5vw, 18px);
+        }
+
+        .main-button p {
+            margin: 0;
+            font-size: clamp(11px, 3.5vw, 13px);
+            color: #777;
+        }
+
+        .secondary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .sec-button {
+            background: white;
+            padding: clamp(12px, 4vw, 18px);
+            border-radius: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #444;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            font-size: clamp(12px, 3.5vw, 14px);
+            font-weight: 600;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .sec-button i {
+            display: block;
+            font-size: clamp(18px, 6vw, 22px);
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .footer-logo {
+            width: 100%;
+            padding: 10px 0;
+            flex-shrink: 0;
+            /* Jamais encolhe ou sai da tela */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg);
+        }
+
+        .footer-logo img {
+            width: clamp(90px, 25vw, 110px);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        footer {
+            font-size: clamp(10px, 3vw, 11px);
+            color: #999;
+            text-align: center;
+            padding: 0 20px 7px;
+        }
+
+
+        /* Container do card de versão */
+        .version-card {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(0, 74, 153, 0.05);
+            /* Azul bem clarinho e transparente */
+            border: 1px solid rgba(0, 74, 153, 0.1);
+            border-radius: 100px;
+            /* Estilo pílula */
+            transition: all 0.3s ease;
+        }
+
+        /* Texto "VERSÃO:" */
+        .version-label {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* O número da versão em si */
+        #app-version-display {
+            font-family: 'Courier New', Courier, monospace;
+            /* Fonte estilo sistema */
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--accent);
+            /* Destaque na cor amarela do seu sistema */
+        }
+
+        /* Efeito sutil ao passar o mouse (opcional) */
+        .version-card:hover {
+            background: rgba(0, 74, 153, 0.1);
+            transform: translateY(-1px);
+        }
+
+
+
+        /* --- BANNER PREMIUM --- */
+        #banner-container {
+            width: 90%;
+            max-width: 450px;
+            /* Mantém a proporção 16:9 exata baseada na largura */
+            aspect-ratio: 16 / 9;
+            margin: 15px auto;
+            border-radius: 24px;
+            overflow: hidden;
+            background: #ffffff;
+            position: relative;
+            flex-shrink: 0;
+            /* Impede que o flexbox amasse o banner */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 74, 153, 0.08);
+        }
+
+        #banner-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), #ffcf7a);
+            width: 0%;
+            z-index: 10;
+            border-radius: 0 5px 5px 0;
+        }
+
+        #banner-content {
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.5s ease-in-out;
+            background: #004a99;
+            /* Fundo sólido enquanto carrega */
+        }
+
+        #banner-content img,
+        #banner-content video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Corta as bordas excedentes para não achatar */
+            object-position: center;
+            /* Mantém o foco no meio do banner */
+            display: block;
+        }
+
+        .fade-out {
+            opacity: 0 !important;
+        }
+
+        /* Animação Pan: A imagem cresce 10% e se move */
+        .pan-diagonal {
+            transform: scale(1.1);
+            /* Dá o zoom necessário para "andar" */
+            animation: panDiagonalLento 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes panDiagonalLento {
+            0% {
+                transform: scale(1.1) translate(0%, 0%);
+            }
+
+            100% {
+                transform: scale(1.1) translate(-3%, -3%);
+            }
+        }
+
+        .banner-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #004a99 0%, #003366 100%);
             color: white;
             text-align: center;
         }
 
-        .container {
-            padding: 30px;
-            max-width: 320px;
-            animation: fadeIn 0.8s ease-out;
+        .banner-error small {
+            font-size: 9px;
+            /* Tamanho micro */
+            opacity: 0.7;
+            /* Deixa a cor mais suave para não poluir o visual */
+            font-weight: 400;
+            line-height: 1.1;
+            display: block;
+            margin-top: 2px;
+            text-transform: none;
+            /* Mantém minúsculo para ocupar menos espaço */
         }
 
-        .icon-box {
-            font-size: 60px;
-            color: var(--accent);
-            margin-bottom: 20px;
+
+
+        /* Classe aplicada ao body via JS */
+        body.dark-mode {
+            --bg: #121212;
+            --primary: #0a192f;
+            color: #e0e0e0;
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 800;
-            margin: 0 0 15px 0;
-            letter-spacing: -1px;
+        body.dark-mode .main-button,
+        body.dark-mode .sec-button,
+        body.dark-mode .modal-content {
+            background: #1e1e1e;
+            color: #fff;
+            border-color: #333;
         }
 
-        p {
-            font-size: 16px;
-            line-height: 1.5;
-            opacity: 0.9;
-            margin-bottom: 25px;
-        }
-
-        .badge-converte {
-            background: white;
-            color: var(--primary);
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-weight: 800;
-            display: inline-block;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            text-transform: uppercase;
-            font-size: 14px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        body.dark-mode .main-button p,
+        body.dark-mode footer {
+            color: #bbb;
         }
     </style>
 </head>
+
 <body>
 
-    <div class="container">
-        <div class="icon-box">
-            <i class="fas fa-tools"></i>
-        </div>
-        <h1>Em Manutenção</h1>
-        <p>Estamos trabalhando em melhorias para o sistema.</p>
-        
-        <p style="font-size: 13px;">FOQUEM PELO AMOR DE DEUS NO:</p>
-        
-        <div class="badge-converte">
-            <i class="fas fa-chart-line"></i> CONVERTE +
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="logo-container">
+                <img src="icone_novo.png" alt="Logo">
+            </div>
+            <p class="loading-text">CARREGANDO SISTEMA</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar-fill"></div>
+            </div>
         </div>
     </div>
 
+    <div id="update-banner"
+        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: white; z-index: 99999; padding: 30px 20px; border-radius: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; flex-direction: column; align-items: center; gap: 15px; border: none; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div
+            style="background: #f4f7f9; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #004a99; font-size: 32px; margin-bottom: 5px;">
+            <i class="fas fa-sync-alt fa-spin"></i>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #004a99; font-size: 20px; font-weight: 800; font-family: sans-serif;">
+                Atualização Necessária</h3>
+            <p style="margin: 12px 0 0 0; color: #555; font-size: 14px; line-height: 1.5; font-family: sans-serif;">Uma
+                nova versão do Checklist está disponível com melhorias essenciais.</p>
+        </div>
+        <button onclick="forceUpdate()" id="btn-update-now"
+            style="background: #004a99; color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; box-shadow: 0 8px 20px rgba(0,74,153,0.3); transition: all 0.2s; font-family: sans-serif;">
+            ATUALIZAR AGORA
+        </button>
+    </div>
+
+    <style>
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%) scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* Garante que o corpo não role quando o modal estiver aberto */
+        body.modal-open {
+            overflow: hidden !important;
+            height: 100vh !important;
+        }
+    </style>
+
+
+
+
+    <button class="btn-settings" onclick="toggleMenu(true)">
+        <i class="fas fa-cog"></i>
+    </button>
+
+
+
+    <div id="modal-settings" class="modal-overlay" onclick="toggleMenu(false)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>Configurações</h3>
+
+            <div id="opt-instalar" class="menu-opt" style="display: none;" onclick="instalarApp()">
+                <i class="fas fa-download"></i> Instalar Aplicativo
+            </div>
+
+            <div class="menu-opt" onclick="verificarAtualizacao()">
+                <i class="fas fa-sync-alt"></i> Buscar Atualizações
+            </div>
+
+            <div class="menu-opt" onclick="pedirLimpezaCache()">
+                <i class="fas fa-trash-alt" style="color: #dc3545;"></i> Limpar Cache
+            </div>
+
+            <div class="menu-opt" id="btn-theme" onclick="toggleDarkMode()">
+                <i class="fas fa-moon"></i> Modo Escuro
+            </div>
+
+            <div class="menu-opt" onclick="abrirSobre()">
+                <i class="fas fa-info-circle" style="color: var(--primary);"></i> Sobre o Aplicativo
+            </div>
+
+            <button class="main-button" style="margin-top: 15px; width: 100%; justify-content: center; padding: 12px;"
+                onclick="toggleMenu(false)">
+                FECHAR
+            </button>
+        </div>
+
+    </div>
+
+
+    <div id="modal-confirm-limpeza" class="modal-overlay" onclick="fecharModalLimpeza()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div
+                style="background: #fff0f0; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #dc3545; font-size: 28px; margin: 0 auto 15px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="color: var(--primary); margin-top: 0; margin-bottom: 10px;">Atenção</h3>
+            <p style="color: #555; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+                Tem certeza que deseja limpar o cache? O sistema será reiniciado para aplicar as correções.
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <button
+                    style="flex:1; padding: 14px; border-radius: 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold; cursor: pointer; color: #555;"
+                    onclick="fecharModalLimpeza()">CANCELAR</button>
+                <button
+                    style="flex:1; padding: 14px; border-radius: 12px; border: none; background: #dc3545; color: white; font-weight: bold; cursor: pointer;"
+                    onclick="executarLimpezaCache()">LIMPAR</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="modal-sobre" class="modal-overlay" onclick="fecharSobre()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img src="icone_novo.png" alt="Logo"
+                style="width: 75px; height: 75px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+            <h3 style="color: var(--primary); margin: 0 0 4px 0; font-size: 20px;">Pague Menos Check-List</h3>
+            <p
+                style="color: var(--accent); font-weight: 800; font-size: 11px; margin: 0 0 20px 0; letter-spacing: 2px;">
+                CLIENTE OCULTO</p>
+
+            <div
+                style="background: rgba(0, 74, 153, 0.05); border-radius: 12px; padding: 15px; text-align: left; font-size: 13px; line-height: 1.6; margin-bottom: 20px; border: 1px solid rgba(0, 74, 153, 0.1);">
+                <p style="margin: 0 0 8px 0;"><i class="fas fa-code" style="width: 20px; color: var(--primary);"></i>
+                    <strong>Desenvolvedor:</strong> Erik Henrique - 126841 - AL1
+                </p>
+                <p style="margin: 0 0 8px 0;"><i class="fas fa-bullseye"
+                        style="width: 20px; color: var(--primary);"></i> <strong>Objetivo:</strong> Sistema de apoio e
+                    acompanhamento de atendimento em relação ao cliente oculto.</p>
+                <p style="margin: 0;"><i class="fas fa-shield-alt" style="width: 20px; color: var(--primary);"></i>
+                    <strong>Aviso:</strong> Sistema não é oficial Empreendimentos Pague Menos S.A. .
+                </p>
+            </div>
+
+            <button
+                style="width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 4px 15px rgba(0, 74, 153, 0.2);"
+                onclick="fecharSobre()">
+                FECHAR
+            </button>
+        </div>
+    </div>
+
+
+
+
+    <div id="transition-overlay">
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <img src="icone_novo.png" class="icon-fixo" alt="Ícone">
+
+    <div class="hero">
+        <div class="lupa-container">
+            <div class="lupa-vidro"></div>
+            <div class="lupa-cabo"></div>
+        </div>
+        <h1>CHECK-LIST</h1>
+        <p>CLIENTE OCULTO</p>
+    </div>
+
+    <div class="menu-container">
+        <a href="javascript:void(0)" onclick="transitionTo('checklist.html')" class="main-button">
+            <i class="fas fa-file-signature"></i>
+            <div>
+                <h3>Nova Avaliação</h3>
+                <p>Iniciar auditoria agora</p>
+            </div>
+        </a>
+
+        <div class="secondary-grid">
+            <a href="#" class="sec-button" onclick="showToast('Histórico em desenvolvimento')">
+                <i class="fas fa-history"></i> Histórico
+            </a>
+            <a href="#" class="sec-button" onclick="showToast('Relatórios em desenvolvimento')">
+                <i class="fas fa-chart-line"></i> Relatórios
+            </a>
+        </div>
+    </div>
+
+    <div id="banner-container">
+        <div id="banner-progress-bar"></div>
+        <div id="banner-content"></div>
+    </div>
+
+
+
+    <div class="footer-logo">
+        <img src="PagueMenosLogo.png" alt="Pague Menos">
+        <footer>
+            Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+            <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao cliente
+            oculto.
+            <br>
+
+            <div class="version-card">
+                <span class="version-label">Versão</span>
+                <span id="app-version-display">---</span>
+            </div>
+        </footer>
+    </div>
+
+
+
+
+    <script>
+
+        // --- FUNÇÕES DO MODAL SOBRE ---
+        function abrirSobre() {
+            toggleMenu(false); // Esconde o menu de configurações
+            document.getElementById('modal-sobre').style.display = 'flex'; // Mostra a tela de sobre
+        }
+
+        function fecharSobre() {
+            document.getElementById('modal-sobre').style.display = 'none';
+        }
+
+        // Limpa a animação de saída caso o usuário retorne pelo botão de voltar do celular (bfcache)
+        window.addEventListener('pageshow', function (event) {
+            if (document.body.classList.contains('page-exit')) {
+                document.body.classList.remove('page-exit');
+            }
+        });
+
+        /* --- LÓGICA DE VERSÃO DINÂMICA --- */
+        let deferredPrompt;
+        const optInstalar = document.getElementById('opt-instalar');
+        const updateBanner = document.getElementById('update-banner');
+        const updateOverlay = document.getElementById('update-overlay');
+
+        /* --- INSTALAÇÃO PWA --- */
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (optInstalar) {
+                optInstalar.style.display = 'flex';
+                optInstalar.classList.add('install-ready');
+            }
+        });
+
+        async function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    optInstalar.style.display = 'none';
+                    toggleMenu(false);
+                }
+                deferredPrompt = null;
+            }
+        }
+
+        /* --- CONTROLE DE ATUALIZAÇÃO --- */
+        async function checkVersion() {
+            try {
+                const response = await fetch(`version.json?v=${Date.now()}`);
+                if (!response.ok) return;
+
+                const data = await response.json();
+                const serverVersion = data.version;
+                const localVersion = localStorage.getItem('app_version');
+
+                if (!localVersion) {
+                    localStorage.setItem('app_version', serverVersion);
+                    return;
+                }
+
+                if (serverVersion !== localVersion) {
+                    exibirBloqueioAtualizacao();
+                    localStorage.setItem('app_version', serverVersion);
+                }
+            } catch (err) {
+                console.warn("Erro ao validar versão.");
+            }
+        }
+
+        function exibirBloqueioAtualizacao() {
+            if (updateBanner && updateOverlay) {
+                updateOverlay.style.display = 'block';
+                updateBanner.style.display = 'flex';
+                document.body.classList.add('modal-open');
+            }
+        }
+
+        async function forceUpdate() {
+            const btn = document.getElementById('btn-update-now');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+                btn.disabled = true;
+            }
+
+            showToast("Limpando cache...");
+
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                for (let reg of regs) await reg.unregister();
+            }
+
+            if ('caches' in window) {
+                const names = await caches.keys();
+                await Promise.all(names.map(name => caches.delete(name)));
+            }
+
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 1000);
+        }
+
+        /* --- UI FUNCTIONS --- */
+        function toggleMenu(show) {
+            const modal = document.getElementById('modal-settings');
+            if (modal) modal.style.display = show ? 'flex' : 'none';
+        }
+
+        function transitionTo(url) {
+            document.body.classList.add('page-exit');
+            setTimeout(() => { window.location.href = url; }, 450);
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            if (container.children.length >= 2) container.removeChild(container.firstChild);
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        /* --- INICIALIZAÇÃO --- */
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.addEventListener('updatefound', () => {
+                    const newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            exibirBloqueioAtualizacao();
+                        }
+                    });
+                });
+            });
+        }
+
+        checkVersion();
+        setInterval(checkVersion, 1000 * 60 * 15);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') checkVersion();
+        });
+
+        async function displayVersion() {
+            try {
+                const response = await fetch(`version.json?v=${Date.now()}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const display = document.getElementById('app-version-display');
+                    if (display) display.innerText = data.version;
+                }
+            } catch (err) {
+                console.error("Erro ao exibir versão:", err);
+            }
+        }
+
+        // Evento que dispara sempre que a página ganha foco ou é carregada/retornada
+        window.addEventListener('pageshow', () => {
+            displayVersion();
+            checkVersion();
+        });
+
+
+
+
+        /* --- LÓGICA DO BANNER INFORMATIVO CORRIGIDA --- */
+        /* --- LÓGICA DO BANNER INFORMATIVO CORRIGIDA --- */
+        function inicializarBanner() {
+            return new Promise((resolveBanner) => { // Transformado em Promise
+                const bannerFiles = [
+                    'banners/kitressaca.jpg',
+                    'banners/app.png',
+                    'banners/converteMAIS.jpg',
+                    'banners/atendimento2.mp4',
+                    'banners/onyou.jpg',
+                    'banners/show.png'
+                ];
+
+                let playlist = [];
+                const container = document.getElementById('banner-content');
+                const progressBar = document.getElementById('banner-progress-bar');
+                const imgDuration = 5000;
+                let primeiroCarregamento = true; // Controla a trava inicial
+
+                if (!container || !progressBar) {
+                    resolveBanner();
+                    return;
+                }
+
+                function shuffle(array) {
+                    return array.sort(() => Math.random() - 0.5);
+                }
+
+                function animateProgress(duration) {
+                    progressBar.style.transition = 'none';
+                    progressBar.style.width = '0%';
+                    void progressBar.offsetWidth;
+                    progressBar.style.transition = `width ${duration}ms linear`;
+                    progressBar.style.width = '100%';
+                }
+
+                async function playNext() {
+                    if (playlist.length === 0) {
+                        playlist = shuffle([...bannerFiles]);
+                    }
+
+                    const file = playlist.pop();
+                    const isVideo = file.toLowerCase().endsWith('.mp4');
+
+                    container.classList.add('fade-out');
+
+                    setTimeout(() => {
+                        container.innerHTML = '';
+                        let element;
+
+                        if (isVideo) {
+                            element = document.createElement('video');
+                            element.src = file;
+                            element.autoplay = true;
+                            element.muted = true;
+                            element.playsInline = true;
+                            element.setAttribute('preload', 'auto');
+
+                            element.onloadedmetadata = () => {
+                                animateProgress(element.duration * 1000);
+                                if (primeiroCarregamento) {
+                                    primeiroCarregamento = false;
+                                    resolveBanner(); // Libera a tela de loading
+                                }
+                            };
+
+                            element.oncanplay = () => {
+                                element.play();
+                            };
+
+                            element.onended = playNext;
+                        }
+                        else {
+                            element = document.createElement('img');
+                            element.src = file;
+
+                            element.onload = () => {
+                                animateProgress(imgDuration);
+                                setTimeout(playNext, imgDuration);
+                                if (primeiroCarregamento) {
+                                    primeiroCarregamento = false;
+                                    resolveBanner(); // Libera a tela de loading
+                                }
+                            };
+                        }
+
+                        element.onerror = () => {
+                            container.innerHTML = `
+                            <div class="banner-error">
+                                <span style="font-size: 13px; font-weight: 800; color: white;">ERRO</span>
+                                <small style="font-size: 9px; opacity: 0.7; margin-top: 2px; color: white;">
+                                    Falha ao carregar mídia
+                                </small>
+                            </div>`;
+                            animateProgress(3000);
+                            setTimeout(playNext, 3000);
+
+                            // Libera a tela mesmo se der erro no 1º banner, para não travar o app
+                            if (primeiroCarregamento) {
+                                primeiroCarregamento = false;
+                                resolveBanner();
+                            }
+                        };
+
+                        container.appendChild(element);
+
+                        setTimeout(() => {
+                            container.classList.remove('fade-out');
+                        }, 50);
+                    }, 500);
+                }
+
+                if (bannerFiles.length > 0) playNext();
+                else resolveBanner();
+            });
+        }
+
+
+
+
+        // 1. Busca real de atualizações (agora fechando o menu no mesmo instante)
+        async function verificarAtualizacao() {
+            toggleMenu(false); // Fecha o menu imediatamente ao clicar
+            showToast("Buscando atualizações...");
+            try {
+                const response = await fetch(`version.json?v=${Date.now()}`);
+                if (!response.ok) throw new Error("Falha na rede");
+
+                const data = await response.json();
+                const serverVersion = data.version;
+                const localVersion = localStorage.getItem('app_version');
+
+                if (serverVersion !== localVersion) {
+                    exibirBloqueioAtualizacao();
+                } else {
+                    showToast("Sistema já está atualizado! ✅");
+                }
+            } catch (err) {
+                showToast("Erro ao buscar versão ⚠️");
+            }
+        }
+
+        // 2. Fluxo da Limpeza de Cache (abre modal, fecha e executa)
+        function pedirLimpezaCache() {
+            toggleMenu(false); // Fecha o menu de configurações
+            document.getElementById('modal-confirm-limpeza').style.display = 'flex'; // Abre o alerta
+        }
+
+        function fecharModalLimpeza() {
+            document.getElementById('modal-confirm-limpeza').style.display = 'none';
+        }
+
+        async function executarLimpezaCache() {
+            fecharModalLimpeza();
+            showToast("Limpando sistema...");
+            localStorage.removeItem('app_version');
+
+            if ('caches' in window) {
+                const names = await caches.keys();
+                await Promise.all(names.map(name => caches.delete(name)));
+            }
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                for (let reg of regs) await reg.unregister();
+            }
+
+            setTimeout(() => window.location.reload(true), 1200);
+        }
+
+        // 3. Modo Escuro Inteligente (Altera texto e ícone do botão)
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('dark-mode', isDark);
+            atualizarBotaoTema(isDark);
+            showToast(isDark ? "Modo Escuro Ativado" : "Modo Claro Ativado");
+        }
+
+        function atualizarBotaoTema(isDark) {
+            const btnTheme = document.getElementById('btn-theme');
+            if (btnTheme) {
+                btnTheme.innerHTML = isDark
+                    ? '<i class="fas fa-sun" style="color:#f9b233;"></i> Modo Claro'
+                    : '<i class="fas fa-moon"></i> Modo Escuro';
+            }
+        }
+
+        // Verifica o tema ao abrir o app
+        if (localStorage.getItem('dark-mode') === 'true') {
+            document.body.classList.add('dark-mode');
+            atualizarBotaoTema(true);
+        }
+
+
+
+        /* --- LÓGICA DE CARREGAMENTO ROBUSTA --- */
+        function fecharLoader() {
+            const loader = document.getElementById('loading-screen');
+            if (loader) {
+                loader.classList.add('loader-hidden');
+                setTimeout(() => loader.style.display = 'none', 600);
+            }
+        }
+
+        async function inicializarAppCompleto() {
+            // 1. Aguarda os recursos estáticos (HTML, CSS, Imagens da tag <img>)
+            const aguardarEstatico = new Promise(resolve => {
+                if (document.readyState === 'complete') {
+                    resolve();
+                } else {
+                    window.addEventListener('load', resolve);
+                }
+            });
+
+            // 2. Aguarda os recursos dinâmicos (Consultas no servidor)
+            const aguardarDinamico = Promise.all([
+                checkVersion(),
+                displayVersion()
+            ]);
+
+            try {
+                // Trava a tela até que TANTO o estático quanto o dinâmico terminem
+                await Promise.all([aguardarEstatico, aguardarDinamico]);
+
+                // AGUARDA O BANNER CARREGAR ANTES DE LIBERAR A TELA
+                await inicializarBanner();
+
+            } catch (erro) {
+                console.error("Erro durante o carregamento:", erro);
+            } finally {
+                // Libera o aplicativo
+                fecharLoader();
+            }
+        }
+
+        // Inicia o processo de carregamento global
+        inicializarAppCompleto();
+
+    </script>
+
+
+
+
 </body>
+
 </html>
