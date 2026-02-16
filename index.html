@@ -37,7 +37,7 @@
             min-height: 100dvh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             /* Permite rolar para baixo se o conteúdo não couber, mas bloqueia pros lados */
             overflow-x: hidden;
@@ -445,12 +445,12 @@
         .menu-container {
             width: 90%;
             max-width: 450px;
-            flex-grow: 1;
-            /* Ocupa o espaço central disponível */
+            margin-top: auto;
+            /* ← Empurra para baixo */
+            margin-bottom: 25px;
+            /* ← Trava a distância exata até o banner */
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            /* Centraliza os botões verticalmente */
             gap: 10px;
             z-index: 10;
         }
@@ -523,6 +523,8 @@
             flex-direction: column;
             align-items: center;
             background: var(--bg);
+            margin-top: auto;
+            /* ← Adicionado aqui */
         }
 
         .footer-logo img {
@@ -587,7 +589,8 @@
             max-width: 450px;
             /* Mantém a proporção 16:9 exata baseada na largura */
             aspect-ratio: 16 / 9;
-            margin: 15px auto;
+            margin: 0 auto 20px auto;
+            /* ← Alterado aqui */
             border-radius: 24px;
             overflow: hidden;
             background: #ffffff;
