@@ -40,13 +40,14 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100dvh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             /* Distribui o espaço automaticamente para caber em qualquer celular */
             justify-content: space-between; 
             align-items: center;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden; /* Adicione para evitar que a tela balance para os lados */
             padding-bottom: 5px; /* Margem de respiro no fim da tela */
         }
 
