@@ -986,7 +986,18 @@
                     }));
                     relatorioObj.secoes.push({ nome: secao, itens });
                 }
+                // ... código anterior onde define o relatorioObj ...
+
+// --- SALVAMENTO NO HISTÓRICO PERSISTENTE ---
+let historicoLocal = JSON.parse(localStorage.getItem('checklist_history')) || [];
+historicoLocal.unshift(relatorioObj); // Adiciona a nova avaliação no topo da lista
+localStorage.setItem('checklist_history', JSON.stringify(historicoLocal));
+
+showToast("Avaliação salva no histórico!");
+// ... resto da função finalizar ...
             }
+            
+            
             function copiar() {
                 navigator.clipboard.writeText(document.getElementById('relatorio').innerText);
                 const toast = document.getElementById('toast');

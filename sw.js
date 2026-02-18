@@ -20,6 +20,17 @@ const ASSETS = [
     './icone_novo.png',
     './PagueMenosLogo.png',
     './manifest.json',
+    './hidrometro.html',
+    './historico.html',
+    './arquivosapoio.html',
+    './version.json',
+    './banners/kitressaca.jpg',
+    './banners/app.png',
+    './banners/converteMAIS.jpg',
+    './banners/atendimento2.mp4',
+    './banners/onyou.jpg',
+    './banners/show.png',
+    './banners/oportunidades_resultados.png',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
 ];
 

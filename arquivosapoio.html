@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arquivos de Apoio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #004a99;
+            --accent: #f9b233;
+            --bg: #f4f7f9;
+            --card: #ffffff;
+            --text-main: #333333;
+            --text-sub: #777777;
+            --danger: #ff3b30;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 20px 20px 30px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .btn-voltar {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .header-title h1 { margin: 0; font-size: 22px; font-weight: 800; }
+        .header-title p { margin: 2px 0 0 0; font-size: 12px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Container da Lista */
+        .container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            margin-top: -15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
+            display: none;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.1);
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0, 74, 153, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            font-size: 16px;
+        }
+
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+            color: var(--primary);
+        }
+        .spinner {
+            font-size: 30px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .file-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
+            text-decoration: none;
+            color: var(--text-main);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .file-card:active { transform: scale(0.98); }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .file-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 74, 153, 0.05);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Cores específicas */
+        .icon-pdf { color: #e2574c; background: rgba(226, 87, 76, 0.1); }
+        .icon-image { color: #f9b233; background: rgba(249, 178, 51, 0.1); }
+        .icon-word { color: #2b579a; background: rgba(43, 87, 154, 0.1); }
+        .icon-excel { color: #217346; background: rgba(33, 115, 70, 0.1); }
+        .icon-vector { color: #8e44ad; background: rgba(142, 68, 173, 0.1); }
+
+        .file-details { flex: 1; overflow: hidden; }
+        .file-details h4 { margin: 0; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .file-details p { margin: 4px 0 0 0; font-size: 11px; color: var(--text-sub); }
+
+        .btn-download {
+            background: #f0f4f8; color: var(--primary); width: 38px; height: 38px;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0; text-decoration: none; margin-left: 10px;
+        }
+
+        .error-msg { text-align: center; color: var(--danger); background: #ffeeee; padding: 15px; border-radius: 12px; font-size: 13px; font-weight: 600; }
+        .empty-msg { text-align: center; color: var(--text-sub); padding: 30px 0; font-size: 14px; }
+
+        /* Modal de Pré-visualização */
+        .preview-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 200000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px; backdrop-filter: blur(5px);
+        }
+
+        .preview-content {
+            background: var(--bg); width: 100%; max-width: 600px; height: 85vh;
+            border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: modalPop 0.3s ease-out;
+        }
+
+        .preview-header {
+            background: var(--card); padding: 15px 20px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;
+        }
+
+        .preview-header h3 { margin: 0; font-size: 14px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; margin-right: 15px; }
+
+        .btn-close-preview { background: #ffeeee; color: var(--danger); border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .preview-body { flex: 1; background: #f0f0f0; position: relative; display: flex; align-items: center; justify-content: center; }
+        .preview-body iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
+
+        @keyframes modalPop { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="btn-voltar"><i class="fas fa-chevron-left"></i></a>
+        <div class="header-title">
+            <h1>Material de Apoio</h1>
+            <p>Documentos e Manuais</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="search-container" class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="Pesquisar por nome..." onkeyup="filterFiles()">
+        </div>
+
+        <div id="status-container" class="loader-container">
+            <i class="fas fa-circle-notch spinner"></i>
+            <span style="font-size: 13px; font-weight: 600;">Buscando arquivos...</span>
+        </div>
+
+        <div id="file-list" class="file-list" style="display: none;"></div>
+    </div>
+
+    <div id="preview-modal" class="preview-overlay" onclick="closePreview()">
+        <div class="preview-content" onclick="event.stopPropagation()">
+            <div class="preview-header">
+                <h3 id="preview-title">Carregando...</h3>
+                <button class="btn-close-preview" onclick="closePreview()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="preview-body">
+                <div class="loader-container"><i class="fas fa-circle-notch spinner"></i></div>
+                <iframe id="preview-iframe" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyC1MWoMoeVxISL-XvVfo3eSzSBXJUpio44'; 
+        const FOLDER_ID = '1Cj2KQhZU9gRKR8CwH7iDq8GuFT4yfoYj'; 
+        let allFetchedFiles = [];
+
+        function getFileIcon(mimeType, fileName) {
+            const lowerName = fileName.toLowerCase();
+            if (mimeType.includes('pdf')) return { class: 'fas fa-file-pdf icon-pdf', label: 'PDF' };
+            if (mimeType.includes('image')) return { class: 'fas fa-image icon-image', label: 'Imagem' };
+            if (mimeType.includes('word') || mimeType.includes('document') || lowerName.endsWith('.odt')) return { class: 'fas fa-file-word icon-word', label: 'Documento' };
+            if (mimeType.includes('spreadsheet') || mimeType.includes('excel') || lowerName.endsWith('.ods')) return { class: 'fas fa-file-excel icon-excel', label: 'Planilha' };
+            if (lowerName.endsWith('.odg') || lowerName.endsWith('.svg') || lowerName.endsWith('.ai')) return { class: 'fas fa-bezier-curve icon-vector', label: 'Desenho/Vetor' };
+            if (mimeType.includes('video')) return { class: 'fas fa-video', label: 'Vídeo' };
+            return { class: 'fas fa-file', label: 'Arquivo' };
+        }
+
+        function openPreview(fileId, fileName) {
+            const modal = document.getElementById('preview-modal');
+            const iframe = document.getElementById('preview-iframe');
+            document.getElementById('preview-title').innerText = fileName;
+            
+            // O link de pré-visualização do Google Drive suporta formatos como .odg convertendo-os em tempo real
+            iframe.src = `https://drive.google.com/file/d/${fileId}/preview`;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            const modal = document.getElementById('preview-modal');
+            const iframe = document.getElementById('preview-iframe');
+            modal.style.display = 'none';
+            iframe.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderFiles(filesToRender) {
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+            if (filesToRender.length === 0) {
+                fileList.innerHTML = `<div class="empty-msg"><i class="fas fa-search" style="font-size: 30px; margin-bottom: 10px; color: #ccc;"></i><br>Nenhum arquivo encontrado.</div>`;
+                return;
+            }
+            filesToRender.forEach(file => {
+                const iconData = getFileIcon(file.mimeType, file.name);
+                const downloadLink = file.webContentLink || file.webViewLink;
+                fileList.insertAdjacentHTML('beforeend', `
+                    <div class="file-card" onclick="openPreview('${file.id}', '${file.name.replace(/'/g, "\\'")}')">
+                        <div class="file-info">
+                            <div class="file-icon ${iconData.class.split(' ')[2]}"><i class="${iconData.class.replace(/icon-\w+/, '')}"></i></div>
+                            <div class="file-details"><h4>${file.name}</h4><p>${iconData.label}</p></div>
+                        </div>
+                        <a href="${downloadLink}" target="_blank" class="btn-download" onclick="event.stopPropagation();"><i class="fas fa-download"></i></a>
+                    </div>`);
+            });
+        }
+
+        function filterFiles() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filteredFiles = allFetchedFiles.filter(file => file.name.toLowerCase().includes(searchTerm));
+            renderFiles(filteredFiles);
+        }
+
+        async function loadFiles() {
+            const statusContainer = document.getElementById('status-container');
+            const searchContainer = document.getElementById('search-container');
+            try {
+                const url = `https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents+and+trashed=false&key=${API_KEY}&fields=files(id,name,mimeType,webViewLink,webContentLink,size)&orderBy=name`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                allFetchedFiles = data.files;
+                statusContainer.style.display = 'none';
+                document.getElementById('file-list').style.display = 'flex';
+                searchContainer.style.display = 'block';
+                renderFiles(allFetchedFiles);
+            } catch (error) {
+                statusContainer.innerHTML = `<div class="error-msg"><i class="fas fa-wifi"></i> Erro ao conectar com o Drive.</div>`;
+            }
+        }
+        window.addEventListener('load', loadFiles);
+    </script>
+</body>
+</html>

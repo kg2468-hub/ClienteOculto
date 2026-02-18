@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Histórico de Avaliações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        :root { --primary: #004a99; --accent: #f9b233; --bg: #f4f7f9; --card: #ffffff; --danger: #dc3545; --success: #28a745; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
+        /* Cabeçalho */
+        header { width: 100%; background: var(--primary); color: white; padding: 40px 20px 25px; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; text-align: center; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-voltar { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; }
+        
+        /* Container */
+        .container { width: 92%; max-width: 500px; margin: 20px 0; display: flex; flex-direction: column; gap: 15px; padding-bottom: 40px; }
+        
+        /* Cards */
+        .history-card { background: var(--card); border-radius: 18px; padding: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
+        .history-card:active { transform: scale(0.98); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .colaborador-info h3 { margin: 0; font-size: 16px; color: var(--primary); text-transform: uppercase; }
+        .nota-badge { background: var(--primary); color: white; padding: 5px 12px; border-radius: 10px; font-weight: 900; font-size: 18px; }
+        .card-footer { display: flex; justify-content: space-between; font-size: 11px; color: #999; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+        
+        /* Botões */
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .btn-action { padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; }
+        .btn-view { background: #e6f0ff; color: var(--primary); }
+        .btn-del { background: #fff1f0; color: var(--danger); }
+
+        /* Modais */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 20000; padding: 15px; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 25px; border-radius: 24px; width: 100%; max-width: 400px; max-height: 85vh; overflow-y: auto; position: relative; animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes modalPop { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Estilo da Pré-visualização */
+        .view-header { border-bottom: 2px solid var(--primary); margin-bottom: 15px; padding-bottom: 10px; text-align: center; }
+        .view-body { text-align: left; font-size: 13px; line-height: 1.6; color: #444; }
+        .view-section { font-weight: 800; color: var(--primary); margin-top: 15px; display: block; background: #f0f4f8; padding: 4px 8px; border-radius: 4px; }
+        .view-item { display: flex; justify-content: space-between; border-bottom: 1px solid #f0f0f0; padding: 5px 0; }
+        .resp-sim { color: var(--success); font-weight: bold; }
+        .resp-nao { color: var(--danger); font-weight: bold; }
+
+        .modal-footer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; position: sticky; bottom: -25px; background: white; padding-top: 10px; padding-bottom: 10px; }
+        .btn-footer { padding: 15px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; font-size: 12px; }
+        .btn-whatsapp { background: var(--success); color: white; }
+        .btn-pdf { background: #555; color: white; }
+
+        #toast { position: fixed; bottom: 30px; background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 50px; display: none; z-index: 30000; }
+
+        /* Dark Mode */
+        body.dark-mode { --bg: #121212; --card: #1e1e1e; color: #eee; }
+        body.dark-mode .history-card, body.dark-mode .modal-content { border-color: #333; }
+        body.dark-mode .modal-content, body.dark-mode .modal-footer-btns { background: #1e1e1e; color: white; }
+        body.dark-mode .view-body { color: #ccc; }
+        body.dark-mode .view-section { background: #2a2a2a; color: var(--accent); }
+
+        @media (min-width: 1024px) { .container { max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div id="toast"></div>
+
+    <header>
+        <a href="index.html" class="btn-voltar"><i class="fas fa-arrow-left"></i> VOLTAR</a>
+        <h1 style="margin:0; font-size: 24px;">HISTÓRICO</h1>
+        <p style="margin:5px 0 0; font-size: 12px; opacity:0.8; letter-spacing: 2px;">AVALIAÇÕES SALVAS</p>
+    </header>
+
+    <div class="container" id="history-container"></div>
+
+    <div id="modal-view" class="modal-overlay" onclick="closeViewModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="view-header">
+                <h2 id="view-title" style="margin:0; font-size: 18px; color: var(--primary);">DETALHES</h2>
+                <span id="view-subtitle" style="font-size: 12px; color: #777;"></span>
+            </div>
+            <div id="view-content" class="view-body"></div>
+            <div class="modal-footer-btns">
+                <button class="btn-footer btn-whatsapp" id="btn-share-wa"><i class="fab fa-whatsapp"></i> WHATSAPP</button>
+                <button class="btn-footer btn-pdf" id="btn-gen-pdf"><i class="fas fa-file-pdf"></i> SALVAR PDF</button>
+            </div>
+            <button onclick="closeViewModal()" style="width:100%; border:none; background:none; color:#999; margin-top:15px; font-weight:bold; cursor:pointer;">FECHAR</button>
+        </div>
+    </div>
+
+    <div id="modal-delete" class="modal-overlay">
+        <div class="modal-content" style="text-align:center;">
+            <i class="fas fa-exclamation-triangle" style="font-size:40px; color:var(--danger); margin-bottom:15px;"></i>
+            <h3>Excluir Registro?</h3>
+            <p>Deseja remover esta avaliação do histórico?</p>
+            <div class="modal-footer-btns">
+                <button class="btn-footer" style="background:#f0f0f0; color:#555;" onclick="closeDeleteModal()">CANCELAR</button>
+                <button class="btn-footer" style="background:var(--danger); color:white;" id="confirm-delete-btn">EXCLUIR</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let indexToDelete = null;
+        let activeItem = null;
+
+        if (localStorage.getItem('dark-mode') === 'true') document.body.classList.add('dark-mode');
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
+        }
+
+        function loadHistory() {
+            const container = document.getElementById('history-container');
+            const data = JSON.parse(localStorage.getItem('checklist_history')) || [];
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-folder-open"></i><p>Nada por aqui.</p></div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach((item, index) => {
+                const card = `
+                    <div class="history-card" onclick="openViewModal(${index})">
+                        <div class="card-header">
+                            <div class="colaborador-info">
+                                <h3>${item.colaborador}</h3>
+                                <p>Mat: ${item.matricula}</p>
+                            </div>
+                            <div class="nota-badge">${item.nota}%</div>
+                        </div>
+                        <div class="card-footer">
+                            <span><i class="far fa-calendar-alt"></i> ${item.data}</span>
+                            <span><i class="far fa-clock"></i> ${item.inicio}</span>
+                        </div>
+                        <div class="actions">
+                            <button class="btn-action btn-view" onclick="event.stopPropagation(); openViewModal(${index})"><i class="fas fa-eye"></i> Ver</button>
+                            <button class="btn-action btn-del" onclick="event.stopPropagation(); openDeleteModal(${index})"><i class="fas fa-trash"></i> Excluir</button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        function openViewModal(index) {
+            const data = JSON.parse(localStorage.getItem('checklist_history')) || [];
+            activeItem = data[index];
+            const content = document.getElementById('view-content');
+            
+            document.getElementById('view-subtitle').innerText = `${activeItem.colaborador} - ${activeItem.data}`;
+            
+            let html = `<p><strong>Início:</strong> ${activeItem.inicio} | <strong>Fim:</strong> ${activeItem.fim}</p>`;
+            
+            activeItem.secoes.forEach(secao => {
+                html += `<span class="view-section">${secao.nome}</span>`;
+                secao.itens.forEach(it => {
+                    const cl = it.resposta === "SIM" ? "resp-sim" : "resp-nao";
+                    html += `<div class="view-item"><span>${it.pergunta}</span><span class="${cl}">${it.resposta}</span></div>`;
+                });
+            });
+
+            content.innerHTML = html;
+            document.getElementById('modal-view').style.display = 'flex';
+
+            // Configura botões do modal
+            document.getElementById('btn-share-wa').onclick = () => shareWhatsApp(activeItem);
+            document.getElementById('btn-gen-pdf').onclick = () => generatePDF(activeItem);
+        }
+
+        function closeViewModal() { document.getElementById('modal-view').style.display = 'none'; }
+
+        function shareWhatsApp(item) {
+            let text = `*AVALIAÇÃO CLIENTE OCULTO*\n--------------------------------\n`;
+            text += `👤 *Colaborador:* ${item.colaborador}\n🆔 *Matrícula:* ${item.matricula}\n📅 *Data:* ${item.data}\n🏆 *NOTA: ${item.nota}%*\n--------------------------------\n`;
+            
+            item.secoes.forEach(s => {
+                text += `\n🔹 *${s.nome}*\n`;
+                s.itens.forEach(it => {
+                    text += `${it.resposta === "SIM" ? "✅" : "❌"} ${it.pergunta}\n`;
+                });
+            });
+
+            const encoded = encodeURIComponent(text);
+            window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+        }
+
+        function generatePDF(item) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.setFontSize(16); doc.setTextColor(0, 74, 153);
+            doc.text("RELATÓRIO CLIENTE OCULTO", 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12); doc.setTextColor(0);
+            doc.text(`Colaborador: ${item.colaborador}`, 20, 35);
+            doc.text(`Matrícula: ${item.matricula}`, 20, 42);
+            doc.text(`Data: ${item.data} (${item.inicio} - ${item.fim})`, 20, 49);
+            doc.text(`NOTA FINAL: ${item.nota}%`, 20, 56);
+            
+            let y = 70;
+            item.secoes.forEach(s => {
+                doc.setFont(undefined, 'bold');
+                doc.text(s.nome, 20, y); y += 7;
+                doc.setFont(undefined, 'normal'); doc.setFontSize(10);
+                s.itens.forEach(it => {
+                    if (y > 280) { doc.addPage(); y = 20; }
+                    doc.text(`${it.resposta === "SIM" ? "[V]" : "[X]"} ${it.pergunta}`, 25, y);
+                    y += 6;
+                });
+                y += 5; doc.setFontSize(12);
+            });
+
+            doc.save(`Avaliacao_${item.colaborador}.pdf`);
+            showToast("PDF Gerado com sucesso!");
+        }
+
+        function openDeleteModal(index) { indexToDelete = index; document.getElementById('modal-delete').style.display = 'flex'; }
+        function closeDeleteModal() { document.getElementById('modal-delete').style.display = 'none'; }
+
+        document.getElementById('confirm-delete-btn').onclick = function() {
+            let data = JSON.parse(localStorage.getItem('checklist_history')) || [];
+            data.splice(indexToDelete, 1);
+            localStorage.setItem('checklist_history', JSON.stringify(data));
+            closeDeleteModal(); loadHistory(); showToast("Registro removido");
+        };
+
+        window.onload = loadHistory;
+    </script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AcquaControl Pro</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        /* --- ESTILOS DO LOADER --- */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+            background: #1a1a1a; display: flex; align-items: center; justify-content: center;
+            z-index: 100000; transition: opacity 0.5s ease, visibility 0.5s;
+        }
+        .loader-content { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .logo-container { font-size: 50px; animation: logoFloat 2s ease-in-out infinite; }
+        .loading-text { color: white; font-size: 11px; font-weight: 800; letter-spacing: 3px; margin: 0; opacity: 0.9; }
+        .loading-bar-container { width: 150px; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; position: relative; }
+        .loading-bar-fill { width: 40%; height: 100%; background: #0dcaf0; border-radius: 10px; animation: progressMove 1.5s infinite ease-in-out; }
+        .loader-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes progressMove {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
+
+        /* --- VARIÁVEIS E BASE --- */
+        :root {
+            --bg: #f8f9fa; --card: #ffffff; --text-main: #1a1a1a; --text-sub: #6c757d;
+            --accent: #000000; --danger: #ff3b30; --warning: #ffcc00; --success: #34c759;
+            --radius: 16px;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 480px; padding: 20px; min-height: 100vh; padding-bottom: 20px; }
+
+        /* Header Data */
+        .brand h1 { font-size: 20px; margin: 0; font-weight: 700; }
+        .data-header { margin: 0; font-size: 12px; color: var(--text-sub); }
+        .logo { font-size: 24px; margin-right: 10px; }
+        .brand { display: flex; align-items: center; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .btn-icon { background: var(--accent); color: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* Inputs */
+        .card-input { background: var(--accent); color: white; padding: 24px; border-radius: var(--radius); box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card-input small { text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; font-size: 10px; }
+        .input-wrapper { display: flex; margin-top: 12px; background: rgba(255,255,255,0.1); border-radius: 12px; padding: 5px; }
+        .input-wrapper input { background: transparent; border: none; color: white; padding: 12px; font-size: 20px; width: 100%; outline: none; }
+        .input-wrapper input::placeholder { color: rgba(255,255,255,0.5); }
+        .input-wrapper button { background: white; color: black; border: none; padding: 0 20px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+
+        /* Status */
+        .grid-status { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .status-box { background: var(--card); padding: 15px; border-radius: var(--radius); border: 1px solid #eee; display: flex; flex-direction: column; align-items: center; text-align: center;}
+        .status-box .label { font-size: 11px; color: var(--text-sub); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .status-box h2 { margin: 0; font-size: 18px; }
+        .grafico-mini { width: 60px; height: 60px; margin-top: 10px; }
+
+        @keyframes pulsar-alerta {
+            0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 59, 48, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+        }
+        #status-alerta.anormal { border-color: var(--danger); color: var(--danger); animation: pulsar-alerta 2s infinite; background-color: #fff9f9; }
+
+        /* Gráficos e Controles */
+        .card-chart { background: var(--card); padding: 20px; border-radius: var(--radius); margin-bottom: 20px; border: 1px solid #eee; }
+        .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .chart-header h3 { font-size: 14px; margin: 0; color: var(--text-sub); }
+        .select-chart { border: 1px solid #ddd; border-radius: 8px; padding: 5px 10px; font-size: 11px; background: #fafafa; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--text-main); outline: none; }
+
+        /* Histórico */
+        .history-section h3 { font-size: 14px; color: var(--text-sub); margin-bottom: 10px; }
+        .history-list { max-height: 250px; overflow-y: auto; background: var(--card); border-radius: var(--radius); border: 1px solid #eee; padding: 10px; margin-bottom: 20px;}
+        .history-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f0f0f0; }
+        .history-item:last-child { border-bottom: none; }
+        .history-info strong { display: block; font-size: 14px; }
+        .history-info span { font-size: 11px; color: var(--text-sub); }
+        .history-actions button { background: #f0f0f0; color: #444; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-left: 5px; transition: background 0.2s; }
+        .history-actions button:hover { background: #e0e0e0; }
+        .history-actions .btn-del { background: #ffeeee; color: var(--danger); }
+        .history-actions .btn-del:hover { background: #fdd; }
+
+        /* Botões do Rodapé */
+        .btn-secondary { width: 100%; padding: 16px; background: #fff; border: 2px solid #eee; border-radius: var(--radius); font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; }
+        .backup-area { display: flex; gap: 10px; margin-top: 15px; margin-bottom: 15px; }
+        .btn-backup { flex: 1; background: #f0f0f0; border: 1px solid #ddd; padding: 12px; border-radius: 8px; font-size: 11px; text-align: center; cursor: pointer; color: #666; text-transform: uppercase; font-weight: bold; display: block; }
+
+        /* --- RODAPÉ (LOGO E VERSÃO) --- */
+        .footer-logo { width: 100%; padding: 15px 0 10px; display: flex; flex-direction: column; align-items: center; background: transparent; }
+        .footer-logo img { width: clamp(90px, 25vw, 110px); border-radius: 12px; margin-bottom: 8px; }
+        footer { font-size: clamp(10px, 3vw, 11px); color: #999; text-align: center; padding: 0 10px; line-height: 1.4; }
+        .version-card { margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(0, 74, 153, 0.05); border: 1px solid rgba(0, 74, 153, 0.1); border-radius: 100px; }
+        .version-label { font-size: 9px; font-weight: 800; color: #004a99; letter-spacing: 0.5px; text-transform: uppercase; }
+        #app-version-display { font-family: 'Courier New', Courier, monospace; font-size: 11px; font-weight: bold; color: #f9b233; }
+
+        /* Modais */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; padding: 20px;}
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-content h3 { margin-top: 0; font-size: 18px;}
+        .modal-content label { font-size: 12px; color: var(--text-sub); font-weight: bold; margin-top: 10px; display: block;}
+        .modal-content input { width: 100%; margin: 5px 0 15px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-save { background: var(--accent); color: white; flex: 1; padding: 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-cancel { background: #f0f0f0; color: #333; flex: 1; padding: 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+
+        .text-center { text-align: center; }
+        .alert-icon { font-size: 40px; margin-bottom: 10px; }
+        .btn-danger { background: var(--danger); color: white; flex: 1; padding: 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+
+        .history-item-container { display: flex; flex-direction: column; }
+        .alerta-gap {
+            background: #fff3cd; color: #856404; font-size: 10px; padding: 6px;
+            text-align: center; border-radius: 6px; margin: 4px 12px 0;
+            font-weight: 600; border: 1px dashed #ffeeba; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen">
+    <div class="loader-content">
+        <div class="logo-container">💧</div>
+        <p class="loading-text">CARREGANDO DADOS</p>
+        <div class="loading-bar-container"><div class="loading-bar-fill"></div></div>
+    </div>
+</div>
+
+<div class="app-container">
+    <header class="main-header">
+        <div class="brand">
+            <span class="logo">💧</span>
+            <div>
+                <h1>AcquaControl</h1>
+                <p id="data-hoje" class="data-header"></p>
+            </div>
+        </div>
+        <button class="btn-icon" onclick="abrirModalEdicao()" title="Adicionar medição antiga">+</button>
+    </header>
+
+    <main>
+        <section class="card-input">
+            <small>NOVA LEITURA (Hoje)</small>
+            <div class="input-wrapper">
+                <input type="number" id="leitura" placeholder="00000.000" step="0.001">
+                <button onclick="registrarLeitura()">Salvar</button>
+            </div>
+        </section>
+
+        <section class="grid-status">
+            <div class="status-box">
+                <span class="label">Consumo Última Leitura</span>
+                <h2 id="consumo-diario">0.000 <small>m³</small></h2>
+            </div>
+            <div class="status-box" id="status-alerta">
+                <span class="label">Status</span>
+                <h2 id="status-texto">---</h2>
+                <div class="grafico-mini"><canvas id="graficoStatus"></canvas></div>
+            </div>
+        </section>
+
+        <section class="card-chart">
+            <div class="chart-header">
+                <h3>Histórico (7 dias)</h3>
+                <select id="tipo-grafico" class="select-chart" onchange="atualizarUI()">
+                    <option value="bar">Barras</option>
+                    <option value="line">Linha</option>
+                    <option value="area">Área</option>
+                </select>
+            </div>
+            <canvas id="meuGrafico"></canvas>
+        </section>
+
+        <section class="history-section">
+            <h3>Registros Salvos</h3>
+            <div id="lista-historico" class="history-list"></div>
+        </section>
+
+        <div class="action-footer">
+            <button class="btn-secondary" onclick="gerarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+            <div class="backup-area">
+                <button class="btn-backup" onclick="exportarDados()">Exportar Backup</button>
+                <label for="importar" class="btn-backup">Importar Backup</label>
+                <input type="file" id="importar" style="display:none" accept=".json" onchange="importarDados(event)">
+            </div>
+        </div>
+    </main>
+
+    <div class="footer-logo">
+        <img src="PagueMenosLogo.png" alt="Pague Menos">
+        <footer>
+            Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+            <strong>Sistema não oficial</strong>, voltado a facilitar o acompanhamento do <strong>Hidrômetro</strong>
+            <br>
+            <div class="version-card">
+                <span class="version-label">Versão</span>
+                <span id="app-version-display">---</span>
+            </div>
+        </footer>
+    </div>
+
+    <div id="modal-edicao" class="modal">
+        <div class="modal-content">
+            <h3 id="titulo-modal-edicao">Adicionar / Editar Registro</h3>
+            <input type="hidden" id="edit-index" value="-1">
+            <label>Data da Medição:</label><input type="date" id="edit-data">
+            <label>Leitura (m³):</label><input type="number" id="edit-leitura" step="0.001">
+            <div class="modal-actions">
+                <button onclick="fecharModal('modal-edicao')" class="btn-cancel">Cancelar</button>
+                <button onclick="salvarEdicao()" class="btn-save">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-confirmacao" class="modal modal-alert">
+        <div class="modal-content text-center">
+            <div class="alert-icon">⚠️</div>
+            <h3 id="confirm-titulo">Tem certeza?</h3>
+            <p id="confirm-mensagem">Essa ação não pode ser desfeita.</p>
+            <div class="modal-actions">
+                <button onclick="fecharConfirmacao()" class="btn-cancel">Cancelar</button>
+                <button id="btn-confirmar-acao" class="btn-danger">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function limparCachesProvisoriamente() {
+        const dadosMedicoes = localStorage.getItem('hidrometro_pro_dados');
+        localStorage.clear(); sessionStorage.clear();
+        if (dadosMedicoes) localStorage.setItem('hidrometro_pro_dados', dadosMedicoes);
+        if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
+    })();
+
+    let historico = JSON.parse(localStorage.getItem('hidrometro_pro_dados')) || [];
+    let graficoBarra = null; let graficoStatus = null; let acaoConfirmacaoPendente = null;
+
+    // Função utilitária para pegar a data atual no fuso local no formato YYYY-MM-DD
+    function getHojeYYYYMMDD() {
+        const data = new Date();
+        const ano = data.getFullYear();
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const dia = String(data.getDate()).padStart(2, '0');
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    window.addEventListener('load', () => {
+        configurarDataHoje(); atualizarUI(); displayVersion();
+        setTimeout(() => {
+            const loader = document.getElementById('loading-screen');
+            if(loader) { loader.classList.add('loader-hidden'); setTimeout(() => loader.style.display = 'none', 500); }
+        }, 1000);
+    });
+
+    async function displayVersion() {
+        try {
+            const response = await fetch(`version.json?v=${Date.now()}`);
+            if (response.ok) {
+                const data = await response.json();
+                const display = document.getElementById('app-version-display');
+                if (display) display.innerText = data.version;
+            }
+        } catch (err) {
+            console.error("Erro ao exibir versão:", err);
+        }
+    }
+
+    function configurarDataHoje() {
+        document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function confirmarAcao(titulo, mensagem, callback) {
+        document.getElementById('confirm-titulo').innerText = titulo;
+        document.getElementById('confirm-mensagem').innerText = mensagem;
+        acaoConfirmacaoPendente = callback;
+        document.getElementById('modal-confirmacao').style.display = 'flex';
+    }
+
+    function fecharConfirmacao() { document.getElementById('modal-confirmacao').style.display = 'none'; acaoConfirmacaoPendente = null; }
+    document.getElementById('btn-confirmar-acao').addEventListener('click', () => { if (acaoConfirmacaoPendente) acaoConfirmacaoPendente(); fecharConfirmacao(); });
+    function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    function registrarLeitura() {
+        const valor = parseFloat(document.getElementById('leitura').value);
+        if (isNaN(valor)) return alert("Insira uma leitura válida.");
+        confirmarAcao("Salvar Leitura", `Confirma o registro de ${valor} m³ para hoje?`, () => {
+            historico.push({ id: Date.now(), data: new Date().toISOString(), leitura: valor });
+            salvarERefrescar(); document.getElementById('leitura').value = '';
+        });
+    }
+
+    function abrirModalEdicao(id = null) {
+        const modal = document.getElementById('modal-edicao');
+        const inputId = document.getElementById('edit-index'); 
+        const inputData = document.getElementById('edit-data'); 
+        const inputLeitura = document.getElementById('edit-leitura');
+
+        // Impede a seleção de datas futuras no calendário
+        inputData.max = getHojeYYYYMMDD();
+
+        if (id) {
+            document.getElementById('titulo-modal-edicao').innerText = "Editar Medição";
+            const registro = historico.find(h => h.id === id);
+            inputId.value = id; inputData.value = registro.data.split('T')[0]; inputLeitura.value = registro.leitura;
+        } else {
+            document.getElementById('titulo-modal-edicao').innerText = "Adicionar Antiga";
+            inputId.value = "-1"; inputData.value = ""; inputLeitura.value = "";
+        }
+        modal.style.display = 'flex';
+    }
+
+    function salvarEdicao() {
+        const id = parseInt(document.getElementById('edit-index').value);
+        const dataRef = document.getElementById('edit-data').value;
+        const valorRef = parseFloat(document.getElementById('edit-leitura').value);
+        
+        if (!dataRef || isNaN(valorRef)) return alert("Preencha corretamente.");
+
+        // Trava final no script para não aceitar medições futuras
+        if (dataRef > getHojeYYYYMMDD()) {
+            return alert("Não é permitido salvar medições em datas futuras.");
+        }
+
+        confirmarAcao("Salvar Alterações", "Deseja salvar esta modificação no histórico?", () => {
+            const dataIso = new Date(dataRef + "T12:00:00").toISOString();
+            if (id !== -1) { const index = historico.findIndex(h => h.id === id); historico[index].data = dataIso; historico[index].leitura = valorRef; } 
+            else { historico.push({ id: Date.now(), data: dataIso, leitura: valorRef }); }
+            salvarERefrescar(); fecharModal('modal-edicao');
+        });
+    }
+
+    function excluirRegistro(id) {
+        confirmarAcao("Excluir Registro", "Esta medição será apagada definitivamente. Continuar?", () => {
+            historico = historico.filter(h => h.id !== id); salvarERefrescar();
+        });
+    }
+
+    function salvarERefrescar() {
+        historico.sort((a, b) => new Date(a.data) - new Date(b.data));
+        for (let i = 0; i < historico.length; i++) {
+            if (i === 0) { historico[i].consumoCalculado = 0; historico[i].diasAusentes = 0; } 
+            else {
+                historico[i].consumoCalculado = Math.max(0, historico[i].leitura - historico[i - 1].leitura);
+                const dataAtual = new Date(historico[i].data); const dataAnterior = new Date(historico[i - 1].data);
+                dataAtual.setHours(0,0,0,0); dataAnterior.setHours(0,0,0,0);
+                const diffDays = Math.round(Math.abs(dataAtual - dataAnterior) / (1000 * 60 * 60 * 24));
+                historico[i].diasAusentes = diffDays > 1 ? diffDays - 1 : 0;
+            }
+        }
+        localStorage.setItem('hidrometro_pro_dados', JSON.stringify(historico)); atualizarUI();
+    }
+
+    function atualizarUI() {
+        renderizarLista();
+        if (historico.length > 0) {
+            const ultimo = historico[historico.length - 1];
+            document.getElementById('consumo-diario').innerHTML = `${ultimo.consumoCalculado.toFixed(3)} <small>m³</small>`;
+            analisarAnormalidade(ultimo.consumoCalculado);
+        } else {
+            document.getElementById('consumo-diario').innerHTML = `0.000 <small>m³</small>`;
+            document.getElementById('status-texto').innerText = "---";
+            renderizarGraficos([], 0, 1);
+        }
+    }
+
+    function renderizarLista() {
+        const lista = document.getElementById('lista-historico'); lista.innerHTML = '';
+        [...historico].reverse().forEach(item => {
+            let alertaHtml = item.diasAusentes > 0 ? `<div class="alerta-gap">⚠️ ${item.diasAusentes} dia(s) sem registro</div>` : '';
+            lista.innerHTML += `
+                <div class="history-item-container">${alertaHtml}
+                    <div class="history-item">
+                        <div class="history-info"><strong>${item.leitura.toFixed(3)} m³</strong><span>${new Date(item.data).toLocaleDateString('pt-BR')} | Consumo: ${item.consumoCalculado.toFixed(3)}</span></div>
+                        <div class="history-actions">
+                            <button onclick="abrirModalEdicao(${item.id})"><i class="fas fa-edit"></i></button>
+                            <button class="btn-del" onclick="excluirRegistro(${item.id})"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function analisarAnormalidade(consumo) {
+        const statusDiv = document.getElementById('status-alerta'); 
+        const texto = document.getElementById('status-texto');
+        
+        if (historico.length < 3) { 
+            texto.innerText = "Coletando..."; 
+            statusDiv.classList.remove('anormal'); 
+            renderizarGraficos(historico, consumo, consumo || 1); 
+            return; 
+        }
+
+        const limite = (historico.reduce((acc, curr) => acc + curr.consumoCalculado, 0) / historico.length) * 1.4;
+        const ultimo = historico[historico.length - 1];
+
+        // Se houve dias pulados, avalia a MÉDIA diária para ver se é vazamento
+        if (ultimo.diasAusentes > 0) {
+            const mediaDiasAcumulados = consumo / (ultimo.diasAusentes + 1);
+            if (mediaDiasAcumulados > limite) {
+                texto.innerText = "Vazamento? (Alta)"; 
+                statusDiv.classList.add('anormal');
+            } else {
+                texto.innerText = "Acumulado"; 
+                statusDiv.classList.remove('anormal');
+            }
+        } else {
+            if (consumo > limite) { 
+                texto.innerText = "Vazamento?"; 
+                statusDiv.classList.add('anormal'); 
+            } else { 
+                texto.innerText = "Normal"; 
+                statusDiv.classList.remove('anormal'); 
+            }
+        }
+
+        renderizarGraficos(historico, consumo, limite);
+    }
+
+    function renderizarGraficos(dadosGlobais, consumoAtual, limiteAtual) {
+        const ultimosDados = dadosGlobais.slice(-7);
+        
+        // Adiciona um marcador na data caso haja dias ausentes
+        const labelsBarra = ultimosDados.map(d => {
+            let dataStr = new Date(d.data).toLocaleDateString('pt-BR', {day:'2-digit', month:'short'});
+            return d.diasAusentes > 0 ? `${dataStr} (${d.diasAusentes + 1}d)` : dataStr;
+        });
+        
+        const valoresBarra = ultimosDados.map(d => d.consumoCalculado);
+        const estilo = document.getElementById('tipo-grafico').value;
+        const typeGrafico = estilo === 'area' ? 'line' : estilo;
+        
+        // Cores: Laranja se acumulado, Vermelho se vazamento, Preto se normal
+        const bgColors = ultimosDados.map(d => {
+            if (d.diasAusentes > 0) return '#f9b233'; // Laranja de Acumulado
+            return d.consumoCalculado > limiteAtual ? '#ff3b30' : '#1a1a1a';
+        });
+
+        const ctxBarra = document.getElementById('meuGrafico').getContext('2d');
+        if (graficoBarra) graficoBarra.destroy();
+        graficoBarra = new Chart(ctxBarra, {
+            type: typeGrafico,
+            data: {
+                labels: labelsBarra,
+                datasets: [{
+                    label: 'Consumo (m³)',
+                    data: valoresBarra,
+                    backgroundColor: estilo === 'area' ? 'rgba(26, 26, 26, 0.2)' : bgColors,
+                    borderColor: estilo === 'bar' ? 'transparent' : '#1a1a1a',
+                    borderWidth: 2,
+                    fill: estilo === 'area',
+                    tension: 0.3, 
+                    pointBackgroundColor: bgColors,
+                    pointRadius: estilo !== 'bar' ? 4 : 0,
+                    borderRadius: estilo === 'bar' ? 4 : 0
+                }]
+            },
+            options: { 
+                responsive: true, 
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let dado = ultimosDados[context.dataIndex];
+                                let labelBase = `Consumo: ${dado.consumoCalculado.toFixed(3)} m³`;
+                                if (dado.diasAusentes > 0) {
+                                    return [labelBase, `(Acumulado de ${dado.diasAusentes + 1} dias)`];
+                                }
+                                return labelBase;
+                            }
+                        }
+                    }
+                }, 
+                scales: { x: { grid: { display: false } } } 
+            }
+        });
+
+        const ctxStatus = document.getElementById('graficoStatus').getContext('2d');
+        if (graficoStatus) graficoStatus.destroy();
+        
+        // A cor do medidor (rosca) também se ajusta
+        const ultimo = ultimosDados[ultimosDados.length - 1] || { consumoCalculado: 0, diasAusentes: 0 };
+        let corMedidor = '#34c759'; // Verde
+        if (ultimo.diasAusentes > 0) {
+            corMedidor = (consumoAtual / (ultimo.diasAusentes + 1)) > limiteAtual ? '#ff3b30' : '#f9b233';
+        } else if (consumoAtual > limiteAtual) {
+            corMedidor = '#ff3b30'; // Vermelho
+        }
+
+        graficoStatus = new Chart(ctxStatus, {
+            type: 'doughnut',
+            data: { labels: ['Consumo', 'Folga'], datasets: [{ data: [consumoAtual, Math.max(0, limiteAtual - consumoAtual)], backgroundColor: [corMedidor, '#eeeeee'], borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+    }
+
+    function gerarPDF() {
+        if (historico.length === 0) return alert("Não há dados.");
+        const { jsPDF } = window.jspdf; const doc = new jsPDF();
+        doc.setFont("helvetica", "bold"); doc.text("RELATÓRIO DE CONSUMO", 14, 20); doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text(`Gerado em: ${new Date().toLocaleDateString()}`, 14, 28);
+        doc.autoTable({ startY: 35, head: [['Data', 'Leitura', 'Consumo (m³)']], body: historico.map(h => [ new Date(h.data).toLocaleDateString('pt-BR'), h.leitura.toFixed(3), h.consumoCalculado.toFixed(3) ]), headStyles: { fillColor: [0, 0, 0] } });
+        doc.save("Relatorio_Agua.pdf");
+    }
+
+    function exportarDados() {
+        if (historico.length === 0) return alert("Sem dados.");
+        const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(historico)); a.download = "backup_hidrometro.json";
+        document.body.appendChild(a); a.click(); a.remove();
+    }
+
+    function importarDados(event) {
+        const file = event.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try { const dados = JSON.parse(e.target.result); if (Array.isArray(dados)) { confirmarAcao("Importar Backup", "Isso substituirá os dados atuais. Continuar?", () => { historico = dados; salvarERefrescar(); }); } } 
+            catch (err) { alert("Arquivo corrompido."); }
+        }; reader.readAsText(file); event.target.value = '';
+    }
+</script>
+</body>
+</html>
