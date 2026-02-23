@@ -1,0 +1,249 @@
+:root {
+    --primary: #004a99;
+    --accent: #f9b233;
+    --bg: #f4f7f6;
+    --text: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 95%;
+    max-width: 600px;
+    background: var(--card-bg);
+    padding: 25px 20px;
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+}
+
+.search-box {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-box i {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    color: #999;
+}
+
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    transition: 0.2s;
+    background: #fafafa;
+}
+
+.file-item:hover {
+    transform: scale(1.02);
+    border-color: var(--primary);
+    background: #fff;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    cursor: pointer;
+    min-width: 0;
+    /* Essencial para o ellipsis funcionar em flexbox */
+}
+
+.file-icon {
+    font-size: 24px;
+}
+
+.file-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* Essencial para o ellipsis funcionar em flexbox */
+    overflow: hidden;
+}
+
+.file-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-meta {
+    font-size: 11px;
+    color: #888;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.file-actions a {
+    color: #666;
+    font-size: 18px;
+    transition: 0.2s;
+}
+
+.file-actions a:hover {
+    color: var(--accent);
+}
+
+.preview-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.preview-content {
+    background: white;
+    width: 100%;
+    max-width: 800px;
+    height: 90vh;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.preview-iframe {
+    flex: 1;
+    border: none;
+    width: 100%;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.text-primary {
+    color: #007bff;
+}
+
+.text-info {
+    color: #17a2b8;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.text-warning {
+    color: #ffc107;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: #999;
+}
+
+.footer-logo {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.footer-logo img {
+    width: 100px;
+    opacity: 0.8;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    --bg: #0f172a;
+    --text: #f8fafc;
+    --primary: #f9b233;
+}
+
+body.dark-mode .container {
+    background: #1e293b;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .file-item {
+    background: #0f172a;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .file-item:hover {
+    background: #2a2a2a;
+    border-color: #f9b233;
+}
+
+body.dark-mode .file-name {
+    color: #f9b233;
+}
+
+body.dark-mode .search-box input {
+    background: #2a2a2a;
+    color: #fff;
+    border-color: #444;
+}
+
+body.dark-mode .preview-content {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+body.dark-mode .preview-header {
+    border-bottom-color: #333;
+}
+
+body.dark-mode h1,
+body.dark-mode .btn-back {
+    color: #f9b233;
+}

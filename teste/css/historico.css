@@ -1,0 +1,344 @@
+:root {
+    --primary: #004a99;
+    --accent: #f9b233;
+    --bg: #f4f7f6;
+    --text: #333;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: var(--white);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.btn-back {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+h1 {
+    font-size: 24px;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Filtros */
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.search-box {
+    flex: 1;
+    position: relative;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 10px 15px 10px 35px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    color: #999;
+}
+
+/* Lista de Cards */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card {
+    background: #fff;
+    border-left: 5px solid var(--primary);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.store-name {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--primary);
+}
+
+.date {
+    font-size: 12px;
+    color: #888;
+}
+
+.card-body {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.score-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.score-high {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.score-mid {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.score-low {
+    background: #ffebee;
+    color: #b71c1c;
+}
+
+/* Ações do Card */
+.card-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.btn-action {
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+}
+
+.btn-view {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.btn-view:hover {
+    background: #bbdefb;
+}
+
+.btn-share {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.btn-share:hover {
+    background: #c8e6c9;
+}
+
+.btn-delete {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.btn-delete:hover {
+    background: #ffcdd2;
+}
+
+/* Logo Rodapé */
+.footer-logo {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.footer-logo img {
+    width: 120px;
+    opacity: 0.8;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 50px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+/* Modal de Visualização */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    border-radius: 15px;
+    overflow-y: auto;
+    padding: 25px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.report-details h2 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary);
+}
+
+.report-item {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.report-label {
+    font-weight: bold;
+    color: #555;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.report-value {
+    font-size: 15px;
+    margin-top: 3px;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    --bg: #121212;
+    --text: #e0e0e0;
+    --white: #1e1e1e;
+    --primary: #0a192f;
+}
+
+body.dark-mode .subtitle {
+    color: #bbb;
+}
+
+body.dark-mode .card {
+    border-color: #333;
+    background: #1e1e1e;
+}
+
+body.dark-mode .store-name {
+    color: #f9b233;
+}
+
+body.dark-mode .search-box input {
+    background: #2a2a2a;
+    color: #fff;
+    border-color: #444;
+}
+
+body.dark-mode .modal-content {
+    background: #1e1e1e;
+    color: #fff;
+}
+
+body.dark-mode .btn-back {
+    color: #f9b233;
+}
+
+body.dark-mode .btn-view {
+    background: #1a2a4a;
+    color: #64b5f6;
+}
+
+body.dark-mode .btn-share {
+    background: #1b3a2b;
+    color: #81c784;
+}
+
+body.dark-mode .btn-delete {
+    background: #3a1b1b;
+    color: #e57373;
+}
+
+/* Dark Mode (opcional se quiserem ligar via sistema) */
+@media (prefers-color-scheme: dark) {
+    /* body { background-color: #121212; }
+    .container { background: #1e1e1e; color: #e0e0e0; }
+    .card { background: #2d2d2d; border-left-color: var(--accent); } */
+}

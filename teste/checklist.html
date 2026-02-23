@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="color-scheme" content="light">
+    <title>Checklist Pague Menos</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="css/global.css?v=1.1.0">
+    <link rel="stylesheet" href="css/checklist.css?v=1.1.0">
+    <script src="js/dark-mode.js"></script>
+</head>
+
+<body>
+
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="logo-container">
+                <img src="assets/images/icone_novo.png" alt="Logo">
+            </div>
+            <p class="loading-text">CARREGANDO SISTEMA</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="transition-overlay">
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+    </div>
+
+
+    <div id="toast"></div>
+
+    <div id="modal-confirm" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--primary); margin-top: 0;">Alterar Resposta?</h3>
+            <p style="margin-bottom: 5px;">Você deseja mudar para <strong id="modal-new-choice"></strong> a pergunta:
+            </p>
+            <div id="modal-question-text" class="modal-question-box"></div>
+            <div class="modal-btns" style="display: flex; gap: 10px;">
+                <button class="btn" style="flex:1" onclick="fecharModalConfirm(false)">CANCELAR</button>
+                <button class="btn" style="flex:1; background: var(--primary); color: white;"
+                    onclick="fecharModalConfirm(true)">CONFIRMAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-alert" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="alert-title" style="color: var(--danger);">⚠️ Atenção</h3>
+            <p id="alert-msg"></p>
+            <button class="btn-fin" style="margin: 10px 0 0; padding: 15px; width: 100%;"
+                onclick="fecharAlerta()">ENTENDI</button>
+        </div>
+    </div>
+
+    <header class="hero-header">
+        <button class="btn-back-hero" onclick="voltar()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-content">
+            <h1>Checklist</h1>
+            <p>Avaliação Cliente Oculto</p>
+        </div>
+        <img src="assets/images/icone_novo.png" alt="Icone" class="header-logo">
+    </header>
+
+    <div class="container" style="margin-top: -20px; position: relative; z-index: 10;">
+
+        <div class="card">
+            <label>Colaborador Avaliado</label>
+            <input type="text" id="nome" placeholder="Nome completo">
+            <label>Matrícula</label>
+            <input type="tel" id="matri" placeholder="Ex: 000000" inputmode="numeric">
+        </div>
+
+        <div id="checklist-area"></div>
+
+        <button id="btn-gerar-relatorio" class="btn-fin" onclick="finalizar()">GERAR RELATÓRIO FINAL</button>
+        <div id="results">
+            <h3 id="score" style="text-align:center; color: var(--primary); margin: 0 0 15px 0;"></h3>
+            <pre id="relatorio"></pre>
+
+            <button class="btn-fin" style="background:#25D366; margin-bottom: 5px; width: 100%;" onclick="copiar()">
+                <i class="fab fa-whatsapp"></i> COPIAR PARA WHATSAPP
+            </button>
+
+            <div class="extra-options">
+                <button class="btn-small" onclick="gerarPDF()"><i class="fas fa-file-pdf"></i> SALVAR PDF</button>
+                <button class="btn-small" onclick="gerarExcel()"><i class="fas fa-file-excel"></i> GERAR EXCEL</button>
+            </div>
+        </div>
+
+        <div class="footer-logo">
+            <img src="assets/images/PagueMenosLogo.png" alt="Pague Menos">
+            <footer>
+                Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+                <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento do atendimento em relação ao
+                cliente oculto.
+                <br>
+                <div class="version-card">
+                    <span class="version-label">Versão</span>
+                    <span id="app-version-display">Carregando...</span>
+                </div>
+            </footer>
+        </div>
+
+
+        <!-- Scripts Externos (Bibliotecas) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+        <!-- Lógica do Aplicativo -->
+        <script src="js/pwa-utils.js"></script>
+        <script src="js/checklist.js"></script>
+</body>
+
+</html>

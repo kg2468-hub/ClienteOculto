@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#004a99">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Checklist PM">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <title>PagueMenos CheckList</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="assets/images/icone_novo.png">
+
+    <link rel="stylesheet" href="css/global.css">
+    <script src="js/dark-mode.js"></script>
+</head>
+
+<body>
+
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="logo-container">
+                <img src="assets/images/icone_novo.png" alt="Logo">
+            </div>
+            <p class="loading-text">CARREGANDO SISTEMA</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="update-banner"
+        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: white; z-index: 99999; padding: 30px 20px; border-radius: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; flex-direction: column; align-items: center; gap: 15px; border: none; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div
+            style="background: #f4f7f9; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #004a99; font-size: 32px; margin-bottom: 5px;">
+            <i class="fas fa-sync-alt fa-spin"></i>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #004a99; font-size: 20px; font-weight: 800;">Atualização Necessária</h3>
+            <p style="margin: 12px 0 0 0; color: #555; font-size: 14px; line-height: 1.5;">Uma nova versão do Checklist
+                está disponível com melhorias essenciais.</p>
+            <div id="update-changes-text"
+                style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 10px; font-size: 12px; color: #666; text-align: left; max-height: 100px; overflow-y: auto; border-left: 3px solid #004a99;">
+                <strong>O que mudou:</strong><br>Carregando notas...
+            </div>
+        </div>
+        <button onclick="forceUpdate()" id="btn-update-now"
+            style="background: #004a99; color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; box-shadow: 0 8px 20px rgba(0,74,153,0.3); transition: all 0.2s;">
+            ATUALIZAR AGORA
+        </button>
+        <button onclick="closeUpdateBanner()" id="btn-update-later"
+            style="display: none; background: transparent; color: #777; border: none; width: 100%; padding: 10px; border-radius: 14px; font-weight: 600; cursor: pointer; font-size: 12px; margin-top: 5px;">
+            LEMBRAR DEPOIS
+        </button>
+    </div>
+
+    <div id="success-banner"
+        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 320px; background: white; z-index: 99999; padding: 30px 20px; border-radius: 28px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; flex-direction: column; align-items: center; gap: 15px; border: none; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div
+            style="background: #e8f5e9; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #2e7d32; font-size: 32px; margin-bottom: 5px;">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #2e7d32; font-size: 20px; font-weight: 800;">Tudo Atualizado!</h3>
+            <p style="margin: 12px 0 0 0; color: #555; font-size: 14px; line-height: 1.5;">Você já está utilizando a
+                versão mais recente do sistema.</p>
+            <div id="current-version-text"
+                style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 10px; font-size: 13px; color: #666; font-family: monospace; font-weight: bold; border-left: 3px solid #2e7d32;">
+                v0.0.0
+            </div>
+        </div>
+        <button onclick="closeSuccessBanner()"
+            style="background: #2e7d32; color: white; border: none; width: 100%; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; box-shadow: 0 8px 20px rgba(46,125,50,0.3); transition: all 0.2s;">
+            ENTENDI
+        </button>
+    </div>
+
+
+    <button class="btn-settings" onclick="toggleMenu(true)">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <div id="modal-settings" class="modal-overlay" onclick="toggleMenu(false)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>Configurações</h3>
+
+            <div id="opt-instalar" class="menu-opt" style="display: none;" onclick="instalarApp()">
+                <i class="fas fa-download"></i> Instalar Aplicativo
+            </div>
+
+            <div class="menu-opt" onclick="verificarAtualizacao()">
+                <i class="fas fa-sync-alt" style="color: #0d6efd;"></i>
+                <div style="display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2;">
+                    <span>Buscar Atualizações</span>
+                    <small style="font-size: 9px; color: #999; font-weight: 400;">Verificar se há novas
+                        melhorias</small>
+                </div>
+            </div>
+
+            <div class="menu-opt" onclick="pedirLimpezaCache()">
+                <i class="fas fa-trash-alt" style="color: #dc3545;"></i> Limpar Cache
+            </div>
+
+            <div class="menu-opt" id="btn-theme" onclick="toggleDarkMode()">
+                <i class="fas fa-moon"></i> Modo Escuro
+            </div>
+
+            <div class="menu-opt" onclick="abrirSobre()">
+                <i class="fas fa-info-circle" style="color: var(--primary);"></i> Sobre o Aplicativo
+            </div>
+
+            <button class="main-button" style="margin-top: 15px; width: 100%; justify-content: center; padding: 12px;"
+                onclick="toggleMenu(false)">
+                FECHAR
+            </button>
+        </div>
+    </div>
+
+    <div id="modal-confirm-limpeza" class="modal-overlay" onclick="fecharModalLimpeza()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div
+                style="background: #fff0f0; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #dc3545; font-size: 28px; margin: 0 auto 15px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="color: var(--primary); margin-top: 0; margin-bottom: 10px;">Atenção</h3>
+            <p style="color: #555; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+                Tem certeza que deseja limpar o cache? O sistema será reiniciado para aplicar as correções.
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <button
+                    style="flex:1; padding: 14px; border-radius: 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold; cursor: pointer; color: #555;"
+                    onclick="fecharModalLimpeza()">CANCELAR</button>
+                <button
+                    style="flex:1; padding: 14px; border-radius: 12px; border: none; background: #dc3545; color: white; font-weight: bold; cursor: pointer;"
+                    onclick="executarLimpezaCache()">LIMPAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-sobre" class="modal-overlay" onclick="fecharSobre()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img src="assets/images/icone_novo.png" alt="Logo"
+                style="width: 75px; height: 75px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+            <h3 style="color: var(--primary); margin: 0 0 4px 0; font-size: 20px;">Pague Menos Check-List</h3>
+            <p
+                style="color: var(--accent); font-weight: 800; font-size: 11px; margin: 0 0 20px 0; letter-spacing: 2px;">
+                CLIENTE OCULTO</p>
+
+            <div
+                style="background: rgba(0, 74, 153, 0.05); border-radius: 12px; padding: 15px; text-align: left; font-size: 13px; line-height: 1.6; margin-bottom: 20px; border: 1px solid rgba(0, 74, 153, 0.1);">
+                <p style="margin: 0 0 8px 0;"><i class="fas fa-code" style="width: 20px; color: var(--primary);"></i>
+                    <strong>Desenvolvedor:</strong> Erik Henrique - 126841
+                </p>
+                <p style="margin: 0 0 8px 0;"><i class="fas fa-bullseye"
+                        style="width: 20px; color: var(--primary);"></i> <strong>Objetivo:</strong> Sistema de apoio e
+                    acompanhamento de atendimento.</p>
+                <p style="margin: 0;"><i class="fas fa-shield-alt" style="width: 20px; color: var(--primary);"></i>
+                    <strong>Aviso:</strong> Sistema não oficial.
+                </p>
+            </div>
+
+            <button
+                style="width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 4px 15px rgba(0, 74, 153, 0.2);"
+                onclick="fecharSobre()">
+                FECHAR
+            </button>
+        </div>
+    </div>
+
+    <div id="transition-overlay">
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+        <div class="transition-bar"></div>
+    </div>
+    <div id="water-fill-container">
+        <div class="water-layer"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+    <div id="toast-container"></div>
+
+
+    <img src="assets/images/icone_novo.png" class="icon-fixo" alt="Ícone">
+
+    <div class="hero">
+        <div class="lupa-container">
+            <div class="lupa-vidro"></div>
+            <div class="lupa-cabo"></div>
+        </div>
+        <h1>CHECK-LIST</h1>
+        <p>CLIENTE OCULTO</p>
+    </div>
+
+    <div class="menu-container">
+        <a href="javascript:void(0)" onclick="transitionTo('checklist.html')" class="main-button">
+            <i class="fas fa-file-signature"></i>
+            <div>
+                <h3>Nova Avaliação</h3>
+                <p>Iniciar auditoria agora</p>
+            </div>
+        </a>
+
+        <div class="secondary-grid">
+            <a href="javascript:void(0)" class="sec-button" onclick="transitionTo('historico.html')">
+                <i class="fas fa-history" style="color: #a855f7;"></i> Histórico
+            </a>
+            <a href="#" class="sec-button" onclick="showToast('Relatórios em desenvolvimento')">
+                <i class="fas fa-chart-line" style="color: #10b981;"></i> Relatórios
+            </a>
+            <a href="javascript:void(0)" class="sec-button" onclick="navigateToHidrometro()">
+                <i class="fas fa-tint" style="color: #0dcaf0;"></i> Hidrômetro
+            </a>
+            <a href="javascript:void(0)" class="sec-button" onclick="transitionTo('arquivosapoio.html')">
+                <i class="fas fa-folder-open" style="color: #f9b233;"></i> Arquivos
+            </a>
+        </div>
+    </div>
+
+    <div id="banner-container">
+        <div id="banner-progress-bar"></div>
+        <div id="banner-content"></div>
+    </div>
+
+    <div class="footer-logo">
+        <img src="assets/images/PagueMenosLogo.png" alt="Pague Menos">
+        <footer>
+            Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+            <strong>Sistema não oficial</strong>, voltado ao apoio e acompanhamento.
+            <br>
+            <div class="version-card">
+                <span class="version-label">Versão</span>
+                <span id="app-version-display">---</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/pwa-utils.js"></script>
+    <script src="js/index.js"></script>
+</body>
+
+</html>

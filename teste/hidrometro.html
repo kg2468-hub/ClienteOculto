@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AcquaControl Pro</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+    <link rel="stylesheet" href="css/global.css?v=1.1.0">
+    <link rel="stylesheet" href="css/hidrometro.css?v=1.1.0">
+    <script src="js/dark-mode.js"></script>
+</head>
+
+<body>
+
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="logo-container">💧</div>
+            <p class="loading-text">CARREGANDO DADOS</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <header class="hero-header">
+        <button class="btn-back-hero" onclick="voltar()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-content">
+            <h1>AcquaControl</h1>
+            <p id="data-hoje">Carregando data...</p>
+        </div>
+        <img src="assets/images/icone_novo.png" alt="Icone" class="header-logo">
+    </header>
+
+    <div class="app-container" style="margin-top: -20px; position: relative; z-index: 10;">
+        <div class="header-actions-row">
+            <button class="btn-plus-premium" onclick="abrirModalEdicao()" title="Adicionar medição antiga">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        <main>
+            <section class="card-input">
+                <small>NOVA LEITURA (Hoje)</small>
+                <div class="input-wrapper">
+                    <input type="number" id="leitura" placeholder="00000.000" step="0.001">
+                    <button onclick="registrarLeitura()">Salvar</button>
+                </div>
+            </section>
+
+            <section class="grid-status">
+                <div class="status-box">
+                    <span class="label">Consumo Última Leitura</span>
+                    <h2 id="consumo-diario">0.000 <small>m³</small></h2>
+                </div>
+                <div class="status-box" id="status-alerta">
+                    <span class="label">Status</span>
+                    <h2 id="status-texto">---</h2>
+                    <div class="grafico-mini"><canvas id="graficoStatus"></canvas></div>
+                </div>
+            </section>
+
+            <section class="card-chart">
+                <div class="chart-header">
+                    <h3>Histórico (7 dias)</h3>
+                    <select id="tipo-grafico" class="select-chart" onchange="atualizarUI()">
+                        <option value="bar">Barras</option>
+                        <option value="line">Linha</option>
+                        <option value="area">Área</option>
+                    </select>
+                </div>
+                <canvas id="meuGrafico"></canvas>
+            </section>
+
+            <section class="history-section">
+                <h3>Registros Salvos</h3>
+                <div id="lista-historico" class="history-list"></div>
+            </section>
+
+            <div class="action-footer">
+                <button class="btn-secondary" onclick="gerarPDF()"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+                <div class="backup-area">
+                    <button class="btn-backup" onclick="exportarDados()">Exportar Backup</button>
+                    <label for="importar" class="btn-backup">Importar Backup</label>
+                    <input type="file" id="importar" style="display:none" accept=".json"
+                        onchange="importarDados(event)">
+                </div>
+            </div>
+        </main>
+
+        <div class="footer-logo">
+            <img src="assets/images/PagueMenosLogo.png" alt="Pague Menos">
+            <footer>
+                Desenvolvido por <strong>Erik Henrique - 126841</strong><br>
+                <strong>Sistema não oficial</strong>, voltado a facilitar o acompanhamento do
+                <strong>Hidrômetro</strong>
+                <br>
+                <div class="version-card">
+                    <span class="version-label">Versão</span>
+                    <span id="app-version-display">---</span>
+                </div>
+            </footer>
+        </div>
+
+        <div id="modal-edicao" class="modal">
+            <div class="modal-content">
+                <h3 id="titulo-modal-edicao">Adicionar / Editar Registro</h3>
+                <input type="hidden" id="edit-index" value="-1">
+                <label>Data da Medição:</label><input type="date" id="edit-data">
+                <label>Leitura (m³):</label><input type="number" id="edit-leitura" step="0.001">
+                <div class="modal-actions">
+                    <button onclick="fecharModal('modal-edicao')" class="btn-cancel">Cancelar</button>
+                    <button onclick="salvarEdicao()" class="btn-save">Salvar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-confirmacao" class="modal modal-alert">
+            <div class="modal-content text-center">
+                <div class="alert-icon">⚠️</div>
+                <h3 id="confirm-titulo">Tem certeza?</h3>
+                <p id="confirm-mensagem">Essa ação não pode ser desfeita.</p>
+                <div class="modal-actions">
+                    <button onclick="fecharConfirmacao()" class="btn-cancel">Cancelar</button>
+                    <button id="btn-confirmar-acao" class="btn-danger">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/pwa-utils.js"></script>
+    <script src="js/hidrometro.js"></script>
+</body>
+
+</html>

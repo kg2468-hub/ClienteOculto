@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Material de Apoio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/global.css?v=1.0.8">
+    <link rel="stylesheet" href="css/arquivosapoio.css?v=1.0.8">
+    <script src="js/dark-mode.js"></script>
+</head>
+
+<header class="hero-header">
+    <button class="btn-back-hero" onclick="voltar()">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+    <div class="header-content">
+        <h1>Material de Apoio</h1>
+        <p>Documentos e Manuais</p>
+    </div>
+    <img src="assets/images/icone_novo.png" alt="Icone" class="header-logo">
+</header>
+
+<div class="container" style="margin-top: -20px; position: relative; z-index: 10;">
+    <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Pesquisar arquivos..." onkeyup="filtrarArquivos(this.value)">
+    </div>
+    <div id="file-list" class="file-list">
+        <div class="empty-state">Carregando arquivos...</div>
+    </div>
+    <div class="footer-logo" style="display: flex; flex-direction: column; align-items: center; padding: 20px 0;">
+        <img src="assets/images/PagueMenosLogo.png" alt="Pague Menos" style="width: 100px; margin-bottom: 10px;">
+        <div class="version-card"
+            style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(0, 74, 153, 0.05); border: 1px solid rgba(0, 74, 153, 0.1); border-radius: 100px; font-size: 11px;">
+            <span class="version-label"
+                style="font-size: 9px; font-weight: 800; color: #004a99; letter-spacing: 0.5px; text-transform: uppercase;">Versão</span>
+            <span id="app-version-display" style="font-family: monospace; font-weight: bold; color: #f9b233;">---</span>
+        </div>
+    </div>
+</div>
+<div id="preview-modal" class="preview-modal">
+    <div class="preview-content">
+        <div class="preview-header">
+            <span id="preview-title" style="font-weight: bold;"></span>
+            <button onclick="closePreview()"
+                style="background:none; border:none; font-size: 24px; cursor:pointer;">&times;</button>
+        </div>
+        <iframe id="preview-iframe" class="preview-iframe"></iframe>
+    </div>
+</div>
+<script src="js/pwa-utils.js"></script>
+<script src="js/arquivosapoio.js"></script>
+</body>
+
+</html>

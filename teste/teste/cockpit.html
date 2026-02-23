@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Relatório - Vendas Profissional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        /* Animações base */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Animação de remover card */
+        .fade-out-remove { transition: all 0.3s ease-in; opacity: 0; transform: scale(0.95); height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: hidden; }
+
+        /* Classes utilitárias para exportação */
+        .no-print { display: block; }
+        .exporting .no-print { display: none !important; }
+        .exporting .card-container { border: none !important; box-shadow: none !important; bg-white !important; }
+        
+        /* Container de notificações toast */
+        #toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 50; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toast { padding: 1rem 1.5rem; border-radius: 0.75rem; color: white; font-weight: 600; shadow: lg; animation: slideInRight 0.3s ease-out forwards; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen p-4 md:p-8">
+
+    <div id="toast-container"></div>
+
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden flex items-center justify-center fade-in p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl scale-100 transition-transform">
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Confirmar Exclusão</h3>
+            <p class="text-slate-600 mb-6">Tem certeza que deseja remover <span id="modalColabName" class="font-bold text-blue-600"></span> da lista?</p>
+            <div class="flex justify-end gap-3">
+                <button onclick="hideDeleteModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-slate-700 font-semibold transition-colors">Cancelar</button>
+                <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition-colors flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 000-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto space-y-8" id="app-container">
+        
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 text-center no-print fade-in">
+            <h1 class="text-3xl font-extrabold text-slate-800 mb-2 tracking-tight">Relatório de Vendas COCKPIT</h1>
+            <p class="text-slate-500 mb-8 text-lg">Geração de painel visual e textos prontos para envio.</p>
+            
+            <label class="group block w-full max-w-lg mx-auto border-2 border-dashed border-blue-300 bg-blue-50/50 hover:bg-blue-100 hover:border-blue-500 transition-all rounded-2xl p-10 cursor-pointer">
+                <div class="flex flex-col items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500 mb-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    <span class="text-blue-700 font-bold text-lg">Clique para selecionar o arquivo .xlsx</span>
+                    <span class="text-blue-400 text-sm mt-2">O processamento é feito 100% no seu dispositivo.</span>
+                </div>
+                <input type="file" id="fileInput" accept=".xlsx, .xls" class="hidden">
+            </label>
+        </div>
+
+        <div id="action-buttons" class="hidden no-print flex-wrap justify-center gap-4 fade-in">
+             <button onclick="copyImageToClipboard()" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all hover:-translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" /><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" /></svg>
+                Copiar Imagem (Rápido)
+            </button>
+            <button onclick="generateImage()" class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all hover:-translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                Baixar Imagem (.png)
+            </button>
+            <button onclick="copyToWhatsApp()" class="flex items-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all hover:-translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd" /></svg>
+                Copiar Texto WhatsApp
+            </button>
+        </div>
+
+        <div id="report-card" class="bg-white p-8 rounded-3xl shadow-xl hidden fade-in">
+            <div class="border-b border-slate-100 pb-6 mb-8 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800 uppercase tracking-wide">Resumo de Vendas Diário</h2>
+                    <div class="flex items-center text-slate-500 mt-1 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        <span id="report-date"></span>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl p-3 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                </div>
+            </div>
+            
+            <div id="collaborators-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        let reportData = [];
+        let collaboratorToDeleteIndex = null;
+
+        // --- Funções Utilitárias de UI (Toasts e Modais) ---
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            // Cores baseadas no tipo
+            const bgColors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-blue-500' };
+            toast.className = `toast ${bgColors[type]} shadow-lg flex items-center`;
+            
+            // Ícone baseado no tipo
+            let iconSvg = type === 'success' 
+                ? '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>'
+                : '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+
+            toast.innerHTML = `${iconSvg} <span>${message}</span>`;
+            container.appendChild(toast);
+
+            // Remove após 3 segundos
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease-in';
+                setTimeout(() => container.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        function showDeleteModal(index) {
+            collaboratorToDeleteIndex = index;
+            const colabName = reportData[index].nome;
+            document.getElementById('modalColabName').textContent = colabName;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            collaboratorToDeleteIndex = null;
+        }
+
+        // Configura o botão de confirmação do modal apenas uma vez
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (collaboratorToDeleteIndex !== null) {
+                executeColaboradorRemoval(collaboratorToDeleteIndex);
+                hideDeleteModal();
+            }
+        });
+
+
+        // --- Funções de Formatação ---
+        const formatCurrency = (value) => {
+            let num = parseFloat(value);
+            return isNaN(num) ? "R$ 0,00" : num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+        const formatUVC = (value) => {
+            let num = parseFloat(value);
+            return isNaN(num) ? "0.00" : num.toFixed(2);
+        };
+
+        // --- Processamento do Arquivo ---
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            showToast('Processando arquivo...', 'info');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    processData(jsonData);
+                    showToast('Dados carregados com sucesso!');
+                } catch (error) {
+                    showToast('Erro ao ler o arquivo. Verifique o formato.', 'error');
+                    console.error(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function processData(data) {
+            reportData = [];
+            // Inicia da linha 4 (índice 3) para pular cabeçalhos do Cockpit
+            for (let i = 3; i < data.length; i++) {
+                const row = data[i];
+                if (!row || !row[0]) continue;
+                reportData.push({
+                    nome: row[0], vendasGeral: row[2], uvc: formatUVC(row[3]), tkm: row[4],
+                    marcasExclusivas: row[5], genericoSimilar: row[7], rx: row[9], autoServico: row[11], dermo: row[13]
+                });
+            }
+            document.getElementById('report-date').innerText = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            renderCards();
+            document.getElementById('report-card').classList.remove('hidden');
+            document.getElementById('action-buttons').classList.remove('hidden');
+        }
+
+        // --- Renderização e Manipulação Visual ---
+        function renderCards() {
+            const grid = document.getElementById('collaborators-grid');
+            grid.innerHTML = ''; 
+            reportData.forEach((colab, index) => {
+                const card = document.createElement('div');
+                // Adiciona um ID único ao card para a animação de remoção
+                card.id = `colab-card-${index}`;
+                card.className = "card-container relative bg-slate-50 border border-slate-200 p-5 rounded-2xl hover:shadow-md transition-shadow fade-in";
+                card.innerHTML = `
+                    <button onclick="showDeleteModal(${index})" class="no-print absolute top-3 right-3 p-2 bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all shadow-sm" title="Excluir Colaborador">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L10 8.586 5.707 4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <h3 class="font-extrabold text-xl text-blue-800 mb-4 border-b-2 border-blue-100 pb-2 pr-8 uppercase tracking-tight">${colab.nome}</h3>
+                    <div class="space-y-2.5 text-sm">
+                        ${renderDataItem('Vendas Geral', formatCurrency(colab.vendasGeral), 'text-blue-700')}
+                        ${renderDataItem('UVC / TKM', `${colab.uvc} <span class="text-slate-400 mx-1">|</span> ${formatCurrency(colab.tkm)}`)}
+                        ${renderDataItem('Marcas Exclusivas', formatCurrency(colab.marcasExclusivas))}
+                        ${renderDataItem('Genérico/Similar', formatCurrency(colab.genericoSimilar))}
+                        ${renderDataItem('RX', formatCurrency(colab.rx))}
+                        ${renderDataItem('Auto Serviço', formatCurrency(colab.autoServico))}
+                        ${renderDataItem('Dermo', formatCurrency(colab.dermo))}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Helper para gerar as linhas de dados do card
+        function renderDataItem(label, valueHtml, valueClass = 'text-slate-800') {
+            return `<div class="flex justify-between items-center bg-white p-2 px-3 rounded-lg shadow-sm border border-slate-100">
+                        <span class="text-slate-500 font-semibold text-xs uppercase tracking-wider">${label}</span>
+                        <span class="font-bold ${valueClass}">${valueHtml}</span>
+                    </div>`;
+        }
+
+        // Função que executa a remoção com animação
+        function executeColaboradorRemoval(index) {
+            const cardElement = document.getElementById(`colab-card-${index}`);
+            if (cardElement) {
+                // Adiciona classe que engatilha a transição CSS
+                cardElement.classList.add('fade-out-remove');
+                
+                // Aguarda a animação CSS terminar (300ms) antes de atualizar os dados
+                setTimeout(() => {
+                    reportData.splice(index, 1);
+                    renderCards(); // Re-renderiza tudo para garantir a ordem correta dos índices
+                    showToast('Colaborador removido.', 'info');
+                }, 300);
+            }
+        }
+
+        // --- Funções de Exportação ---
+
+        // Configuração comum para o html2canvas
+        const commonCanvasConfig = {
+                scale: 2, // Alta resolução
+                backgroundColor: "#ffffff", // Fundo branco na imagem final
+                useCORS: true,
+                logging: false,
+                onclone: (clonedDoc) => {
+                     // Garante que a versão clonada para imagem não tenha sombras css que as vezes bugam
+                    const cards = clonedDoc.querySelectorAll('.card-container');
+                    cards.forEach(card => {
+                        card.style.boxShadow = 'none';
+                        card.style.backgroundColor = '#ffffff';
+                        card.style.border = '1px solid #e2e8f0';
+                    });
+                }
+        };
+
+        function generateImage() {
+            const reportNode = document.getElementById('report-card');
+            const container = document.getElementById('app-container');
+            container.classList.add('exporting');
+            showToast('Gerando imagem para download...', 'info');
+            
+            html2canvas(reportNode, commonCanvasConfig).then(canvas => {
+                container.classList.remove('exporting');
+                const link = document.createElement('a');
+                link.download = `Vendas_Cockpit_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('Imagem baixada com sucesso!');
+            });
+        }
+
+        // Nova função para copiar imagem direto para a área de transferência
+        function copyImageToClipboard() {
+            // Verifica se o navegador suporta a API
+            if (!navigator.clipboard || !navigator.clipboard.write) {
+                 showToast('Seu navegador não suporta cópia direta de imagem. Use o botão "Baixar".', 'error');
+                 return;
+            }
+
+            const reportNode = document.getElementById('report-card');
+            const container = document.getElementById('app-container');
+            container.classList.add('exporting');
+            showToast('Gerando imagem para cópia...', 'info');
+
+            html2canvas(reportNode, commonCanvasConfig).then(canvas => {
+                container.classList.remove('exporting');
+                // Converte o canvas em um "Blob" (objeto binário)
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        showToast('Erro ao gerar imagem para cópia.', 'error');
+                        return;
+                    }
+                    // Tenta escrever o blob na área de transferência
+                    navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+                        .then(() => showToast('Imagem copiada! Pode colar no WhatsApp (Ctrl+V).'))
+                        .catch(err => {
+                            console.error('Erro ao copiar: ', err);
+                            showToast('Falha ao copiar imagem. Tente usar o botão Baixar.', 'error');
+                        });
+                }, 'image/png');
+            });
+        }
+
+        function copyToWhatsApp() {
+            if (reportData.length === 0) {
+                showToast('Não há dados para copiar.', 'error');
+                return;
+            }
+            // Usando símbolos Unicode limpos para o texto puro do WhatsApp
+            let text = `📊 *RESUMO DE VENDAS DIÁRIO* 📊\n📅 ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+            reportData.forEach(c => {
+                text += `👤 *${c.nome.toUpperCase()}*\n`;
+                text += `💵 *Geral:* ${formatCurrency(c.vendasGeral)}\n`;
+                text += `🎯 *UVC:* ${c.uvc}  |  🎟 *TKM:* ${formatCurrency(c.tkm)}\n`;
+                text += `⭐ *Marcas Excl.:* ${formatCurrency(c.marcasExclusivas)}\n`;
+                text += `💊 *Genérico/Sim.:* ${formatCurrency(c.genericoSimilar)}\n`;
+                text += `🩺 *RX:* ${formatCurrency(c.rx)}\n`;
+                text += `🛒 *Auto Serviço:* ${formatCurrency(c.autoServico)}\n`;
+                text += `🧴 *Dermo:* ${formatCurrency(c.dermo)}\n`;
+                text += `═══════════════════\n`;
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Texto copiado! Pronto para colar no grupo.');
+            }).catch(() => {
+                showToast('Erro ao copiar o texto.', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
