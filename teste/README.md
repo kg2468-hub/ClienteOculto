@@ -1,4 +1,4 @@
-📋 Checklist Cliente Oculto - Pague Menos
+📋 Pague Menos APOIO
 Sistema web progressivo (PWA) desenvolvido para facilitar a auditoria e o acompanhamento do padrão de atendimento nas unidades Pague Menos. O foco é a avaliação rápida, geração de relatórios e exportação de dados diretamente pelo dispositivo móvel.
 🚀 Funcionalidades Principais
  * Checklist Dinâmico: Organizado por seções (Salão, Balcão, Caixa e Extras).

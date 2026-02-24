@@ -119,8 +119,15 @@ window.compartilharZap = function (id) {
 }
 
 window.voltar = function () {
-    window.location.href = 'index.html';
+    document.body.classList.add('page-exit');
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 800);
 }
+
+window.addEventListener('pageshow', function (event) {
+    if (document.body.classList.contains('page-exit')) document.body.classList.remove('page-exit');
+});
 
 // Fechar modal ao clicar fora
 window.onclick = function (event) {

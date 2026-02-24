@@ -11,6 +11,12 @@ function fecharSobre() {
 window.addEventListener('pageshow', function (event) {
     if (document.body.classList.contains('page-exit')) document.body.classList.remove('page-exit');
     if (document.body.classList.contains('start-water-fill')) document.body.classList.remove('start-water-fill');
+
+    // Pequeno delay para garantir que o layout renderizou antes do fade-in
+    setTimeout(() => {
+        const content = document.querySelector('.main-content-desktop');
+        if (content) content.classList.add('show');
+    }, 100);
 });
 
 /* --- LÓGICA DE VERSÃO DINÂMICA --- */
@@ -59,6 +65,7 @@ async function checkVersion() {
 function exibirBloqueioAtualizacao(changes, version) {
     if (updateBanner) {
         // Se o usuário já ignorou esta versão nesta sessão, não incomoda de novo
+        // (Mantido por compatibilidade de check, mas não há botão para fechar mais)
         if (sessionStorage.getItem('update_ignored') === version) return;
 
         const changesContainer = document.getElementById('update-changes-text');
@@ -66,27 +73,10 @@ function exibirBloqueioAtualizacao(changes, version) {
             changesContainer.innerHTML = `<strong>O que mudou:</strong><br>${changes}`;
         }
 
-        // Se estiver no navegador (NÃO instalado), permite fechar o banner
-        const btnLater = document.getElementById('btn-update-later');
-        if (btnLater) {
-            const isInstalled = window.PWAUtils ? window.PWAUtils.isStandalone() : false;
-            btnLater.style.display = isInstalled ? 'none' : 'block';
-        }
-
         updateBanner.style.display = 'flex';
+        const overlay = document.getElementById('banner-overlay');
+        if (overlay) overlay.style.display = 'block';
         document.body.classList.add('modal-open');
-    }
-}
-
-function closeUpdateBanner() {
-    if (updateBanner) {
-        updateBanner.style.display = 'none';
-        document.body.classList.remove('modal-open');
-
-        // Salva que o usuário ignorou para não mostrar novamente até recarregar/nova sessão
-        fetch('version.json').then(r => r.json()).then(data => {
-            sessionStorage.setItem('update_ignored', data.version);
-        }).catch(() => { });
     }
 }
 
@@ -96,6 +86,8 @@ function exibirBannerSucesso(version) {
     if (banner) {
         if (versionText) versionText.innerText = `v${version}`;
         banner.style.display = 'flex';
+        const overlay = document.getElementById('banner-overlay');
+        if (overlay) overlay.style.display = 'block';
         document.body.classList.add('modal-open');
     }
 }
@@ -104,6 +96,8 @@ function closeSuccessBanner() {
     const banner = document.getElementById('success-banner');
     if (banner) {
         banner.style.display = 'none';
+        const overlay = document.getElementById('banner-overlay');
+        if (overlay) overlay.style.display = 'none';
         document.body.classList.remove('modal-open');
     }
 }
@@ -139,13 +133,15 @@ function toggleMenu(show) {
 
 function transitionTo(url) {
     document.body.classList.add('page-exit');
-    setTimeout(() => { window.location.href = url; }, 450);
+    // Sincronizado com os 0.6s + 0.15s de delay do CSS
+    setTimeout(() => { window.location.href = url; }, 800);
 }
 
 function navigateToHidrometro() {
     document.body.classList.add('start-water-fill');
     showToast("Acessando leitura...");
-    setTimeout(() => { window.location.href = 'hidrometro.html'; }, 1600);
+    // Sincronizado com os 1.2s do CSS
+    setTimeout(() => { window.location.href = 'hidrometro.html'; }, 1500);
 }
 
 function showToast(message) {
@@ -281,7 +277,16 @@ async function inicializarAppCompleto() {
     try {
         await Promise.all([aguardarEstatico, aguardarDinamico]);
         await inicializarBanner();
-    } catch (erro) { console.error("Erro:", erro); } finally { if (window.PWAUtils) window.PWAUtils.hideLoader(); }
+    } catch (erro) { console.error("Erro:", erro); } finally {
+        if (window.PWAUtils) {
+            window.PWAUtils.hideLoader();
+            // Mostra o conteúdo suavemente após o loader sair
+            setTimeout(() => {
+                const content = document.querySelector('.main-content-desktop');
+                if (content) content.classList.add('show');
+            }, 300);
+        }
+    }
 }
 
 inicializarAppCompleto();

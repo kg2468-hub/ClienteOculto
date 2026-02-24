@@ -217,12 +217,11 @@ body::-webkit-scrollbar {
     position: relative;
     width: 100%;
     background: var(--primary);
-    /* Tamanhos adaptáveis para não estourar telas pequenas */
-    padding: clamp(30px, 8vh, 50px) 20px clamp(20px, 5vh, 40px) 20px;
+    padding: clamp(45px, 10vh, 70px) 20px clamp(35px, 8vh, 60px) 20px;
     text-align: center;
     color: white;
-    border-bottom-left-radius: 45px;
-    border-bottom-right-radius: 45px;
+    border-bottom-left-radius: clamp(30px, 10vw, 45px);
+    border-bottom-right-radius: clamp(30px, 10vw, 45px);
     flex-shrink: 0;
     z-index: 1;
     display: flex;
@@ -233,189 +232,130 @@ body::-webkit-scrollbar {
 
 .hero h1 {
     margin: 0;
-    font-size: clamp(32px, 10vw, 42px);
+    font-size: clamp(42px, 14vw, 68px);
+    /* Aumentado consideravelmente */
     font-weight: 900;
-    line-height: 0.9;
-    letter-spacing: -1px;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    line-height: 0.85;
+    letter-spacing: 3px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(90deg, #fff, #a5c9ff, #fff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: apoioPulse 3s infinite ease-in-out, APOIO_SHIMMER 3s linear infinite;
 }
 
-.hero p {
-    margin: 10px 0 0 0;
-    font-size: clamp(10px, 3vw, 13px);
-    opacity: 0.9;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-}
+@keyframes apoioPulse {
 
-.lupa-vidro {
-    width: 38px;
-    height: 38px;
-    border: 3px solid #fff;
-    border-radius: 50%;
-    position: relative;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(1.5px);
-    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4), 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.lupa-cabo {
-    width: 12px;
-    height: 4px;
-    background: #fff;
-    position: absolute;
-    right: -8px;
-    bottom: 2px;
-    transform: rotate(45deg);
-    border-radius: 2px;
-}
-
-@keyframes leituraLenta {
-    0% {
-        top: 15%;
-        left: 10%;
-        transform: rotate(0deg) scale(1);
-    }
-
-    15% {
-        top: 34%;
-        left: 20%;
-        transform: rotate(-5deg) scale(1.1);
-    }
-
-    30% {
-        top: 34%;
-        left: 80%;
-        transform: rotate(5deg) scale(1.1);
-    }
-
-    40% {
-        top: 20%;
-        left: 50%;
-        transform: rotate(15deg) scale(0.9);
+    0%,
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
     }
 
     50% {
-        top: 45%;
-        left: 15%;
-        transform: rotate(-10deg) scale(1);
-    }
-
-    65% {
-        top: 56%;
-        left: 25%;
-        transform: rotate(0deg) scale(1.2);
-    }
-
-    80% {
-        top: 56%;
-        left: 75%;
-        transform: rotate(10deg) scale(1.2);
-    }
-
-    90% {
-        top: 30%;
-        left: 85%;
-        transform: rotate(-20deg) scale(0.8);
-    }
-
-    100% {
-        top: 15%;
-        left: 10%;
-        transform: rotate(0deg) scale(1);
+        transform: scale(1.05);
+        filter: brightness(1.2);
     }
 }
 
-.lupa-container {
-    position: absolute;
-    z-index: 5;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: leituraLenta 15s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
-    will-change: transform, top, left;
+@keyframes APOIO_SHIMMER {
+    to {
+        background-position: 200% center;
+    }
 }
 
-/* --- MENUS E BOTÕES --- */
+.hero p {
+    margin: 8px 0 0 0;
+    font-size: clamp(12px, 3.5vw, 16px);
+    /* Aumentado */
+    opacity: 0.95;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    /* Mais espaçado */
+}
+
+/* --- MENUS E BOTÕES (NOVO LAYOUT UNIFORME) --- */
 .menu-container {
-    width: 90%;
-    max-width: 450px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 10px;
+    width: 92%;
+    max-width: 500px;
+    margin: clamp(5px, 2vh, 15px) auto;
     z-index: 10;
-}
-
-.main-button {
-    background: white;
+    flex: 1;
     display: flex;
-    align-items: center;
-    padding: clamp(12px, 4vh, 22px);
-    border-radius: 20px;
-    text-decoration: none;
-    color: var(--primary);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-    margin-bottom: clamp(10px, 2vh, 15px);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.main-button i {
-    font-size: clamp(30px, 10vw, 38px);
-    margin-right: 15px;
-    color: var(--accent);
-}
-
-.main-button h3 {
-    margin: 0;
-    font-size: clamp(16px, 5vw, 18px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.main-button p {
-    margin: 0;
-    font-size: clamp(11px, 3.5vw, 13px);
-    color: #777;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.secondary-grid {
+.buttons-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: clamp(8px, 2vw, 12px);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
 }
 
-.sec-button {
-    background: white;
-    padding: clamp(10px, 3vh, 18px);
-    border-radius: 20px;
-    text-align: center;
+.menu-card {
+    background: var(--card-bg);
+    padding: 12px 4px;
+    border-radius: 18px;
     text-decoration: none;
-    color: #444;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    font-size: clamp(11px, 3.5vw, 14px);
-    font-weight: 600;
-    transition: transform 0.2s;
-    cursor: pointer;
+    color: var(--text-main);
+    /* Sombra multi-camada para efeito premium de profundidade */
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 2px 4px -1px rgba(0, 0, 0, 0.03),
+        0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 3px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    overflow: hidden;
 }
 
-.sec-button i {
-    display: block;
-    font-size: clamp(18px, 6vw, 22px);
-    margin-bottom: 8px;
-    color: var(--primary);
+.menu-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+}
+
+.menu-card:active {
+    transform: scale(0.92) translateY(2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.menu-card i {
+    font-size: 32px;
+    /* Ícone Grande */
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.menu-card span {
+    font-size: 8.5px;
+    /* Nome Pequeno */
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    text-align: center;
+    opacity: 0.8;
+}
+
+/* Botões simples agora todos iguais no grid de 3 */
+.menu-card:nth-child(5) {
+    grid-column: span 1;
+    aspect-ratio: 1 / 0.95;
+    flex-direction: column;
 }
 
 /* --- BANNER INFORMATIVO --- */
@@ -423,16 +363,34 @@ body::-webkit-scrollbar {
     width: 90%;
     max-width: 450px;
     aspect-ratio: 16 / 9;
-    max-height: 25vh;
-    /* O banner encolhe se a tela for muito curta */
-    border-radius: 24px;
+    /* 1080x1920 horizontal */
+    max-height: 22vh;
+    border-radius: 20px;
     overflow: hidden;
     background: #ffffff;
     position: relative;
-    flex-shrink: 1;
-    /* Permite encolher */
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 74, 153, 0.08);
+    margin: -35px auto 0 auto;
+    /* Centrado e subindo para sobrepor o Hero */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 11;
+    flex-shrink: 0;
+}
+
+/* Container para mobile e PC facilitado */
+.main-content-desktop {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    opacity: 0;
+    /* Começa invisível para evitar quebra ao carregar */
+    transition: opacity 0.4s ease-out;
+}
+
+.main-content-desktop.show {
+    opacity: 1;
 }
 
 #banner-progress-bar {
@@ -609,35 +567,64 @@ footer {
     border-color: var(--accent);
 }
 
-/* --- EFEITOS DE TRANSIÇÃO (Barras e Água) --- */
+/* --- EFEITOS DE TRANSIÇÃO (Staggered Swipe) --- */
 #transition-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
     pointer-events: none;
     z-index: 10000;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Desfoque de fundo durante a transição */
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.4s ease;
+}
+
+body.page-exit #transition-overlay {
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
 }
 
 .transition-bar {
-    flex: 1;
     width: 100%;
+    height: 100vh;
     background: var(--primary);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease-in-out;
+    transform: translateY(100%);
+    transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.transition-bar:nth-child(even) {
-    transform-origin: right;
-    background: #003a7a;
+.transition-bar:nth-child(1) {
+    transition-delay: 0.0s;
+}
+
+.transition-bar:nth-child(2) {
+    transition-delay: 0.05s;
+}
+
+.transition-bar:nth-child(3) {
+    transition-delay: 0.1s;
+}
+
+.transition-bar:nth-child(4) {
+    transition-delay: 0.15s;
 }
 
 body.page-exit .transition-bar {
-    transform: scaleX(1);
+    transform: translateY(0%);
+}
+
+.transition-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
 }
 
 #water-fill-container {
@@ -650,86 +637,103 @@ body.page-exit .transition-bar {
     pointer-events: none;
     overflow: hidden;
     transform: translateY(100%);
+    transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);
+    background: transparent;
 }
 
 .water-layer {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+    bottom: -10px;
+    left: -25%;
+    width: 150%;
     height: 120%;
-    background: linear-gradient(to top, #003366, #004a99 40%, #0dcaf0);
-    opacity: 0.95;
-    transition: transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+    background: linear-gradient(180deg, #0dcaf0, #004a99 60%, #002a5a);
+    opacity: 0.98;
+    border-radius: 40% 45% 0 0;
+    animation: waveFlow 4s infinite linear;
+    box-shadow: 0 -15px 50px rgba(13, 202, 240, 0.4);
+}
+
+@keyframes waveFlow {
+    0% {
+        transform: scaleY(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scaleY(1.05) rotate(2deg);
+    }
+
+    100% {
+        transform: scaleY(1) rotate(0deg);
+    }
 }
 
 .bubble {
     position: absolute;
-    bottom: -20px;
-    background: rgba(255, 255, 255, 0.3);
+    bottom: -50px;
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 50%;
     pointer-events: none;
-    animation: rise 3s infinite ease-in;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
-.bubble:nth-child(1) {
-    width: 20px;
-    height: 20px;
-    left: 10%;
-    animation-duration: 2.5s;
-}
-
-.bubble:nth-child(2) {
-    width: 10px;
-    height: 10px;
-    left: 30%;
-    animation-duration: 3s;
-    animation-delay: 0.2s;
-}
-
-.bubble:nth-child(3) {
-    width: 15px;
-    height: 15px;
-    left: 50%;
-    animation-duration: 2.8s;
-    animation-delay: 0.5s;
-}
-
-.bubble:nth-child(4) {
-    width: 25px;
-    height: 25px;
-    left: 70%;
-    animation-duration: 3.2s;
-    animation-delay: 0.1s;
-}
-
-.bubble:nth-child(5) {
-    width: 12px;
-    height: 12px;
-    left: 85%;
-    animation-duration: 2.7s;
-    animation-delay: 0.3s;
-}
-
-@keyframes rise {
+@keyframes bubbleFloat {
     0% {
-        bottom: -20px;
-        transform: translateX(0);
+        transform: translateY(0) scale(1);
+        opacity: 0;
     }
 
-    50% {
-        transform: translateX(5px);
+    20% {
+        opacity: 0.6;
+    }
+
+    80% {
+        opacity: 0.4;
     }
 
     100% {
-        bottom: 100%;
-        transform: translateX(-5px);
+        transform: translateY(-120vh) scale(1.5);
+        opacity: 0;
     }
+}
+
+.bubble:nth-child(1) {
+    width: 40px;
+    height: 40px;
+    left: 15%;
+    animation: bubbleFloat 4s infinite 0.5s;
+}
+
+.bubble:nth-child(2) {
+    width: 20px;
+    height: 20px;
+    left: 35%;
+    animation: bubbleFloat 3s infinite 1.2s;
+}
+
+.bubble:nth-child(3) {
+    width: 30px;
+    height: 30px;
+    left: 55%;
+    animation: bubbleFloat 5s infinite 0.8s;
+}
+
+.bubble:nth-child(4) {
+    width: 15px;
+    height: 15px;
+    left: 75%;
+    animation: bubbleFloat 3.5s infinite 2.1s;
+}
+
+.bubble:nth-child(5) {
+    width: 25px;
+    height: 25px;
+    left: 90%;
+    animation: bubbleFloat 4.5s infinite 1.5s;
 }
 
 body.start-water-fill #water-fill-container {
     transform: translateY(0%);
-    transition: transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 #toast-container {
@@ -794,19 +798,10 @@ body.dark-mode footer {
 @media (min-width: 1024px) {
     body {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        /* Duas colunas iguais */
-        grid-template-rows: 1fr auto;
-        grid-template-areas:
-            "hero menu"
-            "hero banner";
-        gap: 40px;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 40px;
-        height: 100dvh;
-        justify-content: center;
-        align-content: center;
+        grid-template-columns: 450px 1fr;
+        grid-template-areas: "left right";
+        height: 100vh;
+        overflow: hidden;
     }
 
     .icon-fixo {
@@ -825,69 +820,71 @@ body.dark-mode footer {
     }
 
     .hero {
-        grid-area: hero;
-        border-radius: 40px;
-        height: 100%;
+        grid-area: left;
+        height: 101vh;
+        /* Pequeno excesso para cobrir bordas */
+        border-radius: 0 50px 50px 0;
+        padding: 50px;
+        margin: -1vh 0;
+    }
+
+    .hero h1 {
+        font-size: 56px;
+    }
+
+    .hero p {
+        font-size: 14px;
+        letter-spacing: 6px;
+    }
+
+    .main-content-desktop {
+        grid-area: right;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 60px;
-    }
-
-    .menu-container {
-        grid-area: menu;
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        align-self: end;
-        /* Gruda na parte de baixo do seu espaço */
-    }
-
-    .secondary-grid {
-        grid-template-columns: repeat(4, 1fr);
-        /* 4 botões na mesma linha no PC! */
-    }
-
-    .sec-button {
-        padding: 20px 10px;
+        align-items: center;
+        padding: 40px;
+        gap: 30px;
+        overflow-y: auto;
+        height: 100vh;
+        /* Garante que preencha a altura no desktop */
     }
 
     #banner-container {
-        grid-area: banner;
         width: 100%;
-        max-width: 100%;
-        height: 100%;
-        max-height: 250px;
+        max-width: 800px;
+        aspect-ratio: 16 / 6;
         margin: 0;
         border-radius: 30px;
-        align-self: start;
+    }
+
+    .menu-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 0;
+    }
+
+    .buttons-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .menu-card {
+        aspect-ratio: 1 / 0.8;
+    }
+
+    .menu-card:nth-child(5) {
+        grid-column: span 1;
+        aspect-ratio: 1 / 0.8;
     }
 
     .footer-logo {
-        position: fixed;
-        bottom: 30px;
-        left: 40px;
+        position: absolute;
+        bottom: 20px;
+        right: 40px;
         width: auto;
         flex-direction: row;
-        text-align: left;
-        gap: 20px;
-        background: transparent;
-        align-items: center;
-        padding: 0;
-    }
-
-    .footer-logo img {
-        margin: 0;
-        width: 80px;
-    }
-
-    footer {
-        text-align: left;
-        padding: 0;
-    }
-
-    .version-card {
-        margin-top: 6px;
+        gap: 15px;
     }
 }
 
@@ -903,11 +900,41 @@ body.dark-mode footer {
     }
 }
 
+/* --- OVERLAY PARA BANNERS --- */
+.banner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 99998;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
 /* Dark Mode para Banners centrais */
 body.dark-mode #update-banner,
 body.dark-mode #success-banner {
     background: #1e293b !important;
     color: #f8fafc !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8) !important;
 }
 
 body.dark-mode #update-banner p,

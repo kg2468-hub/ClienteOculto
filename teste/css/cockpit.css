@@ -1,0 +1,194 @@
+/* --- cockpit.css --- */
+
+.cockpit-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Upload Area */
+.upload-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 28px;
+    border: 1px solid var(--border);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.upload-label {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    border: 2px dashed #93c5fd;
+    background: rgba(239, 246, 255, 0.5);
+    border-radius: 20px;
+    padding: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+body.dark-mode .upload-label {
+    border-color: #1e3a8a;
+    background: rgba(30, 58, 138, 0.1);
+}
+
+.upload-label:hover {
+    background: #dbeaf0;
+    border-color: var(--primary);
+}
+
+body.dark-mode .upload-label:hover {
+    background: rgba(30, 58, 138, 0.2);
+}
+
+.upload-icon {
+    font-size: 48px;
+    color: var(--primary);
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.upload-label:hover .upload-icon {
+    transform: scale(1.1);
+}
+
+.upload-text-main {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    color: #1d4ed8;
+}
+
+body.dark-mode .upload-text-main {
+    color: #60a5fa;
+}
+
+.upload-text-sub {
+    display: block;
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Action Buttons */
+.cockpit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn-cockpit {
+    display: flex;
+    align-items: center;
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 14px;
+    color: white;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cockpit:active {
+    transform: scale(0.95);
+}
+
+.btn-cockpit i {
+    margin-right: 10px;
+}
+
+.btn-indigo {
+    background: #4f46e5;
+}
+
+.btn-indigo:hover {
+    background: #4338ca;
+}
+
+.btn-blue {
+    background: #2563eb;
+}
+
+.btn-blue:hover {
+    background: #1d4ed8;
+}
+
+.btn-green {
+    background: #16a34a;
+}
+
+.btn-green:hover {
+    background: #15803d;
+}
+
+/* Report Card */
+.report-card-main {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 32px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.report-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.report-title-group h2 {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-main);
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    margin: 0;
+}
+
+.report-date-tag {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-top: 5px;
+}
+
+.report-icon-box {
+    background: var(--primary);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: var(--shadow);
+}
+
+/* Collaborators Grid */
+.colabs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 640px) {
+    .colabs-grid {
+        grid-template-columns: 1fr;
+    }
+}

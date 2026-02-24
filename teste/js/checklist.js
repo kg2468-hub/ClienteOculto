@@ -480,8 +480,12 @@ window.voltarInicio = function () {
     document.body.classList.add('page-exit');
     setTimeout(() => {
         window.location.href = 'index.html';
-    }, 450);
-}
+    }, 800);
+};
+
+window.addEventListener('pageshow', function (event) {
+    if (document.body.classList.contains('page-exit')) document.body.classList.remove('page-exit');
+});
 
 window.voltar = window.voltarInicio;
 
