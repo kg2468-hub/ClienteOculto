@@ -1,6 +1,4 @@
 {
-    "version": "260226.0604-BetaTestes",
-    "changes": "Ajustes na adaptação do layout inicial, garantindo melhor responsividade e alinhamento dos elementos na tela.
-Correção no modo escuro, resolvendo inconsistências de cores e problemas de contraste.
-Correções de elementos de design quebrados, proporcionando uma interface mais estável e visualmente consistente."
+  "version": "260226.0604-BetaTestes",
+  "changes": "Ajustes na adaptação do layout inicial, garantindo melhor responsividade e alinhamento dos elementos na tela.\nCorreção no modo escuro, resolvendo inconsistências de cores e problemas de contraste.\nCorreções de elementos de design quebrados, proporcionando uma interface mais estável e visualmente consistente."
 }
