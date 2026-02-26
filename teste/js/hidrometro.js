@@ -1,10 +1,4 @@
-(function limparCachesProvisoriamente() {
-    const dadosMedicoes = localStorage.getItem('hidrometro_pro_dados');
-    localStorage.clear(); sessionStorage.clear();
-    if (dadosMedicoes) localStorage.setItem('hidrometro_pro_dados', dadosMedicoes);
-    if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
-})();
-
+// Carrega os dados salvos ou inicia histórico vazio
 let historico = JSON.parse(localStorage.getItem('hidrometro_pro_dados')) || [];
 let graficoBarra = null; let graficoStatus = null; let acaoConfirmacaoPendente = null;
 

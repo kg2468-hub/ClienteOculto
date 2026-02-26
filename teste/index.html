@@ -112,9 +112,9 @@
                 <i class="fas fa-info-circle" style="color: var(--primary);"></i> Sobre o Aplicativo
             </div>
 
-            <button class="main-button" style="margin-top: 15px; width: 100%; justify-content: center; padding: 12px;"
+            <button class="main-button" style="margin-top: 15px; width: 100%; justify-content: center;"
                 onclick="toggleMenu(false)">
-                FECHAR
+                <i class="fas fa-times"></i> FECHAR
             </button>
         </div>
     </div>
@@ -130,12 +130,11 @@
                 Tem certeza que deseja limpar o cache? O sistema será reiniciado para aplicar as correções.
             </p>
             <div style="display: flex; gap: 10px;">
-                <button
-                    style="flex:1; padding: 14px; border-radius: 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold; cursor: pointer; color: #555;"
+                <button class="main-button"
+                    style="flex:1; background: #f8f9fa; color: #555; border: 1px solid #ddd; box-shadow: none; justify-content: center;"
                     onclick="fecharModalLimpeza()">CANCELAR</button>
-                <button
-                    style="flex:1; padding: 14px; border-radius: 12px; border: none; background: #dc3545; color: white; font-weight: bold; cursor: pointer;"
-                    onclick="executarLimpezaCache()">LIMPAR</button>
+                <button class="danger-button" style="flex:1" onclick="executarLimpezaCache()"><i
+                        class="fas fa-trash-alt"></i> LIMPAR</button>
             </div>
         </div>
     </div>
@@ -162,10 +161,8 @@
                 </p>
             </div>
 
-            <button
-                style="width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: bold; cursor: pointer; font-size: 14px; box-shadow: 0 4px 15px rgba(0, 74, 153, 0.2);"
-                onclick="fecharSobre()">
-                FECHAR
+            <button class="main-button" style="width: 100%; justify-content: center;" onclick="fecharSobre()">
+                <i class="fas fa-check"></i> ENTENDI
             </button>
         </div>
     </div>

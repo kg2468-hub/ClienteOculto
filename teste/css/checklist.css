@@ -141,13 +141,27 @@ textarea {
 .btn {
     padding: 16px;
     border: 1px solid #ccd6e0;
-    border-radius: 10px;
+    border-radius: 12px;
     background: #fff;
-    font-weight: bold;
+    font-weight: 800;
     cursor: pointer;
     font-size: 14px;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+    transform: translateY(1px) scale(0.98);
 }
 
 .btn.active-yes {
@@ -164,15 +178,33 @@ textarea {
 
 .btn-fin {
     width: 92%;
-    padding: 20px;
+    padding: 18px;
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 18px;
-    margin: 10px 0;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 16px;
+    margin: 15px 0;
     cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0, 74, 153, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-fin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 74, 153, 0.3);
+    filter: brightness(1.1);
+}
+
+.btn-fin:active {
+    transform: translateY(1px) scale(0.98);
 }
 
 .modal-question-box {
@@ -233,13 +265,24 @@ pre {
 
 .btn-small {
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid #ddd;
     background: #f8f9fa;
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 800;
     cursor: pointer;
     color: #555;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-small:hover {
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
 }
 
 #checklist-area {

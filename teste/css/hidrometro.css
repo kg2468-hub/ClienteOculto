@@ -508,7 +508,7 @@ body.dark-mode .history-actions .btn-del {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 20px;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 14px;
     display: flex;
     justify-content: center;
@@ -516,13 +516,17 @@ body.dark-mode .history-actions .btn-del {
     gap: 10px;
     cursor: pointer;
     color: var(--text-main);
-    box-shadow: var(--shadow-sm);
-    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary:active {
     transform: scale(0.98);
-    background: var(--bg);
 }
 
 .backup-area {
@@ -685,6 +689,17 @@ footer {
     font-weight: 800;
     cursor: pointer;
     font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0, 74, 153, 0.2);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 74, 153, 0.3);
+}
+
+.btn-save:active {
+    transform: scale(0.95);
 }
 
 .btn-cancel {
@@ -697,6 +712,13 @@ footer {
     font-weight: 800;
     cursor: pointer;
     font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-cancel:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .alert-icon {
@@ -714,6 +736,13 @@ footer {
     font-weight: 800;
     cursor: pointer;
     font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(255, 59, 48, 0.2);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 59, 48, 0.3);
 }
 
 .alerta-gap {

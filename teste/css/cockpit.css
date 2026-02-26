@@ -99,8 +99,14 @@ body.dark-mode .upload-text-main {
     cursor: pointer;
 }
 
+.btn-cockpit:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
 .btn-cockpit:active {
-    transform: scale(0.95);
+    transform: translateY(1px) scale(0.98);
 }
 
 .btn-cockpit i {
